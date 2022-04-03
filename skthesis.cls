@@ -1,6 +1,7 @@
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{skthesis}[10/02/2018]
 
+%\usepackage{indentfirst} % TODO
 
 \def\mystretch{1.4}		% Double spacing hack
 %% `vi' and `upcase' document style options.  Krishna Sethuraman (1990)
@@ -292,3 +293,8 @@ on \@thesisdate
 \def\endabstractrus{\par}
 
 \usepackage{kantlipsum}
+
+%%%% A.LARIONOV's code
+\usepackage[dvipsnames]{xcolor}
+\def\alert#1{\colorbox{red!30}{#1}}
+ 	
