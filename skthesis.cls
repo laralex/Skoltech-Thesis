@@ -54,7 +54,8 @@
 
 \def\baselinestretch{\mystretch}	% Double spacing hack
 
-\parindent 1.27cm
+\setlength{\parindent}{10mm}
+\setlength{\parskip}{6pt}
 %%%%%%%  Set up margins and formatting params %%%
 
 % Margins.
@@ -185,7 +186,7 @@ of this thesis document in whole and in part in any medium now known or hereafte
 %% `upcase' documentclass option: \choosecase is defined either as a dummy or
 %% a macro to change the (expanded) argument to uppercase.
 \usepackage{graphicx}
-\def\maketitle{\begin{titlepage}
+\def\engmaketitle{\begin{titlepage}
 \centering{\includegraphics[scale=0.15]{images/sklogo}}
 \par
 MASTER\/'S THESIS\\
@@ -297,4 +298,6 @@ on \@thesisdate
 %%%% A.LARIONOV's code
 \usepackage[dvipsnames]{xcolor}
 \def\alert#1{\colorbox{red!30}{#1}}
+\usepackage{enumitem}
+\setlist[itemize]{noitemsep, topsep=0pt, leftmargin=10mm}
  	

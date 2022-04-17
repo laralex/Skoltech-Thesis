@@ -6,9 +6,116 @@
 %% prompt when you run the file main.tex through LaTeX.
 \chapter{Introduction}
 
-Computer Graphics is a broad discipline that can be summarized as a collection of methods for producing images using computers. Among its applications are typography, cinema, computer entertainment, scientific visualization and industrial design. One of the most advanced directions of computer graphics is photo-realistic imaging, i.e. generation of images, that are indistinguishable from what we perceive in the real world with our eyes. 
+Computer Graphics is a vast discipline of Computer Sciences. In general, it studies theoretical methods for synthesis of 2-dimensional (2D) images using computers. It also includes research on computer hardware, used for image computing and displaying. Among applications of computer graphics there are: typography, cinema, entertainment, scientific visualization and industrial design. Implicitly, the 2D images contain information about how light beams pass through the space and reach our eyes. Then a snapshot of this light is interpreted by our perception as a holistic sight full of shapes and colors. In a computer images are usually represented with two major archetypes:
 
-Human perception is very sensitive, and it easily can detect when something doesn't look realistic enough, or has unrealistic anomalous features called visual artifacts. However, to this day the computer science haven't discovered an absolute metric or benchmark of realism that would closely match the human perception.
+\begin{itemize}
+	\item vector images \cite{aux:vector14} - represented by a set of 2D points, lines, polygonal shapes and mathematically defined distribution of color within them;
+	\item raster images \cite{aux:raster94} - represented by a uniform rectangular grid (referred to as raster), filled with colored squares (referred to as pixels). Typically, colors are defined using Red-Green-Blue (RGB) color model \cite{aux:color05}, where all possible colors are mixed from 3 primary colors, stored in computers as values in $[0;1]$ range of real numbers (or similarly as values in $[0;255]$ range of integer numbers).
+\end{itemize}
+
+Vector graphics requires to define every simple shape on an image. It's practical to visualize schemes or text. However, objects of the real world are too complex for this representation. They may have non-uniform geometry, materials with non-repeating patterns. The surface colors may change after being illuminated by light sources, or shadowed by other objects. Representing all of that with vector graphics would require hundreds of thousands of unique shapes, which is a lot in terms of computations, human hand-craft, and computer file sizes. 
+
+Although in the raster graphics, the number of pixels may also surpass millions, the structure of the pixel grid is uniform, each pixel stores the same amount of data. Also for most cases, the image data has information redundancy in it, and thus can be compressed \cite{aux:compression18}. Besides, the pixel grid resembles a canvas from the traditional art. The current computer software for creation of raster images has capabilities similar to real brushes and palettes. This intuitive representation allows to speed up production time for humans. And we know that raster images can be very realistic, proven by the visual quality that can be captured with modern digital cameras \cite{aux:camera21}.
+
+Speaking of realism, it's one of the most important challenges in computer graphics research. The generated images should ideally be indistinguishable from sights we perceive with our own eyes. Unfortunately, the real world is at least 3-dimensional (3D). Thus, it cannot be fully represented with images on a screen or paper, which are 2D by nature. Another obstacle, is that human vision is very sensitive, and it can easily detect when something is unrealistic, or has anomalous features, e.g. noise, tearing, blurriness and so on. Those are referred to as visual artifacts (also glitches, distortions). However, to this day there haven't been discovered a unified metric of realism, that would allow to compare two similar images and tell which will be more plausible for the human perception \cite{metric:wang11}.
+
+Direct usage of 2D images for visualization of the 3D world isn't always efficient. For example, if we intend to visualize objects as a sequence of temporarily coherent images (animation), it would require to draw the same content with slight adjustment from frame to frame. Instead of manually copying the content between frames and insuring its coherency and synchronization, it's common to instead approximately model the 3D geometry. Then, at every moment of time the appearance of the geometry can be projected from a certain view point onto an image. This allows to model the geometry one time and reuse it for automatic generation of dozens of images.
+
+%A common way to model 3D geometry is triangular meshes \cite{mesh-data-structure}. Here the geometry is defined as a set of 3D vertices and their connectivity into polygons (usually triangles).
+
+With 3D modeling, however, it's even harder to achieve photo-realistic images. An order of magnitude higher number of geometric details needs to be defined. There's also a limit in the modern computer hardware, which may not be fast enough to process all the data, or doesn't have enough storage. For example, it takes a few days to render a single frame of a modern movie, using thousands of Central Processing Units (CPU). It's common, that precision of modeling is sacrificed in favor of production time, e.g. slight natural movements like human muscle bulging, grass shaking, water splashes may undergo simplification. Additionally, the specular phenomena present in the real world \cite{TODO} are also computationally complex. Moreover, we lack knowledge about some phenomena, and only can model them coarsely.
+
+In the last decades, the methods of Artificial Intelligence (AI) and its sub-fields of Machine Learning (ML) and Deep Neural Networks (DNN) have emerged to solve multidisciplinary problems of science and business. Instead of modeling a phenomenon imperatively, they aim to model statistical properties of data captured from the phenomenon. Generally, input data is passed down a highly-parameterized computational graph, and output is compared to certain desired data. During a process referred to as a optimization (training, tuning), the parameters of the graph are iteratively adjusted to better fit the desired data. Afterwards, the graph is expected to be general enough to also accurately model the data, that was never seen during training. The automation is what makes these approaches groundbreaking. Unlike humans, numerical algorithms can capture very complex statistical correlations or patterns in highly-dimensional data, including images.
+
+A selection of computer graphics problems may also solved by means of ML and DNN methods. A few notable research topics in this field include:
+\begin{itemize}
+\item image impainting -- completion of missing parts on an image;
+\item image super-resolution -- up-scaling an image and making it more detailed;
+\item reconstruction of 3D objects -- automated creation of triangular meshes, point clouds, voxel grids, implicit functions that model the 3D objects' geometry;
+\item neural rendering -- automated synthesis of realistic images with certain expected content.
+\end{itemize}
+
+This thesis focuses on the particular topic of neural rendering. It resembles traditional computer graphics,
+ 
+ Neural rendering description
+ 
+ Neural rendering limitations
+ 
+ Having an algorithm for generating photo-realistic images is only a half of the actual task. Every ML or DNN method has to be executed on some computing device
+ Mobile devices computing power
+ 
+ There, many performance, compute and power usage constraints may arise:
+ Models that run in real-time applications need to deliver results multiple times per
+ second.
+ Models that run on mobile hardware have limited computing resources, which are
+ even further restricted, in order to reduce overheat and improve battery life.
+ Models that utilize customer devices by any means need to deal with compatibility
+ issues (e.g. between operating systems).
+ This makes optimization of AI models for real usage a very challenging task. In the
+ absence of a general way to efficiently run arbitrary AI models on every hardware, AI
+ projects have to seek ways to run particular models on particular hardware. This is a
+ crucial task to add business value to AI products.
+
+ 
+ Mobile limitations
+ 
+ Desire to make real-time mobile graphics, complications
+ 
+ Examples of existing products, state
+ 
+ Main thesis goal
+ 
+ Samsung AI Center at Moscow had been researching on real-time generation of images
+ with full-body human avatars. Their recent Deep Neural Network (DNN architecture
+ features mesh-based neural rendering 2. Specifically, it's a Generative Adversarial
+ Network (GAN, that produces a colorful 2D image of a person, given an intermediate
+ multichannel 2D image of a generic human 3D model. Such DNN has proven to generate
+ high quality images of avatars, when trained with big image resolution. However, the
+ performance concerns for real time avatar generation weren't profoundly researched.
+ 
+ During the Summer Immersion, a mobile Android application was developed from
+ scratch. It serves as a test of performance, visual quality and compatibility of neural
+ rendering DNNs with mobile devices. The application visualizes an avatar on top of
+ camera frames in real-time. The visualization is essentially Augmented Reality (AR, i.e.
+ the avatar is positioned as if it's a part of the real world. Camera movements allow
+ observing the avatar from arbitrary distance and angle.
+ 
+ The main concern now is to find performance and visual quality balance of the AR
+ application on the mobile devices. In instance, with the minimal acceptable avatar
+ quality, the performance of the researched DNNs is too low. Each frame computing
+ takes more than 60ms on modern mobile hardware. However, twice as lower
+ computation time is required to consider AR performance acceptable (which is above 30
+ frames per second).
+
+ 
+ The goal of this thesis is to continue the aforementioned project. The high-level task is
+ to obtain an admissible trade off of performance and visual quality of neural rendering
+ DNNs, when executed as a part of mobile AR experience. Target devices are the latest
+ Samsung mobile phones running on Qualcomm Snapdragon System on the Chip (SoC,
+ with Android operating system.
+ In details, this includes the following parts:
+  Research on modifications of existing DNN architecture for neural avatar rendering
+ 2, or new architectures. Research on distillation of those. In the end, models
+ should be capable of rendering avatars with real-time performance of 30 frames
+ per second and resolution of generated images above 256256 pixels.
+  Research on training of the DNNs, to make them robust to abnormal inputs,
+ compared to the training datasets. For example, extremely far zooms, extremely
+ close zooms, rotations and angles of view.
+  Achieve execution of the DNNs on specialized mobile hardware for fast low
+ precision AI computations (see Development techniques section). Keep track of
+ visual difference between outputs of the default models and mobile low precision
+ models.
+  Implement real-time pre-processing and post-processing routines for inputs and
+ outputs that would compensate weaknesses of DNN models, improving either
+ performance or visual quality of avatars.
+  Implement real-time input generation for the neural rendering DNNs, namely:
+ Evaluation of unified human body model SMPLX 6, that converts numerical
+ parameters of skeleton pose into a fully fledged human 3D model.
+ 2D projection of the posed 3D model with a neural texture.
+ 
+ Tasks
+
+Expected result
 
 \section{Motivations for micro-optimization}
 
