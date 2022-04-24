@@ -4,21 +4,28 @@
 %\usepackage[T2A]{fontenc}
 \usepackage{indentfirst}
 \usepackage{array}% for extended column definitions 
+\usepackage{hyperref}
+
+\newcommand*{\docpath}{.}
+\newcommand*{\imgfp}{\docpath/images}
+\newcommand*{\codefp}{\docpath/code}
+\def\alert#1{\colorbox{red!30}{#1}}
 
 \begin{document}
-\include{chapters/cover} % Your title pages, abstracts and acknowledgments
-\include{chapters/contents} % Probably you don't need to change it
-\include{chapters/chap_intro} 
-\include{chapters/chap_lit} 
-\include{chapters/chap_methods}
-\include{chapters/chap_results}
-\include{chapters/conclusion}
-\include{chapters/contrib_ack_abbrev}
+\include{chapters/0_cover}
+\include{chapters/1_contents} % Probably you don't need to change it
+\include{chapters/2_ch_intro} 
+\include{chapters/2_ch_lit} 
+\include{chapters/2_ch_methods}
+\include{chapters/2_ch_results}
+\include{chapters/2_conclusion}
+\include{chapters/2_contrib}
 
 \appendix
 
-\include{chapters/appa}
-\include{chapters/appb}
+% TODO (enable back)
+\include{chapters/3_app_a}
+%\include{chapters/appb}
 
 \bibliographystyle{plain}
 %\nocite{*}

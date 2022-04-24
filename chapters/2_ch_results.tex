@@ -1,0 +1,217 @@
+\chapter{Results and Discussion}\label{chapter:results}
+
+\section{Mobile performance}\label{results:performance}
+\section{Quantitative analysis}\label{results:metrics}
+\section{Qualitative analysis}\label{results:quality}
+
+%\begin{figure}[!htbp]
+%	\centering
+%	\adjustbox{minipage=1.3em}{\subcaption{}}%
+%	\begin{subfigure}[t]{\dimexpr.5\textwidth-1.5em\relax}		\includegraphics[height=5cm]{\imgpath/perlin-terrain}
+%	\end{subfigure}
+%	%\hfill %выровнять
+%	\adjustbox{minipage=1.3em}{\subcaption{}\label{fig:fractal-tree}}%
+%	\begin{subfigure}[t]{\dimexpr.5\linewidth-1.5em\relax}
+%		\includegraphics[height=5cm]{\imgpath/fractal-tree}
+%	\end{subfigure}%
+%	
+%	\captionsetup{justification=centering} %центрировать
+%	\caption{Примеры применения известных функций и фракталов, в том числе: {\itshape a} --- ландшафт из карты высот с шумом Перлина; {\itshape b} --- фрактальная модель дерева.} \label{fig:functions-and-fractals}  
+%\end{figure}
+
+%\begin{figure}[!htbp]
+%	\captionsetup[subfigure]{justification=centering}
+%	\centering
+%	\begin{subfigure}[b]{0.24\textwidth}%{\dimexpr.25\textwidth-1em\relax}		
+%		\centering
+%		\includegraphics[height=5cm]{\imgpath/building-from-image-1} %height=4.8cm
+%		\subcaption{}\label{fig:building-from-image:input}
+%	\end{subfigure}
+%	\hskip -2ex
+%	\begin{subfigure}[b]{0.24\textwidth}%{\dimexpr.25\linewidth-1em\relax}
+%		\centering
+%		\includegraphics[height=5cm]{\imgpath/building-from-image-2}
+%		\subcaption{}\label{fig:building-from-image:side-detection}
+%	\end{subfigure}
+%	\hskip -6ex
+%	\begin{subfigure}[b]{0.24\textwidth}%{\dimexpr.25\linewidth-1em\relax}
+%		\centering
+%		\includegraphics[height=5cm]{\imgpath/building-from-image-3}
+%		\subcaption{}\label{fig:building-from-image:simplification}
+%	\end{subfigure}
+%	\begin{subfigure}[b]{0.24\textwidth}%{\dimexpr.25\linewidth-1em\relax}
+%		\centering
+%		\includegraphics[height=5cm]{\imgpath/building-from-image-4}
+%		\subcaption{}\label{fig:building-from-image:output}
+%	\end{subfigure}
+%	
+%	\captionsetup{justification=centering} %центрировать
+%	\caption{Промежуточные результаты алгоритма построения грамматики здания из реального изображения \cite{nishida-buidling-from-image-2018}: 
+%		{\itshape a} --- входное изображение; 
+%		{\itshape b} --- распознанная сторона здания;
+%		{\itshape c} --- результат снижения сложности данных;
+%		{\itshape d} --- готовая модель.
+%	} \label{fig:building-from-image}  
+%\end{figure}
+
+%\begin{table} [htbp]% Пример записи таблицы с номером, но без отображаемого наименования
+%	\centering
+%	\caption{Сравнение возможностей некоторых существующих решений}%
+%	\label{tab:other-solutions}		
+%%	\begin{SingleSpace}
+%		%		\resizebox{1\linewidth}{!}{
+%			\begin{tabular}{|Q{0.13}|Q{0.09}|Z{0.11}|Q{0.23}|Z{0.13}|Q{0.15}|}\hline
+%				\textbf{Название системы} & 
+%				\textbf{Тип} & 
+%				\textbf{Целевой контент} & 
+%				\textbf{Усилия для получения результата} & 
+%				\textbf{Возможн. экспорта (от 0 до 5)} & 
+%				\textbf{Генерация текстур} \\ \hline
+%				
+%				SceneCity & плагин Blender & модели городов & 
+%				Ручная интуитивная настройка &
+%				2 & 
+%				\multicolumn{1}{c|}{-} \\ \hline
+%				
+%				Procedural Buildings & модуль Unreal Engine & модели зданий &
+%				Ручная настройка грамматики и ручная калибровка & 
+%				0 &
+%				\multicolumn{1}{c|}{-} \\ \hline
+%				
+%				Fast Architecture & плагин 3ds Max & модели зданий & 
+%				Простая инициализация численных параметров &
+%				5 &
+%				\multicolumn{1}{c|}{-} \\ \hline
+%				
+%				Maya Structures & плагин Maya & модели зданий &
+%				Простая инициализация базовых компонентов &
+%				5 &
+%				Процедурное комбинирование \\ \hline
+%				
+%				Esri CityEngine & ПО & модели городов &
+%				Простое прототипирование формы зданий &  
+%				5 &
+%				Собственная база текстур \\ \hline
+%				
+%				GameSim Procedural Modeling & ПО & модели городов &
+%				Сложная настройка числовых параметров &
+%				4 &
+%				Собственная база текстур \\ \hline		
+%			\end{tabular}	
+%			%		}
+%%	\end{SingleSpace}
+%\end{table} 
+
+%\begin{algorithm} %[h]
+%	\SetKwProg{myfn}{Function}{}{} %write in 2nd agrument <<Algorithm>>, <<Procedure>> etc
+%	\SetKwProg{myalg}{Algorithm}{}{} %write in 2nd agrument <<Algorithm>>, <<Procedure>> etc
+%	\SetKwFunction{DeriveFromGrammar}{DeriveFromGrammar} 
+%	\nonl\myfn{\DeriveFromGrammar}{
+%		\KwInput{нетерминальные символы $N$,
+%			терминальные символы $\Sigma$, 
+%			начальное слово $S$, 
+%			грамматич. правила над негеометр. символами $R$,
+%			грамматич. правила над геометр. символами $\hat{R}$,
+%			лимит рекурсии $depth$
+%		} 
+%		\KwOutput{итоговое слово из символов грамматики $\overbar{S} = (\Sigma\cup N)^{*}$}
+%		\If{$depth = 0$}{\Return $S$\;}	
+%		$\hat{R} \leftarrow \hat{R} \cup \{SplitRule, TransformRule\}$\;
+%		\For (\tcp*[h]{$R_A$ -- символы текущего слова}){$\forall s_i \in S$\label{step:word-iteration}}{
+%			\eIf{$IsGeometrical(s_i)$}{
+%				$R_A \leftarrow R \cup \hat{R}$\;
+%			}{
+%				$R_A \leftarrow R$\;
+%			}
+%			\For(\tcp*[h]{$R_A$ -- применимые правила для символа}) {$\forall r_j \in R_A$} {
+%				\If{$Antedecent(r_j) = s_i$}{
+%					$S \leftarrow Replace(S, s_i, Consequence(r_j))$\;
+%					$DeriveFromGrammar(N, \Sigma, S, R, \hat{R}, depth - 1)$\;	
+%				}	
+%			}
+%		}
+%		\Return $S$;
+%	}
+%	\caption{Псевдокод использования описанной грамматики для вывода итогового слова}\label{alg:grammar-derivation}
+%	\index[ru]{алгоритм!\texttt{DiagnosticTestsScaling\-AndInferring}} %нужен ручной перенос \- из-за ошибки в MakeIndex для команды \texttt
+%	%ключевые слова <<алгоритм>> и <<algorithm>> не менять
+%	\index[en]{algorithm!\texttt{DiagnosticTestsScaling\-AndInferring}} %нужен ручной перенос \- из-за ошибки в MakeIndex для команды \texttt
+%\end{algorithm} 
+
+%\begin{figure}[!htbp]
+%	\captionsetup[subfigure]{justification=centering}
+%	\centering
+%	\begin{subfigure}[b]{0.33\textwidth}%{\dimexpr.25\textwidth-1em\relax}	
+%		\centering
+%		\includegraphics[height=5cm]{\imgpath/e-init-split} %height=4.8cm
+%		\subcaption{}\label{fig:generation:init}
+%	\end{subfigure}
+%	%\hskip -2ex
+%	\begin{subfigure}[b]{0.33\textwidth}%{\dimexpr.25\linewidth-1em\relax}
+%		\centering
+%		\includegraphics[height=5cm]{\imgpath/e-roof-vertical}
+%		\subcaption{}\label{fig:generation:subdivide}
+%	\end{subfigure}
+%	\hskip -1ex
+%	\begin{subfigure}[b]{0.33\textwidth}%{\dimexpr.25\linewidth-1em\relax}
+%		\centering
+%		\includegraphics[height=5cm]{\imgpath/e-end}
+%		\subcaption{}\label{fig:generation:output}
+%	\end{subfigure}
+%	
+%	\captionsetup{justification=centering} %центрировать
+%	\caption{Вариант преобразования слова по грамматике и пример модели, которая может быть построена на каждом этапе: 
+%		{\itshape a} --- начальный этап - объем, разделенный на горизонтальные уровни; 
+%		{\itshape b} --- некоторые уровни подразделяются на сегменты, а самый верхний уровень преобразован в символ крыши;
+%		{\itshape c} --- возможный результат визуализации выведенного слова.
+%	} \label{fig:generation}  
+%\end{figure}
+
+%style=nonumbers,
+%\begin{figure}[!htbp]
+%	\centering
+%	\begin{lstlisting}[
+%		language=XML,
+%		numbers=none,
+%		caption=,
+%		basicstyle=\fontsize{12}{14}\selectfont\ttfamily,
+%		morekeywords={encoding,models,group,name,src,type,model},
+%		]
+%		<?xml version="1.0" encoding="UTF-8"?>
+%		<models>
+%		<group name="Windows">
+%		<model name="2 sections window" src="windows/window_1.obj" type="obj"/>
+%		<model name="Plastic window" src="windows/window_2.obj" type="obj"/>
+%		<model name="Dull arc window" src="windows/window_3.obj" type="obj"/>
+%		<model name="Sliding window" src="windows/window_4.obj" type="obj"/>
+%		</group>
+%		<group name="Doors">
+%		<model name="Decorated wooden door" src="doors/door_1.obj" type="obj"/>
+%		<model name="Classic wooden door" src="doors/door_2.obj" type="obj"/>
+%		<model name="Big arc door" src="doors/door_3.obj" type="obj"/>
+%		<model name="2 section plastic door" src="doors/door_4.obj" type="obj"/>
+%		</group>
+%		</models>
+%	\end{lstlisting}
+%%	\captionsetup{justification=centering}
+%	\caption{Example}\label{code:manifest}
+%\end{figure}
+%
+%\begin{figure}[!htbp]
+%	\centering
+%	\begin{lstlisting}[
+%		numbers=none,
+%		basicstyle=\fontsize{12}{14}\selectfont\ttfamily,
+%		caption=,
+%		]
+%		public interface IVisualizer
+%		{
+%			string GetDescription();
+%			void VisualizeModel(Stream model, ModelMetaBase modelMeta, 
+%			Stream materialLibrary, Stream[] materialFiles);
+%			void Shutdown();
+%		} 
+%	\end{lstlisting}
+%%	\captionsetup{justification=centering}
+%	\caption{Example}\label{code:visualizer-charp-interface}
+%\end{figure}

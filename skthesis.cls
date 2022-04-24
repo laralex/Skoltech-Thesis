@@ -297,7 +297,104 @@ on \@thesisdate
 
 %%%% A.LARIONOV's code
 \usepackage[dvipsnames]{xcolor}
-\def\alert#1{\colorbox{red!30}{#1}}
+
 \usepackage{enumitem}
 \setlist[itemize]{noitemsep, topsep=0pt, leftmargin=10mm}
+
+\usepackage{listings} % программный код
+%\usepackage{lmodern}  % for bold teletype font
+\usepackage{amsmath}  % for \hookrightarrow
+
+%\makeatletter
+\DeclareRobustCommand{\getlstname}{%
+	\begingroup
+	% \lstname seems to change hyphens into \textendash
+	\def\textendash{-}%
+	\filename@parse{\lstname}%
+	\filename@base.\filename@ext%
+	\endgroup
+}
+
+\newcommand*{\keywordstyle}{\color{NavyBlue}\textbf}
+
+\lstdefinelanguage{GLSL}{
+	%alsolanguage=C,
+	morekeywords=[1]{vec2,vec3,vec4,precision,highp,uniform,mat2,mat3,mat4,uvec2,uvec3,uvec4,ivec2,ivec3,ivec4,layout,location,mediump,sampler2DArray,out,in,uint}, 
+	alsoletter={\#},
+	morekeywords=[2]{,\#if,\#version,\#define,\#error,\#ifdef,\#ifndef,\#else,\#endif,}
+	keywordstyle = [1]\keywordstyle,
+	keywordstyle = [2]\color{magenta}\textbf,
+	sensitive = true,
+	morecomment = [l]{//},
+	morecomment = [s]{/*}{*/},
+	morecomment = [s]{/**}{*/},
+	commentstyle = \color[rgb]{0.0,0.4,0.0}\footnotesize,
+	morestring = [b]",
+	morestring = [b]',
+}
+
+\lstdefinestyle{myCode}{
+	columns=fullflexible,
+	caption=\getlstname,
+	%basicstyle=\linespread{0.7}\footnotesize\selectfont\ttfamily,
+	basicstyle=\footnotesize\ttfamily,
+	lineskip=-0.8ex,
+	frame=single,
+	resetmargins=true,
+	commentstyle=\color[rgb]{0.0,0.4,0.0}\footnotesize,
+	breaklines=true,
+	stepnumber=5,
+	numberstyle=\tiny\color{black},
+	numbers=left,
+	keywordstyle=\keywordstyle,
+	keepspaces=true, 
+	extendedchars=true,
+	breakautoindent=true,
+	prebreak=\raisebox{0ex}[0ex][0ex]{\ensuremath{\hookrightarrow}},
+	breakindent=100pt,
+	breakatwhitespace=true,
+	xleftmargin=1em,
+	%xrightmargin=1em,
+	rulecolor=\color{black!30},
+	tabsize=2,
+	firstnumber=1,
+	columns=[l]{fullflexible},
+}
+
+\usepackage{xargs}
+\usepackage{xparse}
+\usepackage{xifthen}% provides \isempty test
+
+% \myfilelisting[<\lstset arguments, e.g. language=XML>]{<fp>}[<\label value>]
+\NewDocumentCommand{\myfilelisting}{D[]{} m d[] d<>}{%
+	\lstinputlisting[
+	#1,
+	style=myCode,
+	caption=\getlstname\IfValueT{#3}{\label{#3}}
+	\IfValueT{#4}{\hspace{\textwidth}\centering Comment: #4},
+	%title=\getlstname\IfValueT{#3}{\label{#3}},
+	]{#2}
+}
+
+%\usepackage{pdfpages} % insert pdf documents
+%\usepackage{titlepages}
+
+%% override footnotes
+%\let\oldfootnote\footnote 
+%\renewcommand\oldfootnote[2][]{\relax}
+
+% show unused bibliorgraphy
+\usepackage{refcheck}
+
+% allows to forbid images on another page from reference
+\usepackage{float} 
+
+% special column type in a table
+% С - centering with given width
+% Q - with width coefficient relative to \textwidth
+% Z - centering with width coefficient relative to \textwidth
+\usepackage{array}
+\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}p{#1}} 
+\newcolumntype{Q}[1]{p{#1\textwidth}}
+\newcolumntype{Z}[1]{C{#1\textwidth}}
  	

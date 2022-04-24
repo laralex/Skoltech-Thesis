@@ -6,51 +6,53 @@
 %% prompt when you run the file main.tex through LaTeX.
 \chapter{Introduction}
 
-Computer Graphics is a vast discipline of Computer Sciences. In general, it studies theoretical methods for synthesis of 2-dimensional (2D) images using computers. It also includes research on computer hardware, used for image computing and displaying. Among applications of computer graphics there are: typography, cinema, entertainment, scientific visualization and industrial design. Implicitly, the 2D images contain information about how light beams pass through the space and reach our eyes. Then a snapshot of this light is interpreted by our perception as a holistic sight full of shapes and colors. In a computer images are usually represented with two major archetypes:
+Computer Graphics is a vast discipline of Computer Sciences. In general, it studies theoretical methods for synthesis of 2-dimensional (2D) images using computers. It also includes research on computer hardware, used for image computing and displaying. Among applications of computer graphics there are: typography, cinema, entertainment, scientific visualization and industrial design. Implicitly, the 2D images contain information about how light beams pass through the space and reach our eyes. Then a snapshot of this light is interpreted by our perception as a sight full of shapes and colors. Images in a computer are usually represented with two major archetypes:
 
 \begin{itemize}
 	\item vector images \cite{aux:vector14} - represented by a set of 2D points, lines, polygonal shapes and mathematically defined distribution of color within them;
 	\item raster images \cite{aux:raster94} - represented by a uniform rectangular grid (referred to as raster), filled with colored squares (referred to as pixels). Typically, colors are defined using Red-Green-Blue (RGB) color model \cite{aux:color05}, where all possible colors are mixed from 3 primary colors, stored in computers as values in $[0;1]$ range of real numbers (or similarly as values in $[0;255]$ range of integer numbers).
 \end{itemize}
 
-Vector graphics requires to define every simple shape on an image. It's practical to visualize schemes or text. However, objects of the real world are too complex for this representation. They may have non-uniform geometry, materials with non-repeating patterns. The surface colors may change after being illuminated by light sources, or shadowed by other objects. Representing all of that with vector graphics would require hundreds of thousands of unique shapes, which is a lot in terms of computations, human hand-craft, and computer file sizes. 
+Vector graphics is more practical to visualize simple shapes, like schemes or text. This representation is not suited for objects of the real world, as they are too complex: may have arbitrary geometry, specular properties of materials, when being illuminated by light or shadowed by other objects. Representing all of that with vector graphics would require hundreds of thousands of unique shapes, which is a lot in terms of computations, human hand-craft, and computer file sizes. 
 
-Although in the raster graphics, the number of pixels may also surpass millions, the structure of the pixel grid is uniform, each pixel stores the same amount of data. Also for most cases, the image data has information redundancy in it, and thus can be compressed \cite{aux:compression18}. Besides, the pixel grid resembles a canvas from the traditional art. The current computer software for creation of raster images has capabilities similar to real brushes and palettes. This intuitive representation allows to speed up production time for humans. And we know that raster images can be very realistic, proven by the visual quality that can be captured with modern digital cameras \cite{aux:camera21}.
+Although in the raster graphics, the number of pixels may also surpass millions, the structure of pixel grids is uniform, and each pixel stores the same amount of data. Also for most cases, the image data has information redundancy in it, and thus can be compressed \cite{aux:compression18}. Besides, the pixel grid resembles a canvas from the traditional art. Current computer software for creation of raster images has capabilities similar to real brushes and palettes. This intuitive representation allows to speed up production time for humans. And we know that raster images can be very realistic, proven by the visual quality that can be captured with modern digital cameras \cite{aux:camera21}.
 
 Speaking of realism, it's one of the most important challenges in computer graphics research. The generated images should ideally be indistinguishable from sights we perceive with our own eyes. Unfortunately, the real world is at least 3-dimensional (3D). Thus, it cannot be fully represented with images on a screen or paper, which are 2D by nature. Another obstacle, is that human vision is very sensitive, and it can easily detect when something is unrealistic, or has anomalous features, e.g. noise, tearing, blurriness and so on. Those are referred to as visual artifacts (also glitches, distortions). However, to this day there haven't been discovered a unified metric of realism, that would allow to compare two similar images and tell which will be more plausible for the human perception \cite{metric:wang11}.
 
-Direct usage of 2D images for visualization of the 3D world isn't always efficient. For example, if we intend to visualize objects as a sequence of temporarily coherent images (animation), it would require to draw the same content with slight adjustment from frame to frame. Instead of manually copying the content between frames and insuring its coherency and synchronization, it's common to instead approximately model the 3D geometry. Then, at every moment of time the appearance of the geometry can be projected from a certain view point onto an image. This allows to model the geometry one time and reuse it for automatic generation of dozens of images.
+Direct usage of 2D images for visualization of the 3D world isn't always efficient. For example, if we intend to visualize objects as a sequence of temporarily coherent images (animation), it would require to draw the same content with slight adjustment between images. Instead of manually copying the content from one image to another and insuring its coherency and synchronization, it's common to instead approximately model the 3D scene of interest. Such scene models can take a form of point clouds, voxel grids, triangular meshes, or even implicit functions, such as signed distance fields (SDF). After modeling, at every moment of time the appearance of the geometry can be projected from a certain view point onto an image. This allows to model the scene one time and reuse it for automatic generation of dozens of images.
 
 %A common way to model 3D geometry is triangular meshes \cite{mesh-data-structure}. Here the geometry is defined as a set of 3D vertices and their connectivity into polygons (usually triangles).
 
-With 3D modeling, however, it's even harder to achieve photo-realistic images. An order of magnitude higher number of geometric details needs to be defined. There's also a limit in the modern computer hardware, which may not be fast enough to process all the data, or doesn't have enough storage. For example, it takes a few days to render a single frame of a modern movie, using thousands of Central Processing Units (CPU). It's common, that precision of modeling is sacrificed in favor of production time, e.g. slight natural movements like human muscle bulging, grass shaking, water splashes may undergo simplification. Additionally, the specular phenomena present in the real world \cite{TODO} are also computationally complex. Moreover, we lack knowledge about some phenomena, and only can model them coarsely.
+Even with the 3D modeling, it's still a challenge to achieve photo-realism. Some 3D scene representations lack details, some may not be fast enough to process all the data, require enormous amount of computer storage, or require manual artistic work to look good. In either case an order of magnitude higher number of geometric details needs to be defined compared to just a 2D image. 
 
-In the last decades, the methods of Artificial Intelligence (AI) and its sub-fields of Machine Learning (ML) and Deep Neural Networks (DNN) have emerged to solve multidisciplinary problems of science and business. Instead of modeling a phenomenon imperatively, they aim to model statistical properties of data captured from the phenomenon. Generally, input data is passed down a highly-parameterized computational graph, and output is compared to certain desired data. During a process referred to as a optimization (training, tuning), the parameters of the graph are iteratively adjusted to better fit the desired data. Afterwards, the graph is expected to be general enough to also accurately model the data, that was never seen during training. The automation is what makes these approaches groundbreaking. Unlike humans, numerical algorithms can capture very complex statistical correlations or patterns in highly-dimensional data, including images.
+Typically 2D images are synthesized from a 3D scene, using rendering algorithms. Those have been developed to emulate the laws of physics that lie withing synthesis of image in traditional cameras. One of such algorithms is ray tracing, which mimics how rays travel starting from a light source, bouncing from reflective surfaces, until finally reaching a camera frame. This method is one of the most photo-realistic (atleast to the state of our theoretical understanding of physical specular phenomena), yet exceptionally long to compute in great details. That's why a much more coarse algorithm of rasterization is typically used, with the scene modeled as triangular meshes (sets of 3D triangles) and materials, that capture physical properties of surfaces, such as opacity, refraction, reflection, texture, etc. But still, there persists a problem that all those properties need to be explicitly specified, often by a human.
 
-A selection of computer graphics problems may also solved by means of ML and DNN methods. A few notable research topics in this field include:
+In the last decades, the methods of Artificial Intelligence (AI) and its sub-fields of Machine Learning (ML) and Deep Neural Networks (DNN) have emerged to solve multidisciplinary problems of science and business. Instead of modeling a phenomenon imperatively, they aim to approximate statistical properties of data captured from the phenomenon. Generally, input data is passed down a highly-parameterized computational graph, and output is compared to certain desired data. During a process referred to as a optimization (training, tuning), the parameters of the graph are iteratively adjusted to better fit the desired data. Afterwards, the graph is expected to be general enough to also accurately model the data, that was never seen during training. The automation is what makes these approaches groundbreaking. Unlike humans, numerical algorithms can capture very complex statistical correlations or patterns in highly-dimensional data, including images.
+
+A selection of computer graphics problems may also be solved by means of ML and DNN methods. A few notable research topics in this field include:
 \begin{itemize}
 \item image impainting -- completion of missing parts on an image;
 \item image super-resolution -- up-scaling an image and making it more detailed;
-\item reconstruction of 3D objects -- automated creation of triangular meshes, point clouds, voxel grids, implicit functions that model the 3D objects' geometry;
+\item reconstruction of 3D objects -- automated creation of triangular meshes, point clouds, voxel grids, implicit functions that model the 3D objects' geometry and materials;
 \item neural rendering -- automated synthesis of realistic images with certain expected content.
 \end{itemize}
 
-This thesis focuses on the particular topic of neural rendering. It resembles traditional computer graphics,
+This thesis focuses on topic of neural rendering. This term on its own doesn't have a specific definition. At first it was understood as synthesis of images with help of ML and DNNs. A popular approach was to use traditional algorithms to generate a coarse unrealistic image that encodes supporting information about a scene, such as general outlines of each separate object, distance from a camera, etc. Then a DNN was used to generate the final image, likely much more realistic than what was input. In the last years, another branch of research stood up, where the DNNs are used to represent the 3D scene, and then this representation is decoded into an images using deterministic algorithms. Whilst producing outstanding results for novel camera views, such methods are far from being uses 
  
  Neural rendering description
  
  Neural rendering limitations
  
- Having an algorithm for generating photo-realistic images is only a half of the actual task. Every ML or DNN method has to be executed on some computing device
- Mobile devices computing power
- 
- There, many performance, compute and power usage constraints may arise:
- Models that run in real-time applications need to deliver results multiple times per
- second.
- Models that run on mobile hardware have limited computing resources, which are
- even further restricted, in order to reduce overheat and improve battery life.
- Models that utilize customer devices by any means need to deal with compatibility
- issues (e.g. between operating systems).
+ Having an algorithm for generating photo-realistic images is only a half of the challenge. Every ML or DNN method is meant to be executed on some computing device. It be a stationary computer with lots of computing power. It can also be a mobile device, following the latest advances in mobile hardware, making them as comparably powerful with much smaller sizes than a computer. On mobile, many performance, compute and power usage constraints may arise:
+ \begin{itemize}
+ 	\item  Models that run in real-time applications need to deliver results multiple times per
+ 	second.
+ 	\item  Models that run on mobile hardware have limited computing resources, which are
+ 	even further restricted, in order to reduce overheat and improve battery life.
+ 	\item  Models that utilize customer devices by any means need to deal with compatibility
+ 	issues (e.g. between operating systems).
+ \end{itemize}
+
  This makes optimization of AI models for real usage a very challenging task. In the
  absence of a general way to efficiently run arbitrary AI models on every hardware, AI
  projects have to seek ways to run particular models on particular hardware. This is a
@@ -117,10 +119,10 @@ This thesis focuses on the particular topic of neural rendering. It resembles tr
 
 Expected result
 
-\section{Motivations for micro-optimization}
+%\section{Motivations for micro-optimization}
 
 
-\section{Description of micro-optimization}\label{ch1:opts}
+%\section{Description of micro-optimization}\label{ch1:opts}
 
 %In order to perform a sequence of floating point operations, a normal FPU
 %performs many redundant internal shifts and normalizations in the process of

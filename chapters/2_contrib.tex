@@ -1,0 +1,66 @@
+\section*{\centering Acknowledgments}
+\addcontentsline{toc}{chapter}{Acknowledgements}
+This thesis project was completed on premises of Samsung AI Center at Moscow, in direct collaboration with its lab of Visual Understanding. I'd like to express my gratitude to all its members, and personally Renat Bashirov, Ilya Zakharkin, Evgenia Ustinova, Artur Grigoriev, David Svitov, Aleksei Ivakhnenko for sharing their knowledge and supporting the research.
+
+I thank my research advisor Victor Lempitsky for directing the project and giving such invaluable networking and research opportunities.
+
+I thank Skolkovo Institute of Science and Technology, for being the best place for education and research in Russia. I've learned thrice as much as I expected here, got to know the brightest people of the country, and jump started my own career before even graduating.
+
+%\addcontentsline{toc}{chapter}{fAuthor Contribution}
+\section*{\centering Author Contribution}
+\addcontentsline{toc}{chapter}{Author Contribution}
+
+The developments presented in this thesis, are a part of the bigger project of Samsung AI Center at Moscow on realistic full-body human avatars. The presented advancements are based on the project's state as of June 2021. 
+
+The described mobile application for Android OS has been developed from scratch solely by the author (using the aforementioned software and hardware products). This includes, but not limited to the following:
+\begin{itemize}
+	\item auxiliary code for Android application interaction;
+	\item passing camera frames through 3D tracking library;
+	\item implementing the human body model \cite{dnn:smplx19} inference in Java;
+	\item preparing the DNN models written in Python for execution as SNPE modules (code adaptation, binaries conversion, DNN quantization);
+	\item implementing low-level GPU programs for real-time generation of the DNNs' input data;
+	\item implementing frustum cropping w.r.t. camera angle relative to the rendered avatar position.
+\end{itemize}
+
+The research on avatars quality in both far-out and close-up scales has been carried out in isolation from research directions of the other lab members. All the presented experiments with the neural network training were implemented by the author. This includes implementation of the camera-space affine augmentations module in Python. However, many of subsequent conclusions and further ideas were suggested by the thesis supervisors and the lab members.
+ 
+\newpage
+\section*{\centering Abbreviations}
+\addcontentsline{toc}{chapter}{Abbreviations}
+
+
+\begin{center}
+\begin{tabular}{>{\bf}r l >{\bf}r l}
+	2D & Two Dimensional \\
+	3D & Three Dimensional\\
+	AR & Augmented Reality \\
+	VR & Virtual Reality \\ 
+	AI & Artificial Intelligence \\
+	GAN & Generative Adversarial Network \\
+	DNN & Deep Neural network \\
+	SoC & System-on-a-chip \\
+	CPU & Central Processing Unit \\
+	GPU & Graphics Processing Unit \\
+	NPU & Neural Processing Unit \\
+	TPU & Tensor Processing Unit \\
+	DSP & Digital Signal Processor \\
+	API & Application Programming Interface \\
+	SDK & Software Development Kit \\
+	ADB & Android Debug Bridge \\
+	OpenGL & Open Graphics Library \\
+	OpenCL & Open Computing Language \\
+	ONNX & Open Neural Network Exchange \\
+	SNPE & Snapdragon Neural Processing Engine \\
+	RGB & Red-Green-Blue (pixel channels) \\
+	RGBA & Red-Green-Blue-Alpha \\
+	RGBS & Red-Green-Blue-Segmentation \\
+	BCHW & Batch-Channel-Height-Width \\
+	BHWC & Batch-Height-Width-Channel \\
+	SMPL & Skinned Multi-Person Linear model \cite{smpl} \\
+	SMPL-X & Skinned Multi-Person Linear model - Expressive \cite{smplx}\\
+	BN & Batch Normalization \\
+	FB & Full-body \\
+	FPS (fps) & Frames per second\\
+	ms & Milliseconds \\
+\end{tabular}
+\end{center}
