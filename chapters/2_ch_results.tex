@@ -101,3 +101,13 @@
 	\caption{Example}
 	\label{res:fig:example}
 \end{figure}
+
+\section{Future work}\label{res:future}
+\begin{enumerate}
+	\item To use shared memory between GPU and DSP, to eliminate sending of OpenGL rasterized images between GPU and DSP
+	\item To use bufferization of data to infer DNN in batches (possibly better DSP usage ratio)
+	\item To research on training a single renderer for multiple people, and adjusting mobile inference to fit multiple people simultaneously. We can render multiple avatars in different corners of an input rasterization, regardless of distance in camera space. Then after getting an output image, we can tear apart this image and place corresponding avatars in different places of the AR space.
+	\item To research on completely different neural rendering architectures, since the small adjustments of the current baseline yield little to no benefit
+	\item To find an algorithmic way of solving the issue of unseen body parts during training
+	\item To research on other regularizing techniques to prevent overfitting, without harming high-frequency details learning 
+\end{enumerate}

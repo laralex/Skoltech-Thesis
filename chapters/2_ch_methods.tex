@@ -1,31 +1,103 @@
 \chapter{Methods}\label{chapter:methods}
 
+\section{Development setup}
+The Android application is being developed in Java and Kotlin programming languages using Android Software Development Kit (SDK). The application can be installed on a smartphone device from a personal computer using Android Debug Bridge tool.
+
+AR experience is being accomplished using ARCore SDK for continuous tracking of real world objects relative to phone's camera. The tracking information is sufficient to draw arbitrary images at respective screen locations. The drawing itself is done directly on GPU by issuing commands of OpenGL application programming interface (API).
+
+The DNN models are to be developed in Python programming language, specifically PyTorch framework for development of DNNs. Such models require a special conversion in order to run them on mobile processors.  Mobile devices with Qualcomm Snapdragon processors require DNN models in Snapdragon Neural Processing Engine (SNPE) format. The whole conversion can be described as follows:
+\begin{enumerate}
+	\item  PyTorch model is converted to Open Neural Network Exchange (ONNX) format . For it the Python code is run once on example data, in order to record sizes and shapes of all the data flowing through DNN. 
+	\item The model in ONNX format is converted to SNPE format, using SNPE SDK. 
+	\item The underlying weights of the DNN layers are quantized, from 32-bit floating point numbers to 8-bit integer number format. All input data has to be quantized as well.
+\end{enumerate}
+
+The intermediate conversion to ONNX format is required due to absence of software for direct conversion from PyTorch models to SNPE. The quantization is a preferable option, because it allows computing the DNN on modern DSP, NPU accelerated devices.
+
+Preparation of an input tensor for the DNN is a trivially parallel task. In essence, it's a rendering of a human mesh with a multichannel texture. It's suitable for execution on GPU and can be done using OpenGL API or OpenCL API.
+
+
 \section{Neural rendering as a mobile application}
 \label{methods:app}
 
-\begin{figure}[!htbp]
-	\centering
-	\begin{lstlisting}[
-		language=C++,
-		numbers=none,
-		basicstyle=\ttfamily,
-		keywordstyle=\color{NavyBlue}\textbf,
-		frame=single,
-		extendedchars=true,
-		tabsize=4,
-		morekeywords={interface, string},
-		]
-public interface IVisualizer
-{
-	string GetDescription();
-	void VisualizeModel(Stream model, ModelMetaBase modelMeta, 
-	Stream materialLibrary, Stream[] materialFiles);
-	void Shutdown();
-} 
-	\end{lstlisting}
-	%	\captionsetup{justification=centering}
-	\caption{Blah blah}\label{res:code:example}
-\end{figure}
+%TODO
+\alert{TODO: Explain in details}
+\begin{itemize}
+	\item SMPL-X inference on mobile
+	\begin{itemize}
+		\item  "ON CPU" -- Pre-inference of shape blendshapes into a default posed mesh, load as a GPU buffer into OpenGL
+		\item "ON CPU" -- Pre-compute indices of 12 the most influential joints for every mesh vertex, pre-load them on GPU as well.
+		\item "ON CPU" -- On each frame compute posed joints (i.e. 55 rotation matrices): unwrap 3 axis angles into matrices following Rodrigues formula for rotations, multiply matrices in topological order to combine rotations of multiple joints. Load the matrices on GPU as shader uniforms (shared by all vertices)
+		\item "ON GPU Vertex Shader" -- find a weighted sum of rotation matrices for each vertex (only 12 matrices to add up, using the most influential joints indices, without it 55 matrices would need to be added per each vertex). Project each vertex onto image, using a combination of extrinsic and intrinsic matrices of the camera.
+	\end{itemize}
+	\item Rasterization with a neural texture and quantization overcoming OpenGL limitations
+	\begin{itemize}
+		\item OpenGL can only render images with 4 channels RGBA. If rendering 16 channels naively, it requires to render 4 images with 4 channels, then send them to the DNN, and permute channels from 4xHxWx4 to 1xHxWx16, which is long to do on each frame (takes up to 20 ms)
+		\item Using quantization, we can let network accept each channels as an 8-bit integer number. Then in OpenGL we can quantize in parallel rasterized pixels from 4-byte floats to 1-byte integers, pack them together with 4 neural channels per OpenGL channel, and then we don't need to permute channels, the input goes straight into the DNN and the first convolution starts immediately. The visual quality loss is not drastic
+		\item Using quantized numbers, it also opens an opportunity to run on Digital Signal Processor (DSP), which is designed to do fast quantized computations (mainly because of bit-fiddling shortcuts possible with integers, and not with IEEE floating point numbers). Overall the performance is more than real-time with up to 640 px resolution
+	\end{itemize}
+	\item Dynamic camera frustum cropping
+		\begin{itemize}
+			\item Around view span -- On every frame compute coordinates of joints in camera space, find a XY-bounding box for them. Project bounds of this box onto the image, and find adjustments of top-bottom-left-right-near-far parameters of the camera frustum. Calculate a new projection matrix to fit only the bounding box of the avatar. Rasterize an input frame with this matrix. Infer the network and place the output using offset computed from the updated projection matrix
+			\item Auto-zoom to reducing frame waste -- detect if bounding box of joints is cut off by the mobile screen. Zoom in the projection matrix to the avatar to compensate cut off parts. This will allow to see the avatar parts rendered in bigger resolution (thus DNN has to be trained on zoom scale too)
+		\end{itemize}
+	
+	\item \alert{TODO: parallelization}
+\end{itemize}
+%\begin{figure}[!htbp]
+%	\centering
+%	\begin{lstlisting}[
+%		language=C++,
+%		numbers=none,
+%		basicstyle=\ttfamily,
+%		keywordstyle=\color{NavyBlue}\textbf,
+%		frame=single,
+%		extendedchars=true,
+%		tabsize=4,
+%		morekeywords={interface, string},
+%		]
+%public interface IVisualizer
+%{
+%	string GetDescription();
+%	void VisualizeModel(Stream model, ModelMetaBase modelMeta, 
+%	Stream materialLibrary, Stream[] materialFiles);
+%	void Shutdown();
+%} 
+%	\end{lstlisting}
+%	%	\captionsetup{justification=centering}
+%	\caption{Blah blah example}\label{res:code:example}
+%\end{figure}
 
-\section{Avatars quality on both far-out and close-up scales}
-\label{methods:zooms}
+\section{Avatars quality on both far-out and close-up scales}\label{methods:zooms}
+
+%TODO
+\alert{TODO: Motivation and pre-conclusions}
+
+Researched adjustments:
+\begin{itemize}
+	\item Camera space affine augmentations module (for Python) to eliminate need of augmenting prerasterized frame (which will lead to quality loss on strong zooms)
+	\item Zooming to different joints (or mesh vertices) with different scale range 
+	\item Regularization of Batch Normalization layers to prevent overfit (and Spurious Correlations as result): collecting statistics on FB scale only, or on zoom scale only; using current statistics to train or not
+	\item Accumulating gradients for more than 1 batch before making optimization step
+	\item Adam Optimizer without 1st momentum in neural renderer, discriminator
+	\item Fine tuning a zoom-trained model on FB to restore FB quality and to preserve neural texture high frequency details
+	\item Other normalization layers: Instance norms, Group norms, No norms
+	\item Adam optimizer of the neural texture - don't decay momentum of pixels with 0 analytic gradient (unseen in the current batch)
+	\item Capacity of neural texture, encoder, decoder
+	\item Gradient norm clipping
+	\item Learning rate scheduling with warmup and later annealing
+	\item Concatenate input neural image to deeper activations of the encoder
+	\item More strong affine augmentations 
+	\item Batch normalization without learned affine parameters, or without tracking running statistics 
+	\item Single-scale neural texture, compared to multiscale-texture
+	\item Homogeneous augmentations in a single optimization batch (to prevent mixing of statistics)
+	\item Disabling GAN losses
+	\item Initializing neural texture training from a stable pretrained checkpoint, or random noize, compared to spectral initialization
+	\item Disable discriminator on zooms, or disable discriminator on FB
+	\item Equal loss weights
+	\item Using scale probability distribution to prioritize FB scale and show close-up and far-out ever so rarely
+	\item Dropout2d to nullify random feature maps after convolutions: in encoder, in decoder, in both
+	\item Change input rasterization background to not 0 (which is a valid value on the neural texture), but to ntex.abs()*2
+	\item Add gaussian noize to input rasterization, or neural texture, or ground truth
+	
+\end{itemize}

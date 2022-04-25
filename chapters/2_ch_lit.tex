@@ -1,19 +1,84 @@
 \chapter{Literature Review}\label{chapter:lit}
 
-\section{Classic 3D scene representations}
+\section{3D scene representations}
 \label{lit:classic-repr}
+\begin{itemize}
+	\item point clouds, oriented point clouds
+	\item triangular meshes
+	\item voxel grids
+	\item implicit functions
+	\item neural representation
+\end{itemize}
 
 \section{Classic image generating algorithms}
 \label{lit:classic-algo}
+\begin{itemize}
+	\item ray casting 
+	\item ray marching
+	\item rasterization
+\end{itemize}
+
 
 \section{Neural Rendering and Human Reconstruction}
 \label{lit:nrender}
+\begin{itemize}
+	\item deferred neural rendering \cite{dnn:deferred19}
+	\item NeRF \cite{dnn:nerf20,dnn:phorhum22}
+	\item GANs, StyleGAN \cite{dnn:gan14, dnn:stylegan-v1-19,dnn:stylegan-v2-20,dnn:stylegan-v3-21,survey:gans:18}
+	\item human avatars, from video, a few shots; monocular and not \cite{dnn:volumetric-primitives21}
+	\item StylePeople in details \cite{dnn:stylepeople21}
+	
+	Avatar rendering can be described as a learned operator $f_\theta$, that takes as an input an image with $L$ channels and spatial dimensions $H \times W$, and outputs a Red-Green-Blue-Segmentation (RGBS) colorful image with the same spatial dimensions. The input image should be a *rasterization* of a generic human triangular mesh $M$, with $L$-channels texture $T$ (also called *neural texture*), given that the image is projected using camera parameters $C$. 
+	
+	The idea behind this structure, is that human mesh $M$ doesn't need to carry information about fine details, e.g. face features, loose clothes and haircut. Instead, such details of a particular person's appearance can be learned in the texture $T$ and parameters of renderer $f_\theta$. 
+	
+	The mentioned paper proposes ways to train a GAN that generates textures $T$, and a rendering DNN $f_\theta$ from a video sequence with a person. After the training, an arbitrary rasterization of the mesh with the prepared texture $T$ can be used. For example, the mesh's skeleton can be animated, and the avatar can be observed from an arbitrary camera pose. 
+	
+	\item unified body models (SMPLX) \cite{dnn:smpl15, dnn:smplify16, dnn:smplx19}
+	
+	The human 3D model, on which the neural texture is applied, is based on work by the name SMPL-X. This unified body model is used for construction of a human's triangular mesh with more than 10 000 vertices. SMPL-X also features detailed poses of hands and faces, and provides robustness to self-intersection of joints. The input parameters to create the 3D model are:
+	\begin{itemize}
+		\item  Shape parameters - values that carry meaning of body scale, incorporating height, width of hips, size of a head, etc.
+		\item  Joints pose - values encoding skeleton pose, location of joints, hands, fingers.
+		\item  Expression parameters - values encoding facial expression.
+		\item  Gender parameter - value controlling creation of male/female bodies.
+	\end{itemize}
 
-\section{Metrics of realism}
+	\item training data augmentations
+	
+\end{itemize}
+
+\section{Metrics of images similarity}
 \label{lit:metrics}
+\begin{itemize}
+	\item Structural Similarity
+	\item Peak Signal to Noise ratio
+	\item Perceptual Similarity
+	\item Image L1 distance
+	\item Adversarial loss
+	\item Feature matching
+	\item Dice loss
+	\item LPIPS
+\end{itemize}
 
 \section{Increasing performance of Neural Networks}
 \label{lit:dnn-speedup}
+\begin{itemize}
+	\item Knowledge Distillation tries to teach a "student" model, that mimics outputs of a heavy "teacher" model, but has much fewer parameters \cite{speed:distillgan19}
+	\item Pruning finds a subset of model layers and parameters that can be removed, preserving the similar outputs quality \cite{speed:prunning-gan21}
+	\item Quantization is a hardware specific approach that converts 32-bit floating point numbers of parameters into a lower memory format, e.g. 8-bit integer numbers \cite{speed:quant-error-analysis15}. This reduces memory requirement by a factor, and usually improves performance, especially when DNN is executed on specifically designed hardware for quantized values. The conversion loses precision, which can be remedied by sophisticated non-linear quantization methods. However, those are harder to implement in hardware. Data-free quantization \cite{speed:datafreequant19} algorithm proposed and implemented for Qualcomm Snapdragon SoCs, and achieves near-identical outputs' quality for quantized DNNs.  
+	\item Neural Architecture Search
+\end{itemize}
 
 \section{Mobile devices architecture}
 \label{lit:mobile}
+
+For a long time now, the computing hardware has been moving from general purpose computing units (referred to as Central Processing Units, CPU), towards specialized processing units, that are specifically constructed and programmed to perform a subset of operations faster than CPU. The most obvious example is a Graphical Processing Unit (GPU), consisting of hundreds of repetitive cores that may execute linear algebra operations in parallel. The usage of GPUs was recognized for AI purposes. Powerful full-size GPUs are the main devices to train and execute DNNs on desktop computers and clusters. On embedded hardware (for instance mobile), the technology goes further by introducing the more specialized accelerated devices, that complete certain tasks faster than mobile GPUs \cite{mobile:dl-review19}.
+
+Different accelerated devices exist under separate names, but the similar idea - specialized computing. For example, mobile SoC by Samsung contains Neural Processing Units (NPU) for tensor computations. Google has dedicated Tensor Processing Units (TPU) for large-scale tensor computations on base of clusters of computer machines.
+
+Qualcomm Snapdragon SoC, that is of interest for this project, may contain a Digital Signals Processor (DSP) accelerated device (besides CPU and GPU). It's a chip designed to perform low power quantized computations with built-in support to parallel execution and Single Instruction Multiple Data operations \cite{speed:online-dsp-qualcomm}.
+
+Mobile hardware has a lot of minor differences from desktop computing hardware. One of those is that the GPU is physically located on the same chip as the CPU. Also, their memory is located on the same chip, yet mutually inaccessible in software.
+
+Although technically hard, but accelerated devices can be programmed separately. \cite{mobile:pipelining20} suggests a pipeline approach, where a model is split into several stages. Instead of processing input from start to finish, each stage receives new input as soon as it finished the previous calculation. By combining usage of multiple accelerate devices on mobile hardware, it's possible to almost double real time performance.
