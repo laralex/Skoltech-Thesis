@@ -296,13 +296,27 @@ on \@thesisdate
 \usepackage{kantlipsum}
 
 %%%% A.LARIONOV's code
+\usepackage{tabularx}
+\usepackage{algorithm}
+\usepackage{multirow}
+\usepackage{makecell}
+\usepackage{booktabs}
+%\usepackage{algpseudocode}
+\usepackage{setspace} % override spacing in some block
+\usepackage{caption}
+\usepackage{subcaption}
 \usepackage[dvipsnames]{xcolor}
+\newcommand{\cfbox}[2]{%
+	\colorlet{currentcolor}{.}%
+	{\color{#1}%
+		\fbox{\color{currentcolor}#2}}%
+}
 
 \usepackage{enumitem}
 \setlist[itemize]{noitemsep, topsep=0pt, leftmargin=10mm}
+\setlist[enumerate]{noitemsep, topsep=0pt, leftmargin=10mm}
 
 \usepackage{listings} % программный код
-%\usepackage{lmodern}  % for bold teletype font
 \usepackage{amsmath}  % for \hookrightarrow
 
 %\makeatletter

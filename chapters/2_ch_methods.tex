@@ -3,5 +3,29 @@
 \section{Neural rendering as a mobile application}
 \label{methods:app}
 
+\begin{figure}[!htbp]
+	\centering
+	\begin{lstlisting}[
+		language=C++,
+		numbers=none,
+		basicstyle=\ttfamily,
+		keywordstyle=\color{NavyBlue}\textbf,
+		frame=single,
+		extendedchars=true,
+		tabsize=4,
+		morekeywords={interface, string},
+		]
+public interface IVisualizer
+{
+	string GetDescription();
+	void VisualizeModel(Stream model, ModelMetaBase modelMeta, 
+	Stream materialLibrary, Stream[] materialFiles);
+	void Shutdown();
+} 
+	\end{lstlisting}
+	%	\captionsetup{justification=centering}
+	\caption{Blah blah}\label{res:code:example}
+\end{figure}
+
 \section{Avatars quality on both far-out and close-up scales}
 \label{methods:zooms}
