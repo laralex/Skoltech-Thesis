@@ -1,6 +1,6 @@
 \chapter{Literature Review}\label{chapter:lit}
 
-\section{3D scene representations}
+\section{Traditional 3D representations and rendering algorithms}
 \label{lit:classic-repr}
 \begin{itemize}
 	\item point clouds, oriented point clouds
@@ -10,7 +10,7 @@
 	\item neural representation
 \end{itemize}
 
-\section{Classic image generating algorithms}
+\alert{CPU, GPU, TPUs}
 \label{lit:classic-algo}
 \begin{itemize}
 	\item ray casting 
@@ -19,7 +19,8 @@
 \end{itemize}
 
 
-\section{Neural Rendering and Human Reconstruction}
+\section{Neural rendering and human reconstruction}
+\alert{CNN}
 \label{lit:nrender}
 \begin{itemize}
 	\item deferred neural rendering \cite{dnn:deferred19}
@@ -61,14 +62,58 @@
 	\item LPIPS
 \end{itemize}
 
-\section{Increasing performance of Neural Networks}
+\section{Increasing computing speed of Neural Networks}
 \label{lit:dnn-speedup}
-\begin{itemize}
-	\item Knowledge Distillation tries to teach a "student" model, that mimics outputs of a heavy "teacher" model, but has much fewer parameters \cite{speed:distillgan19}
-	\item Pruning finds a subset of model layers and parameters that can be removed, preserving the similar outputs quality \cite{speed:prunning-gan21}
-	\item Quantization is a hardware specific approach that converts 32-bit floating point numbers of parameters into a lower memory format, e.g. 8-bit integer numbers \cite{speed:quant-error-analysis15}. This reduces memory requirement by a factor, and usually improves performance, especially when DNN is executed on specifically designed hardware for quantized values. The conversion loses precision, which can be remedied by sophisticated non-linear quantization methods. However, those are harder to implement in hardware. Data-free quantization \cite{speed:datafreequant19} algorithm proposed and implemented for Qualcomm Snapdragon SoCs, and achieves near-identical outputs' quality for quantized DNNs.  
-	\item Neural Architecture Search
-\end{itemize}
+
+State-of-the-art DNN methods indeed achieve high quality results, but may also have tremendous computational costs. As an example, the models of natural language processing may surpass billions of trained parameters (weights): Turing-NLG has 17 billion parameters \cite{dnn:turingnlg20}, GPT-3 - 175 billion \cite{dnn:gpt3-20}, Megatron-Turing NGL - 530 billion \cite{dnn:megatron22}. This number affects the amount of required computer memory, as all the parameters, computed values (activations) of intermediate DNN layers, and analytic gradients need to be stored. Secondly, sufficient computing power is needed to make training time more feasible. In instance, a computing cluster of 10000 GPUs, 285000 CPU cores was built in order to train GPT-3, still requiring more than a month of constant training \cite{aux:openai-cluster-20}. 
+
+After training, the amount of minimum computing power to perform DNN inference is generally a lot smaller, because we can load and compute neural layers one by one without storing intermediate activations. Nevertheless, inference may still require dozens of GPUs, a handful of memory and seconds to compute. Thus, a few research directions of Deep Learning are dedicated to reduce the required computing power, trying to preserve the similar model's quality.
+
+One such approach is known as \textit{knowledge distillation}. Its idea, is that the learned values of DNN's parameters are not equivalent to knowledge of how to perform a task. In fact, by knowledge we can consider any sufficiently good mapping from input data to the desired output data \cite{method:distillation15}. Thus, we could try to train the original model fully to yield great results, and then to train another DNN "student" model with much fewer parameters. Both models are inferred with the same input data, and the student model is supervised to output the same results as the original model. Mimicking intermediate activations of the original model is also an option to replicate even more knowledge. The simplified neural architecture of the student models helps to reduce computation time and overfitting. That's because with fewer parameters there's less capacity in the student to remember the training data, and also imperfections of the original model's predictions additionally regularize the student \cite{survey:distillation21, speed:distillgan19}. However, knowledge distillation adds up more research work, with experimentation on neural architectures of the student, the training routines and hyper-parameters.
+
+There's an adjacent group of methods, called \textit{neural architecture search}. It aims to automatically find a DNN architecture that would outperform hand-crafted architectures on the given tasks. The motivation is to both reduce the committal effect of selecting a sub-optimal neural architecture by researchers, and to also reduce the amount of parameters required to accomplish the same tasks \cite{survey:neural-arch-search19, dnn:eff-neural-arch-search18}. However, a single search step requires to train the current network, collect quality metrics and then update the architecture. The convergence may require dozens of steps. This limits neural architecture search to lightweight DNNs, and it's hard to apply for big neural architectures.
+
+Another option comes from an observation, that some activation values of DNNs may be less important to the overall output than the others. Such activation values usually have low variance with respect to different input data, i.e. they frequently yield similar values. The corresponding learned parameters could then be replaced in the architecture by constants, if the quality doesn't decrease much. Such approach is called \textit{pruning}. Similarly to knowledge distillation, it allows to train a big model with the full capacity, which eases training. Then the obtained knowledge is squeezed to the lower number of parameters  \cite{method:pruning16, survey:pruning20, speed:prunning-gan21}.
+
+On a computer hardware level, DNNs are usually trained and inferred with weights and activations represented with 16-bit/32-bit floating point numbers (also referred to as half-float or FP16; full-float or FP32 respectively). A \textit{quantization} approach switches to integer number formats, with lower memory usage, e.g. 4-bit/8-bit/16-bit integer numbers (INT4/INT8/INT16). The main motivation is that integer operations can be computed faster than floating-point ones, their physical circuits are smaller, thus decreasing device's size, overheating, energy consumption \cite{aux:fp-int-speed10}. The quantization approach relies on a fact, that a vector of floating-point numbers $\bm{x}$ can be approximately expressed as 
+\begin{equation}
+	\setlength\abovedisplayskip{0pt}
+	\bm{x} \approx s^\prime_{\bm{x}} \cdot \bm{x^\prime_{\mathtt{int}}} = s_{\bm{x}} \cdot (\bm{x_{\mathtt{int}}} - z_{\bm{x}})
+	\setlength\belowdisplayskip{0pt}
+\end{equation} where $s^\prime_{\bm{x}}$ is a floating-point scalar, $\bm{x^\prime_{\mathtt{int}}}$ contains only integer values. Then they can be re-parameterized using an integer zero-offset $z_{\bm{x}}$, so that values in $\bm{x_{\mathtt{int}}}$ are mapped uniformly to range $(0, 2^b-1)$, with $b$ being bit-width of a number. Having a floating-point vector $\bm{x}$, it's quantized as:  
+\begin{equation}
+	\setlength\abovedisplayskip{0pt}
+	\bm{x_{\mathtt{int}}} = \text{round}(\bm{x}/s_{\bm{x}}) + z_{\bm{x}}.
+	\setlength\belowdisplayskip{0pt}
+\end{equation}
+
+Since many operations in neural networks can be computed using dot products of vectors, this allows to represent them in a quantized form. For example, a basic operation of matrix-vector multiplication with a floating-point weights matrix $\bm{W}_{n \times m}$ and a bias vector $\bm{b}_n$, the output activation vector $\bm{A}_n$  could be computed from an input activation vector $\bm{x}_m$ as:
+\setlength\abovedisplayskip{0pt}
+\begin{align}
+\begin{split}
+	\bm{A} &= \bm{b} + \bm{W} \bm{x}\\
+  &\approx \bm{b}
+  + [s_{\bm{w}} (\bm{W}_{\mathtt{int}} - z_{\bm{w}})]
+  \cdot [s_{\bm{x}} (\bm{x}_{\mathtt{int}} - z_{\bm{x}})] \\
+  &=\bm{b}
+  + s_{\bm{w}} s_{\bm{x}} ( 
+  \bm{W}_{\mathtt{int}} \bm{x}_{\mathtt{int}}
+  - \bm{x}_{\mathtt{int}} z_{\bm{w}}
+  \textcolor{blue}{- \bm{W}_{\mathtt{int}} z_{\bm{x}}
+  + z_{\bm{x}} z_{\bm{w}}}).
+	\setlength\belowdisplayskip{0pt}
+\end{split}
+\end{align} The last two terms shown in blue can be pre-computed for the whole DNN, and merged with the bias vector $\bm{b}$ \cite{dnn:quant-white21}. However since there's still an extra overhead from computation of $\bm{x}_{\mathtt{int}} z_{\bm{w}}$, specifically for weights it's common to use symmetric quantization, where floating-point values are mapped to $(-2^{b-1}, 2^{b-1}-1)$ integer range, with floating-point 0 mapped precisely to integer 0, thus making $z_{\bm{w}} = 0$, and eliminating the overhead. 
+
+Typically, a post training quantization (PTQ) is applied to weights and activations of a DNN, it's easy to apply and automatically get performance benefits of quantization. On the other hand, if precision of the outputs is a priority, a  quantization-aware training (QAT) \cite{quant:qat18} approach is used. Here architecture tweaks are required to do quantized inference and weights updates, with an idea to make the model learn to deal with quantization imprecision. As a downside, it enlarges training time and adds issues with analytic gradients back-propagation through rounded values \cite{quant:straight-through-estimator13}.
+
+Usually, the uniform quantization is appealing for simplicity of hardware implementation. However, the quantization range defined by constants $s$ and $z$ may be selected too wide, e.g. min-max range of values in a tensor where outliers are present. Thus, a lot of precision will be lost as different numbers will be mapped to the same integer value. Instead, the range can be selected to minimize a mean squared error with respect to the original floating-point values \cite{quant:mse19, speed:quant-error-analysis15}. If hardware supports it, instead of defining per-tensor quantization constants, they can be defined per-channel for more precision. Alternatively, a Cross Layer Equalization \cite{quant:cle20} can be applied to re-parameterize quantized weights and biases, compensating the channels' discrepancy of ranges, without adding runtime overhead. A non-uniform quantization can also be used to devote more precision to near mean values, and less to the outliers, but the hardware support of it is very limited \cite{quant:non-uniform21}.
+
+Moving on, DNNs also suffer from computational inefficiency, when similar input data leads to computing identical activations of layers. The DNN's architecture can be designed to cache and reuse these values. It can be applied to video stream processing or synthesis, where multiple consecutive frames have similarity \cite{aux:reusing19}. Additionally, filters of CNNs may frequently contain repeated weights after being quantized. Thus, as a filter slides over the data, certain dot-products can be reused \cite{dnn:reusing18}. While having a potential to speed up a certain DNN architecture, it requires immense manual hand-craft, which slows down active research and experimentation.
+
+The last but not least appoach, is to design the neural architectures efficiently, i.e with a good trade off of inference speed and outputs accuracy. It's obtained by reducing the number of parameters, applying only fast-to-compute neural layers, and composing them into a sparse computational graph. It leads to a better utilization of memory caches and computing cores of the hardware. Often, such models are implemented using low-level parallelized code, that increases the number of floating-point operations per second (FLOPs) even further. The notable examples are: MobileNetV1 \cite{dnn:mnv1-17}, MobileNetV2 \cite{dnn:mnv2-18}, MobileNetV3 \cite{dnn:mnv3-19},  ShuffleNetV1 \cite{dnn:shufflenetv1-18}, ShuffleNetV2 \cite{dnn:shufflenetv2-18}, CondenseNetV1 \cite{dnn:condensenetv1-18}, CondenseNetV2 \cite{dnn:condensenetv2-21}, EfficientNet \cite{dnn:efficientnetv1-19}. Although the original papers obtain similar or better results with their proposed architectures, the drop-in replacement is not guaranteed for every task. In this work a significant drop of quality is observed, when a baseline ResNet18 backbone was replaced with either MobileNetV2 or EfficientNet.
+
+%
 
 \section{Mobile devices architecture}
 \label{lit:mobile}
@@ -82,3 +127,5 @@ Qualcomm Snapdragon SoC, that is of interest for this project, may contain a Dig
 Mobile hardware has a lot of minor differences from desktop computing hardware. One of those is that the GPU is physically located on the same chip as the CPU. Also, their memory is located on the same chip, yet mutually inaccessible in software.
 
 Although technically hard, but accelerated devices can be programmed separately. \cite{mobile:pipelining20} suggests a pipeline approach, where a model is split into several stages. Instead of processing input from start to finish, each stage receives new input as soon as it finished the previous calculation. By combining usage of multiple accelerate devices on mobile hardware, it's possible to almost double real time performance.
+
+ Data-free quantization \cite{speed:datafreequant19} algorithm is proposed and implemented for Qualcomm Snapdragon SoCs, and achieves near-identical outputs' quality for quantized DNNs

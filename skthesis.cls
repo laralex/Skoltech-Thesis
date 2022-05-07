@@ -296,6 +296,7 @@ on \@thesisdate
 \usepackage{kantlipsum}
 
 %%%% A.LARIONOV's code
+\usepackage{bm}
 \usepackage{tabularx}
 \usepackage{algorithm}
 \usepackage{multirow}
@@ -311,6 +312,8 @@ on \@thesisdate
 	{\color{#1}%
 		\fbox{\color{currentcolor}#2}}%
 }
+
+%\renewcommand{\cite}[1]{\hypersetup{citecolor=red}\cite{#1}}
 
 \usepackage{enumitem}
 \setlist[itemize]{noitemsep, topsep=0pt, leftmargin=10mm}
