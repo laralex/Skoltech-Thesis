@@ -1,26 +1,110 @@
 \chapter{Literature Review}\label{chapter:lit}
 
+This chapter introduces to traditional and Deep Learning approaches of image synthesis, and overviews ways of inferring DNNs in real-time on mobile devices. Sections \ref{lit:traditional-cg} and \ref{lit:nrender} gradually expand on state-of-the-art reconstruction of human images, with more attention to the parts that comprise the basis for this work. The used metrics and optimization losses are described in Section \ref{lit:metrics}. Then, methods for decreasing DNNs inference time are given (Section \ref{lit:dnn-speedup}) with a few peculiarities of the mobile devices targeted by this work (Section \ref{lit:mobile}).
+
 \section{Traditional 3D representations and rendering algorithms}
-\label{lit:classic-repr}
-\begin{itemize}
-	\item point clouds, oriented point clouds
-	\item triangular meshes
-	\item voxel grids
-	\item implicit functions
-	\item neural representation
-\end{itemize}
+\label{lit:traditional-cg}
 
-\alert{CPU, GPU, TPUs}
-\label{lit:classic-algo}
-\begin{itemize}
-	\item ray casting 
-	\item ray marching
-	\item rasterization
-\end{itemize}
+Ever since the dawn of Computer Graphics, many primitive representations for 3D world were proposed to reconstruct real objects. The representations may model volumetric properties, such as occupancy, density of matter, radiance, color at a certain point of 3D space; or model surfaces and assign these properties to points on the surface. The definition of the primitives may also be explicit or implicit. An explicit surface can be defined by taking every point on a real coordinate plane $\mathbb{R}^2$, and mapping it to the third "height" coordinate explicitly via function $f_e(.) \in \mathbb{R}$. An implicit surface is defined by a zero-level set of a multivariable function $f_i(.) \in \mathbb{R}$ \cite{survey:advances-nn22}.
+\begin{multicols}{2}
+\setlength\abovedisplayskip{0pt}
+\noindent
+\begin{equation}
+	\renewcommand\arraystretch{0.6}
+	S_{explicit} = \left\{ 
+	\left( \begin{array}{c} x \\ y \\ f_{e}(x,y) \end{array} \right) \Bigg\rvert 
+	\left( \begin{array}{c} x \\ y \end{array} \right) \in \mathbb{R}^2
+	\right\}
+\end{equation}
+\begin{equation}
+	\renewcommand\arraystretch{0.6}
+	S_{implicit} = \left\{ \begin{pmatrix} x \\ y \\ z \end{pmatrix} \in \mathbb{R}^3 \Bigg\rvert f_{i}(x, y, z) = 0 \right\}
+\end{equation}
+\setlength\belowdisplayskip{0pt} 
+\end{multicols} 
 
+Unlike surfaces, for volumes the values of its properties are usually defined explicitly for all points in the 3D space:
+
+\begin{equation}
+	\renewcommand\arraystretch{0.6}
+	V = \left\{ f_{vol}(x,y,z)  \Bigg\rvert \begin{pmatrix} x \\ y \\ z \end{pmatrix} \in \mathbb{R}^3 \right\}
+\end{equation}
+  
+
+Let's look at the common surface and volume representations in details. A \textit{point cloud} is a discrete set of points in $\mathbb{R}^n$ (usually $\mathbb{R}^3$). It can model either surfaces (thus each point belongs to the surface) or volumes. The points may be associated with additional attributes, such as: color, density, orientation vector (normal) of a surface. When rendering an image from a point cloud, usually the points are interpreted as spheres with certain radius, in order to compensate sparsity and lack of connectivity between adjacent points \cite{aux:pointcloud21}.
+
+A \textit{polygonal mesh} is the most wide-spread 3D representation, being a compromise between granularity of 3D modeling and computational requirements to render adequate images. It reconstructs curvature of a surface using small planar segments, generally $N$-sided polygons, but usually triangles or quads. A set of 3D points (vertices) is defined, as well as information about which vertices are connected and in which order. Every vertex can be associated with additional attributes, but fine details of the whole polygons can be stored using \textit{textures}. Textures are commonly 2D images, containing in the pixels values of attributes (color, surface orientation, etc). Each 3D vertex on a mesh has designated 2D texture coordinates (also referred to as UV-coordinates; See Figure \ref{intro:fig:mesh-texture}). A barycentric interpolation of vertices' texture coordinates is used to sample attribute value from the texture for a certain point in a polygon. Textures allow to model details, that are too hard to approximate directly with polygons, e.g. small wrinkles, folds of clothes, complex color patterns, etc . Using textures, any information for polygons surface can be conveyed, e.g. by storing orthogonal direction for all points in polygons, interaction of light and very small details can be simulated without additional computational overhead \cite{aux:normal-mapping78}. 
+
+A \textit{voxel grid} is commonly referred to as 3D image, for also being a regular grid of primitives - cubes (voxels) with associated attributes. As volumetric representations, they may store occupation or density of matter at all points in a closed 3D area \cite{aux:voxels98}. Voxel grids are fast to process, but are enormously large in memory. Storing fine-detailed geometry requires shrinking the grid's scale, but memory consumption grows cubically. Thus, attempts on sparse voxel grids are made, using hyerarchical structures, that are longer to query, but can encapsulate large empty space into very large voxels, and reconstruct fine details using very small voxels where needed \cite{aux:voxels-sparse13}.
+
+\textit{Implicit functions}, as already described, can model surfaces. For example, we can define a Signed Distance Function for all points in a 3D volume. The values tell the closest distance to the surface, with negative sign if the point is "inside" a surface. However, to render an image, the surface (i.e. the zero-distance set) has to be queried repeatedly from the implicit representation. This makes image synthesis computationally expensive, unless an intermediate explicit representation is built to approximate the surface, e.g. using Marching Cubes algorithm \cite{aux:marching-cubes87} to reconstruct a mesh.
+
+The computer graphics evolution led to computing hardware to support some 3D representations. For instance, images are now typically rendered using Graphic Processing Units (GPUs), that unlike general Central Processing Units (CPUs) implement operations of linear algebra in a massively parallel way, allowing to process millions of primitives in real-time. Next, we'll describe the most common rendering algorithms called \textit{ray casting} and \textit{rasterization}. They can be adapted to any 3D representation, although sometimes with too high computational complexity.
+
+For both algorithms, a virtual camera is mathematically modeled. In physical cameras, light that bounces in the 3D space forms an image as it hits the camera's sensor. Light can be captured from a larger span of view using lenses, that focus light rays into a single spot, referred to as camera origin or focal point. For virtual cameras, a pinhole model is used, where a focal point is chosen, and the 3D scene representation is projected on a pixel grid, as if it was placed at a distance from the focal point, called focal length. From that, a view \textit{frustum} is defined, that is a pyramid that extends from the focal point through the image to infinity, and has apex cut off at the focal length. Objects outside the frustum are invisible to the virtual camera. See Figure \ref{lit:fig:rasterization}, where frustum spans from the image to infinity along the lines converging at the focal point.
+
+The image formation can be mathematically expressed using a projecting transformation $\bm{\mathrm{K}}$ (also called intrinsic matrix, see Formula \ref{lit:eq:intrinsic}), parameterized by focal lengths along axes ($f_x$, $f_y$), image center point ($c_x$, $c_y$), and axis skew $\gamma$. This transform maps a 3D point, which is extended to 4D homogeneous space $\bm{\mathrm{p}} = [x, y, z, 1]$ to a 3D point $\bm{\mathrm{p_{proj}}} = \bm{\mathrm{K}} \cdot \bm{\mathrm{p}} = [x_p, y_p, w_p]$. Dividing by $w_p$, we get $\bm{\mathrm{p_{img}}} = [x_p/w_p, y_p/w_p, 1]$. The last coordinate can be discarded being equal to 1. Now $\bm{\mathrm{p_{img}}}$ contains pixel coordinates of the projected 3D point. This transform only simulates a camera at the coordinates origin. To place it at any point in 3D space, an additional affine transformation matrix \bm{\mathrm{E}} (extrinsic, see Formula \ref{lit:eq:extrinsic}) is introduced, which defines camera rotation \bm{\mathrm{R}} and translation \bm{\mathrm{t}} in the homogeneous space \cite{survey:advances-nn22}. The projection is thus $\bm{\mathrm{p_{proj}}} = \bm{\mathrm{K}} \cdot \bm{\mathrm{E}} \cdot \bm{\mathrm{p}}$ .
+
+\begin{multicols}{2}
+	\setlength\abovedisplayskip{0pt}
+	\noindent
+	\begin{equation}
+		\bm{\mathrm{K}} = \begin{bmatrix} 
+			f_x & \gamma & c_x & 0 \\
+			0   & f_y    & c_y & 0 \\
+			0   & 0      & 1   & 0 \\
+		\end{bmatrix}
+		\label{lit:eq:intrinsic}
+	\end{equation}
+	\begin{equation}
+		\vphantom{\begin{bmatrix} a \\ b \\ c \end{bmatrix}}
+		\bm{\mathrm{E}} = \begin{bmatrix} 
+			\bm{\mathrm{R}}_{3 \times 3} & \bm{\mathrm{t}}_{3 \times 1} \\
+			\bm{\mathrm{0}}_{1 \times 3} & 1 \\
+		\end{bmatrix}
+		\label{lit:eq:extrinsic}
+	\end{equation}
+	\setlength\belowdisplayskip{0pt} 
+\end{multicols} 
+
+Ray casting method uses the above math to project rays, that pass through all pixels of the image and converge at the focal point. At a point where a surface is hit by the ray, surface attributes are extracted from the 3D representation and the pixel is colored accordingly. To model more realistic lighting, the reflection from the hit-points can be calculated, thus attributes from a secondary hit will be accumulated. This recursive process is also referred to as ray tracing. Such approach is computationally heavy, as 3D representation has to be queried many times for each ray to detect hits. On the bright side, the computational complexity only scales with the number of image pixels, no matter the number of objects in the scene (see Figure \ref{lit:fig:raytracing}).
+
+Rasterization is typically used together with mesh 3D representation \cite{aux:raster94}. It's much more widely used due to its computational efficiency and hardware support. Here, vertices of all polygons are projected onto the image. Pixels that belong to the projected polygons are colored. Additionally for each pixel, the nearest polygon's depth is stored as depth image (also called $Z$-buffer). This helps to resolve occlusion between polygons. Since it's usual that the number of vertices in the view frustum is smaller than the number of pixels, the computation is much faster than ray casting. However, it scales with the number of polygons, requiring to apply algorithms for efficient discarding of occluded polygons in real-time. Also, rasterization loses in producing realistic specular phenomena, such as shadows, due to lack of physical image formation modeling.
+
+
+
+%\begin{figure}[h!]
+%	\centering
+%	\includegraphics[width=\linewidth]{\imgfp/representations}
+%	\caption{Different 3D representations. Voxels comprise uniform axis-aligned grid with occupancy information. Meshes define 3D points and their connectivity into 3D plane patches (polygons). Point clouds define just 3D points. Signed Distance Function for each point in 3D space associates a distance to a surface, points with distance 0 implicitly model a surface. The picture is adapted from \href{https://www.youtube.com/watch?v=r9lvAyAgR3E}{www.youtube.com/watch?v=r9lvAyAgR3E}}
+%	\label{lit:fig:3d-representations}
+%\end{figure}
+
+\begin{figure}[h!]
+	%\fboxrule=2pt
+	\centering
+	\begin{subfigure}[b]{0.49\textwidth}
+		\centering
+		\includegraphics[height=5cm]{\imgfp/raytracing}
+		\caption{}
+		\label{lit:fig:raytracing}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.49\textwidth}
+		\centering
+		\includegraphics[height=5cm]{\imgfp/rasterization-s}
+		\caption{}
+		\label{lit:fig:rasterization}
+	\end{subfigure}
+	
+	\caption{(\protect\subref{lit:fig:raytracing}) Rays are cast from the camera origin through each pixel, and if a ray hits any surface, the pixel is colored accordingly. (\protect\subref{lit:fig:rasterization}) In rasterization, vertices of a polygon are projected onto a raster grid, filling the pixels that belong to the projected shape. Images from \href{https://www.scratchapixel.com/}{www.scratchapixel.com}}
+	\label{lit:fig:rendering-methods}
+\end{figure}
 
 \section{Neural rendering and human reconstruction}
-\alert{CNN}
+\alert{CNN, MLP universal function approximator, overfitting, losses, hyperparameters, backpropagation}
+%	\item neural representation
+	
 \label{lit:nrender}
 \begin{itemize}
 	\item deferred neural rendering \cite{dnn:deferred19}
@@ -49,7 +133,7 @@
 	
 \end{itemize}
 
-\section{Metrics of images similarity}
+\section{Metrics of image similarity}
 \label{lit:metrics}
 \begin{itemize}
 	\item Structural Similarity
@@ -62,10 +146,10 @@
 	\item LPIPS
 \end{itemize}
 
-\section{Increasing computing speed of Neural Networks}
+\section{Inference time decreasing approaches}
 \label{lit:dnn-speedup}
 
-State-of-the-art DNN methods indeed achieve high quality results, but may also have tremendous computational costs. As an example, the models of natural language processing may surpass billions of trained parameters (weights): Turing-NLG has 17 billion parameters \cite{dnn:turingnlg20}, GPT-3 - 175 billion \cite{dnn:gpt3-20}, Megatron-Turing NGL - 530 billion \cite{dnn:megatron22}. This number affects the amount of required computer memory, as all the parameters, computed values (activations) of intermediate DNN layers, and analytic gradients need to be stored. Secondly, sufficient computing power is needed to make training time more feasible. In instance, a computing cluster of 10000 GPUs, 285000 CPU cores was built in order to train GPT-3, still requiring more than a month of constant training \cite{aux:openai-cluster-20}. 
+State-of-the-art DNN methods indeed achieve high quality results, but may also have tremendous computational costs. As an example, the models of natural language processing may surpass billions of trained parameters (weights): Turing-NLG has 17 billion parameters \cite{dnn:turingnlg20}, GPT-3 - 175 billion \cite{dnn:gpt3-20}, Megatron-Turing NGL - 530 billion \cite{dnn:megatron22}. This number affects the amount of required computer memory, as all the parameters, computed values (activations) of intermediate DNN layers, and analytic gradients need to be stored. Secondly, sufficient computing power is needed to make training time more feasible. For instance, a computing cluster of 10000 GPUs, 285000 CPU cores was built in order to train GPT-3, still requiring more than a month of constant training \cite{aux:openai-cluster-20}. 
 
 After training, the amount of minimum computing power to perform DNN inference is generally a lot smaller, because we can load and compute neural layers one by one without storing intermediate activations. Nevertheless, inference may still require dozens of GPUs, a handful of memory and seconds to compute. Thus, a few research directions of Deep Learning are dedicated to reduce the required computing power, trying to preserve the similar model's quality.
 
@@ -115,10 +199,10 @@ The last but not least appoach, is to design the neural architectures efficientl
 
 %
 
-\section{Mobile devices architecture}
+\section{Architecture of mobile devices}
 \label{lit:mobile}
 
-For a long time now, the computing hardware has been moving from general purpose computing units (referred to as Central Processing Units, CPU), towards specialized processing units, that are specifically constructed and programmed to perform a subset of operations faster than CPU. The most obvious example is a Graphical Processing Unit (GPU), consisting of hundreds of repetitive cores that may execute linear algebra operations in parallel. The usage of GPUs was recognized for AI purposes. Powerful full-size GPUs are the main devices to train and execute DNNs on desktop computers and clusters. On embedded hardware (for instance mobile), the technology goes further by introducing the more specialized accelerated devices, that complete certain tasks faster than mobile GPUs \cite{mobile:dl-review19}.
+For a long time now, the computing hardware has been moving from general purpose computing units (CPU), towards specialized processing units, that are specifically constructed and programmed to perform a subset of operations faster than CPU. The most obvious example is a Graphical Processing Unit (GPU), consisting of hundreds of repetitive cores that may execute linear algebra operations in parallel. The usage of GPUs was recognized for AI purposes. Powerful full-size GPUs are the main devices to train and execute DNNs on desktop computers and clusters. On embedded hardware (for instance mobile), the technology goes further by introducing the more specialized accelerated devices, that complete certain tasks faster than mobile GPUs \cite{mobile:dl-review19}.
 
 Different accelerated devices exist under separate names, but the similar idea - specialized computing. For example, mobile SoC by Samsung contains Neural Processing Units (NPU) for tensor computations. Google has dedicated Tensor Processing Units (TPU) for large-scale tensor computations on base of clusters of computer machines.
 

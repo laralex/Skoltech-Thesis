@@ -296,10 +296,12 @@ on \@thesisdate
 \usepackage{kantlipsum}
 
 %%%% A.LARIONOV's code
+\clubpenalty10000
 \usepackage{bm}
 \usepackage{tabularx}
 \usepackage{algorithm}
 \usepackage{multirow}
+\usepackage{multicol}
 \usepackage{makecell}
 \usepackage{booktabs}
 %\usepackage{algpseudocode}
@@ -321,6 +323,7 @@ on \@thesisdate
 
 \usepackage{listings} % программный код
 \usepackage{amsmath}  % for \hookrightarrow
+\usepackage{amsfonts}
 
 %\makeatletter
 \DeclareRobustCommand{\getlstname}{%
