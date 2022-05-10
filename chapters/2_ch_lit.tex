@@ -43,13 +43,13 @@ The computer graphics evolution led to computing hardware to support some 3D rep
 
 For both algorithms, a virtual camera is mathematically modeled. In physical cameras, light that bounces in the 3D space forms an image as it hits the camera's sensor. Light can be captured from a larger span of view using lenses, that focus light rays into a single spot, referred to as camera origin or focal point. For virtual cameras, a pinhole model is used, where a focal point is chosen, and the 3D scene representation is projected on a pixel grid, as if it was placed at a distance from the focal point, called focal length. From that, a view \textit{frustum} is defined, that is a pyramid that extends from the focal point through the image to infinity, and has apex cut off at the focal length. Objects outside the frustum are invisible to the virtual camera. See Figure \ref{lit:fig:rasterization}, where frustum spans from the image to infinity along the lines converging at the focal point.
 
-The image formation can be mathematically expressed using a projecting transformation $\bm{\mathrm{K}}$ (also called intrinsic matrix, see Formula \ref{lit:eq:intrinsic}), parameterized by focal lengths along axes ($f_x$, $f_y$), image center point ($c_x$, $c_y$), and axis skew $\gamma$. This transform maps a 3D point, which is extended to 4D homogeneous space $\bm{\mathrm{p}} = [x, y, z, 1]$ to a 3D point $\bm{\mathrm{p_{proj}}} = \bm{\mathrm{K}} \cdot \bm{\mathrm{p}} = [x_p, y_p, w_p]$. Dividing by $w_p$, we get $\bm{\mathrm{p_{img}}} = [x_p/w_p, y_p/w_p, 1]$. The last coordinate can be discarded being equal to 1. Now $\bm{\mathrm{p_{img}}}$ contains pixel coordinates of the projected 3D point. This transform only simulates a camera at the coordinates origin. To place it at any point in 3D space, an additional affine transformation matrix \bm{\mathrm{E}} (extrinsic, see Formula \ref{lit:eq:extrinsic}) is introduced, which defines camera rotation \bm{\mathrm{R}} and translation \bm{\mathrm{t}} in the homogeneous space \cite{survey:advances-nn22}. The projection is thus $\bm{\mathrm{p_{proj}}} = \bm{\mathrm{K}} \cdot \bm{\mathrm{E}} \cdot \bm{\mathrm{p}}$ .
+The image formation can be mathematically expressed using a projecting transformation $\bmr{K}$ (also called intrinsic matrix, see Formula \ref{lit:eq:intrinsic}), parameterized by focal lengths along axes ($f_x$, $f_y$), image center point ($c_x$, $c_y$), and axis skew $\gamma$. This transform maps a 3D point, which is extended to 4D homogeneous space $\bmr{p} = [x, y, z, 1]$ to a 3D point $\bmr{p_{proj}} = \bmr{K} \cdot \bmr{p} = [x_p, y_p, w_p]$. Dividing by $w_p$, we get $\bmr{p_{img}} = [x_p/w_p, y_p/w_p, 1]$. The last coordinate can be discarded being equal to 1. Now $\bmr{p_{img}}$ contains pixel coordinates of the projected 3D point. This transform only simulates a camera at the coordinates origin. To place it at any point in 3D space, an additional affine transformation matrix $\bmr{E}$ (extrinsic, see Formula \ref{lit:eq:extrinsic}) is introduced, which defines camera rotation $\bmr{R}$ and translation $\bmr{t}$ in the homogeneous space \cite{survey:advances-nn22}. The projection is thus $\bmr{p_{proj}} = \bmr{K} \cdot \bmr{E} \cdot \bmr{p}$ .
 
 \begin{multicols}{2}
 	\setlength\abovedisplayskip{0pt}
 	\noindent
 	\begin{equation}
-		\bm{\mathrm{K}} = \begin{bmatrix} 
+		\bmr{K} = \begin{bmatrix} 
 			f_x & \gamma & c_x & 0 \\
 			0   & f_y    & c_y & 0 \\
 			0   & 0      & 1   & 0 \\
@@ -58,9 +58,9 @@ The image formation can be mathematically expressed using a projecting transform
 	\end{equation}
 	\begin{equation}
 		\vphantom{\begin{bmatrix} a \\ b \\ c \end{bmatrix}}
-		\bm{\mathrm{E}} = \begin{bmatrix} 
-			\bm{\mathrm{R}}_{3 \times 3} & \bm{\mathrm{t}}_{3 \times 1} \\
-			\bm{\mathrm{0}}_{1 \times 3} & 1 \\
+		\bmr{E} = \begin{bmatrix} 
+			\bmr{R}_{3 \times 3} & \bmr{t}_{3 \times 1} \\
+			\bmr{0}_{1 \times 3} & 1 \\
 		\end{bmatrix}
 		\label{lit:eq:extrinsic}
 	\end{equation}
@@ -135,18 +135,71 @@ Rasterization is typically used together with mesh 3D representation \cite{aux:r
 
 \section{Metrics of image similarity}
 \label{lit:metrics}
-\begin{itemize}
-	\item Structural Similarity
-	\item Peak Signal to Noise ratio
-	\item Perceptual Similarity
-	\item Image L1 distance
-	\item Adversarial loss
-	\item Feature matching
-	\item Dice loss
-	\item LPIPS
-\end{itemize}
 
-\section{Inference time decreasing approaches}
+For comparison of real and synthesized, many metrics can be applied. Those that are differentiable and fast to compute, are usually used as training losses, by minimizing which the DNN learns how to generate images similar to the real. The next description will follow the notation: $\bmr{f}$ - a fake synthesized image, $\bmr{r}$ - a real image, $\bmr{f}_{segm}$/$\bmr{r}_{segm}$ are segmentation masks for fake and real images respectively, $\bmr{A_f}$/$\bmr{A_r}$ are intermediate DNN layers activations when processing fake and real images respectively.
+
+\textit{Mean Absolute Error} (MAE or L1, ideal value 0, \cite{metric:l1-95}) measures absolute differences between corresponding pixels. It simplifies training process, by forcing the pixels to be the same, but doesn't capture many image degradation like blur, warping, etc: 
+\begin{equation}
+	\setlength\abovedisplayskip{0pt} 
+	\text{MAE}(\bmr{f}, \bmr{r}) = \frac{1}{N}\sum_{i=1}^{N}\lvert \bmr{f}_i - \bmr{r}_i \rvert \in [0, +\infty] \setlength\belowdisplayskip{0pt}
+\end{equation}
+
+\textit{Mean Squared Error} (MSE or L2, ideal value 0, \cite{metric:l1-95}) measures squared differences between corresponding pixels. In terms of image comparison, similar to MAE. However, it has smoother values distribution, and penalizes high differences much more, which is sometimes harmful. For example, a single pixel may be very different, but it's hardly seen by a human, thus should not necessarily be penalized. 
+\begin{equation}
+	\setlength\abovedisplayskip{0pt} 
+	\text{MSE}(\bmr{f}, \bmr{r}) = \frac{1}{N}\sum_{i=1}^{N}(\bmr{f}_i - \bmr{r}_i)^2 \in [0, +\infty] \setlength\belowdisplayskip{0pt}
+\end{equation}
+
+\textit{Learned Perceptual Image Patch Similarity} (LPIPS, ideal value 0, \cite{metric:lpips18}) is based on an observation, that image-based neural networks (commonly VGG \cite{dnn:vgg14}) tend to learn structured patterns on images inside intermediate weights tensors. Given a new image, activations of the network will contain a proportion of those patterns that can be found on the image. Thus, we could infer such network with fake and real images, and compare activations. They should be identical, and such loss is applied during training. The metric is computed as an average MSE distance between corresponding activations (also normalized by the tensors size to equalize contribution of deep layers).
+\begin{equation}
+	\setlength\abovedisplayskip{0pt} 
+	\text{LPIPS}(\bmr{f}, \bmr{r}) = \frac{1}{L}\sum_{l=1}^L \frac{1}{\text{size}(\bmr{A_f}^l)}\text{MSE}(\bmr{A_f}^l, \bmr{A_r}^l) \in [0, +\infty], L \text{ is number of VGG layers} \setlength\belowdisplayskip{0pt}
+\end{equation}
+	
+\textit{Structural Similarity} (SSIM \cite{metric:ssim04}, ideal value 1) metric is based on an idea, that perception of noise on an image is dependent on luminance (mean of image values $\mu$), contrast (standard deviation of image values $\sigma$) and structure (covariance between images $\sigma_{xy}$). The metric is computed for two images from components, that measure luminance difference ($l(\bmr{f}, \bmr{r})$), contrast difference ($c(\bmr{f}, \bmr{r})$), structure difference ($s(\bmr{f}, \bmr{r})$)). Importance of components is also controlled by $\alpha$, $\beta$, $\gamma$ powers.
+\begin{equation}
+	\setlength\abovedisplayskip{6pt} 
+	\begin{aligned}
+	& l(\bmr{f}, \bmr{r}) = \frac{2 \mu_{\bmr{f}} \mu_{\bmr{r}} + C_1}{{\mu_{\bmr{f}}}^2 + {\mu_{\bmr{r}}}^2 + C_1} \quad
+	c(\bmr{f}, \bmr{r}) = \frac{2 \sigma_{\bmr{f}} \sigma_{\bmr{r}}+ C_2}{{\sigma_{\bmr{f}}}^2 + {\sigma_{\bmr{r}}}^2 + C_2} \quad
+	s(\bmr{f}, \bmr{r}) = \frac{\sigma_{\bmr{f}\bmr{r}} + C_2/2}{\sigma_{\bmr{f}}\sigma_{\bmr{r}} + C_2/2} \\
+	& \text{SSIM}(\bmr{f}, \bmr{r}) = 
+	[l(\bmr{f}, \bmr{r})]^\alpha \cdot
+	[c(\bmr{f}, \bmr{r})]^\beta \cdot
+	[s(\bmr{f}, \bmr{r})]^\gamma \in [-1;1]
+	\end{aligned}
+	\setlength\belowdisplayskip{6pt}
+\end{equation}
+where $C_1 = (K_1L)^2$, $C_2 = (K_2L)^2$,  $L$ is a range of values stored in pixel channels (usually it's 1 for channels in floating-point format, or 255 for byte channel format), $K_1$ and $K_2$ are arbitrary constants to ensure numerical stability for near-zero denominator. SSIM is usually computed in a $11 \times 11$ sliding window and averaged over the whole image. It can detect degradation due to noise, but might be insensitive to blur and color shift.
+
+\textit{Multi-Scale Structural Similarity} (MS-SSIM, ideal value 1\cite{metric:msssim03}) is an extension of SSIM, but contrast and structure terms are computed on multiple scales, i.e. the original images are processed with a low-pass filter and downsampled by a factor of 2, a total of $M$ times. All the computed multi-scale components are multiplied to the metric. The metric was shown to be same or better than SSIM in detecting many types of distortions:
+\begin{equation}
+	\setlength\abovedisplayskip{0pt} 
+	\text{MS-SSIM}(\bmr{f}, \bmr{r}) = 
+	[l(\bmr{f}, \bmr{r})]^\alpha \cdot
+	\prod_{j=1}^{M}
+	[c_j(\bmr{f}, \bmr{r})]^{\beta_{j}}
+	[s_j(\bmr{f}, \bmr{r})]^{\gamma_j} \in [-1;1] \setlength\belowdisplayskip{0pt} 
+\end{equation}
+
+	
+\textit{Peak Signal-to-Noise ratio} (PSNR, ideal value $+\infty$, \cite{metric:psnr13}) metric comes from signal processing theory. It captures a ratio of the maximum value in an noise-free signal to the average noise magnitude (can be captured by MSE). The metric indeed helps to detect noise levels, but it's much less useful as image similarity measure than other metrics, such as SSIM.
+\begin{equation}
+	\setlength\abovedisplayskip{0pt} 
+	\text{PSNR}(\bmr{f}, \bmr{r}) = 20 \cdot \log_{10} \left( \max(\bmr{r}) \right) - 10 \cdot \log_{10}\left( \text{MSE}(\bmr{f}, \bmr{r}) \right) \in \mathbb{R} \setlength\belowdisplayskip{0pt} 
+\end{equation}
+	
+\textit{Adversarial} loss (GAN-loss, ideal value 0.5, \cite{dnn:gan14}) is used as a part of Generator - Discriminator DNN training architecture. It measures how well the discriminator learned to distinguish real images from fake (by assigning probabilities of realism: 0 is fake, 1 is real). The generator's task is to synthesize images that cannot be detected by the discriminator. Ideally, discriminator should report probability 0.5 on average, indicating that it essentially reports a random guess.
+
+\textit{Feature matching} loss (ideal value 0, \cite{metric:fm16}) is analogous to LPIPS, but the intermediate activations on fake and real images are taken not from external image network, but from discriminator network. The motivation is that the generator network will learn to produce images that are perceived as real by the discriminator.
+
+\textit{Dice} loss (ideal value 1, \cite{metric:dice17}) is widely used in various pixel segmentation tasks to learn segmentation masks. It maximizes area of masks intersection and minimizes union of the areas (to prevent false positives in the predicted mask). The formula treats masks as sets of pixels where segmentation value is greater than 0.
+\begin{equation}
+	\setlength\abovedisplayskip{0pt} 
+	\text{Dice}(\bmr{f}_{segm}, \bmr{r}_{segm}) = \frac{2 \lvert \bmr{f}_{segm} \cap \bmr{r}_{segm} \rvert}{ \lvert \bmr{f}_{segm} \rvert + \lvert \bmr{r}_{segm} \rvert} \setlength\belowdisplayskip{0pt} 
+\end{equation}
+
+\section{Ways of speeding up DNN inference}
 \label{lit:dnn-speedup}
 
 State-of-the-art DNN methods indeed achieve high quality results, but may also have tremendous computational costs. As an example, the models of natural language processing may surpass billions of trained parameters (weights): Turing-NLG has 17 billion parameters \cite{dnn:turingnlg20}, GPT-3 - 175 billion \cite{dnn:gpt3-20}, Megatron-Turing NGL - 530 billion \cite{dnn:megatron22}. This number affects the amount of required computer memory, as all the parameters, computed values (activations) of intermediate DNN layers, and analytic gradients need to be stored. Secondly, sufficient computing power is needed to make training time more feasible. For instance, a computing cluster of 10000 GPUs, 285000 CPU cores was built in order to train GPT-3, still requiring more than a month of constant training \cite{aux:openai-cluster-20}. 
@@ -199,17 +252,16 @@ The last but not least appoach, is to design the neural architectures efficientl
 
 %
 
-\section{Architecture of mobile devices}
+\section{Computations on mobile hardware}
 \label{lit:mobile}
 
-For a long time now, the computing hardware has been moving from general purpose computing units (CPU), towards specialized processing units, that are specifically constructed and programmed to perform a subset of operations faster than CPU. The most obvious example is a Graphical Processing Unit (GPU), consisting of hundreds of repetitive cores that may execute linear algebra operations in parallel. The usage of GPUs was recognized for AI purposes. Powerful full-size GPUs are the main devices to train and execute DNNs on desktop computers and clusters. On embedded hardware (for instance mobile), the technology goes further by introducing the more specialized accelerated devices, that complete certain tasks faster than mobile GPUs \cite{mobile:dl-review19}.
+Traditional desktop computers have hardware, where components are designed to be independent and replaceable. This is achieved through standardization of connectors and signaling. This design is convenient when physical size of devices, power usage, or necessity of active cooling are not issues. On the other hand there is mobile hardware, which can be found in modern smartphones, watches, AR and VR devices. There exists a strong desire to minimize physical size, weight, battery power usage and heat generation. Despite the wide variety of mobile devices and vendors, the state-of-the-art mobile architectures look similar on a high level. They are presented as Systems-on-a-chip (SoC), also referred to as heterogeneous platforms, where computing devices of different underlying principles are fused under a single silicon. The computing work is offloaded to the designated computing devices, to minimize idleness and latency. Such platforms may accelerate general computing (CPU), graphics computing (GPU), signal processing, networking, cryptography, external devices, camera processing, AI computing, sensing, etc. To name a few SoC platforms, there are: Nvidia Tegra \cite{soc:nvidia-tegra}, Samsung Exynos \cite{soc:exynos}, Qualcomm Snapdragon \cite{soc:snapdragon}. Notably, all of them advance towards providing special computing devices for AI, and DNNs in particular \cite{mobile:dl-review19}. Such AI accelerators can come by the names: Deep Learning Accelerator, Neural Processing Unit (NPU), Tensor Processing Unit (TPU), etc \cite{soc:tops}. This work by default targets devices running Qualcomm Snapdragon SoC.
 
-Different accelerated devices exist under separate names, but the similar idea - specialized computing. For example, mobile SoC by Samsung contains Neural Processing Units (NPU) for tensor computations. Google has dedicated Tensor Processing Units (TPU) for large-scale tensor computations on base of clusters of computer machines.
+The latest chip called Qualcomm Snapdragon 888 consists of an 8-core CPU, a GPU with mixed precision AI inference support (vectorized half-float/full-float), a sensing processor, and a Digital Signal Processor (DSP). The latter is especially optimized for parallel integer computations, which are common in real-time 1D or 2D digital signal processing (e.g. Fast Fourier Transform algorithm). It supports parallel scalar, vector and tensor operations, while retaining state-of-the-art low level of power usage. Besides, it's possible to use DSP as an AI accelerator to infer a quantized DNN, and get massive benefit in inference speed and energy consumption. All accelerators of the SoC are located on the same chip and have access to shared memory, allowing to reduce overhead of data transfer (which is common in desktop systems). The claimed performance of the combined accelerators is 26 TOPS (Trillion Operations per Second). The platform also offers a triple-core chip for multithreaded camera processing with up to 2.7 Gigapixels per second of throughput \cite{soc:snapdragon888}.
 
-Qualcomm Snapdragon SoC, that is of interest for this project, may contain a Digital Signals Processor (DSP) accelerated device (besides CPU and GPU). It's a chip designed to perform low power quantized computations with built-in support to parallel execution and Single Instruction Multiple Data operations \cite{speed:online-dsp-qualcomm}.
+Importantly for this work, Qualcomm Snapdragon's DSP works with tensors layout called BHWC (Batch-Height-Width-Channel), that is, data of a single spatial element (pixel) is stored contiguously (e.g. $N$ values for pixel 1 are followed by $N$ values for pixel 2, and so on). This will be utilized during real-time input data generation for the DNN researched in this work. The other possible format is BCHW (Batch-Channel-Height-Width), which is usually used in software libraries for DNN training on desktop computers.
 
-Mobile hardware has a lot of minor differences from desktop computing hardware. One of those is that the GPU is physically located on the same chip as the CPU. Also, their memory is located on the same chip, yet mutually inaccessible in software.
+As well as usual quantization approaches described in Section \ref{lit:dnn-speedup}, for Snapdragon DSP a data-free quantization algorithm is implemented, which doesn't require estimating quantization ranges from example input dataset \cite{speed:datafreequant19}. It features high quantization speed, which used to be critical with big datasets, and also achieves near-identical outputs' quality for quantized DNNs.
 
-Although technically hard, but accelerated devices can be programmed separately. \cite{mobile:pipelining20} suggests a pipeline approach, where a model is split into several stages. Instead of processing input from start to finish, each stage receives new input as soon as it finished the previous calculation. By combining usage of multiple accelerate devices on mobile hardware, it's possible to almost double real time performance.
+An AI model can possibly provide software level improvements for better hardware utilization. For example, the work \cite{mobile:pipelining20} suggests a pipeline approach, where a model is split into several stages. Instead of processing input from start to finish, each stage receives new input as soon as it finished the previous calculation. By combining usage of multiple accelerate devices on mobile hardware, it's possible to almost double real time performance.
 
- Data-free quantization \cite{speed:datafreequant19} algorithm is proposed and implemented for Qualcomm Snapdragon SoCs, and achieves near-identical outputs' quality for quantized DNNs

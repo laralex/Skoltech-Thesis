@@ -315,6 +315,8 @@ on \@thesisdate
 		\fbox{\color{currentcolor}#2}}%
 }
 
+\newcommand{\bmr}[1]{\bm{\mathrm{#1}}}
+
 %\renewcommand{\cite}[1]{\hypersetup{citecolor=red}\cite{#1}}
 
 \usepackage{enumitem}
@@ -404,7 +406,7 @@ on \@thesisdate
 %\renewcommand\oldfootnote[2][]{\relax}
 
 % show unused bibliorgraphy
-\usepackage{refcheck}
+%\usepackage{refcheck}
 
 % allows to forbid images on another page from reference
 \usepackage{float} 
