@@ -98,59 +98,94 @@ Rasterization is typically used together with mesh 3D representation \cite{aux:r
 	\end{subfigure}
 	
 	\caption{(\protect\subref{lit:fig:raytracing}) Rays are cast from the camera origin through each pixel, and if a ray hits any surface, the pixel is colored accordingly. (\protect\subref{lit:fig:rasterization}) In rasterization, vertices of a polygon are projected onto a raster grid, filling the pixels that belong to the projected shape. Images from \href{https://www.scratchapixel.com/}{www.scratchapixel.com}}
-	\label{lit:fig:rendering-methods}
+	\label{lit:fig:rendering-methods}.
 \end{figure}
 
-\section{Neural rendering and human reconstruction}
-\alert{CNN, MLP universal function approximator, overfitting, losses, hyperparameters, backpropagation}
-%	\item neural representation
-	
-\label{lit:nrender}
-\begin{itemize}
-	\item deferred neural rendering \cite{dnn:deferred19}
-	\item NeRF \cite{dnn:nerf20,dnn:phorhum22}
-	\item GANs, StyleGAN \cite{dnn:gan14, dnn:stylegan-v1-19,dnn:stylegan-v2-20,dnn:stylegan-v3-21,survey:gans:18}
-	\item human avatars, from video, a few shots; monocular and not \cite{dnn:volumetric-primitives21}
-	\item StylePeople in details \cite{dnn:stylepeople21}
-	
-	Avatar rendering can be described as a learned operator $f_\theta$, that takes as an input an image with $L$ channels and spatial dimensions $H \times W$, and outputs a Red-Green-Blue-Segmentation (RGBS) colorful image with the same spatial dimensions. The input image should be a *rasterization* of a generic human triangular mesh $M$, with $L$-channels texture $T$ (also called *neural texture*), given that the image is projected using camera parameters $C$. 
-	
-	The idea behind this structure, is that human mesh $M$ doesn't need to carry information about fine details, e.g. face features, loose clothes and haircut. Instead, such details of a particular person's appearance can be learned in the texture $T$ and parameters of renderer $f_\theta$. 
-	
-	The mentioned paper proposes ways to train a GAN that generates textures $T$, and a rendering DNN $f_\theta$ from a video sequence with a person. After the training, an arbitrary rasterization of the mesh with the prepared texture $T$ can be used. For example, the mesh's skeleton can be animated, and the avatar can be observed from an arbitrary camera pose. 
-	
-	\item unified body models (SMPLX) \cite{dnn:smpl15, dnn:smplify16, dnn:smplx19}
-	
-	The human 3D model, on which the neural texture is applied, is based on work by the name SMPL-X. This unified body model is used for construction of a human's triangular mesh with more than 10 000 vertices. SMPL-X also features detailed poses of hands and faces, and provides robustness to self-intersection of joints. The input parameters to create the 3D model are:
-	\begin{itemize}
-		\item  Shape parameters - values that carry meaning of body scale, incorporating height, width of hips, size of a head, etc.
-		\item  Joints pose - values encoding skeleton pose, location of joints, hands, fingers.
-		\item  Expression parameters - values encoding facial expression.
-		\item  Gender parameter - value controlling creation of male/female bodies.
-	\end{itemize}
+\section{Neural Rendering and human avatars}\label{lit:nrender}
 
-	\item training data augmentations
-	
-\end{itemize}
+As was mentioned in the Section \ref{intro:nrender}, any theory that lies inside algorithmic approaches may miss complex correlations in the real world behavior. This can be a corner stone that differentiates realistically-looking and truly photo-realistic images. For this reason, statistical methods of AI (such as DNNs) are applied, to learn a parameterized model from the real observations. In our case, it learns on real photos to synthesize images automatically from descriptive data, such as position of the view in the world, or the desired content in the view. The learning per se comes down to computing loss (fitness) between produced output and the desired one. The DNN's weights are optimized by computing gradient loss value with respect to every weight.
+
+There are two major modes of DNNs training. The first it to learn on diverse data to understand different modalities of it. With this knowledge, a feed-forward with novel inputs would yield an acceptable result \cite{dnn:gan14, dnn:gaugan19, dnn:stylegan-v1-19}. Although time of inference is much smaller than of training, it's still rarely real-time, because such generalization requires a substantial number of learnable parameters. Another approach is optimization-based. A DNN is trained only on a narrow domain of the data, requiring fewer parameters to fit. Every novel domain needs training of a separate model. 
+
+Next, we'll review relevant advances of DNN research for image synthesis. \textit{Multi-Layer Perceptron} (MLP) is a fully-connected neural network, where layers compute weighted sums of a previous layer, and transform sums by a non-linear function \cite{aux:activation18}. MLP is known to be a universal function approximator \cite{dnn:mlp89}, yet high accuracy requires lots of parameters. Still, the research community has found it powerful to use MLPs as an implicit 3D scene representation, and then synthesizing the images using deterministic algorithms, such as ray casting \cite{dnn:scene-repr19}. This idea evolved into \textit{neural radience fields} (NeRF, \cite{dnn:nerf20}), where MLP maps any scene point $(x, y, z)$ and view angle $(\theta, \phi)$ to its color $(r, g, b)$ and volume density $\sigma$. The method can model complex materials and reflections from novel views of static scenes, but takes seconds to query the volume to render an image. It's also suitable for reconstruction of dynamic objects, such as humans\cite{dnn:phorhum22}.
+
+Large MLPs are prone to overfitting, i.e. that they can memorize perfect solutions to the training data and fail to generalize the novel data. \textit{Convolutional Neural Networks} (CNN) revolutionized \cite{aux:cnn98, dnn:alexnet12} image processing with fewer parameters and better generalization. There, a series of 2D convolution operations is applied, that compute weighted sums over input tensors with a small-sized learnable matrix in a sliding-window manner. In MLPs the same data in different places on an image is processed with different weights. CNNs are invariant to spatial shifts, but may have small receptive field - i.e. size of recognized patterns limited by kernel size. Many notable DNNs apply convolutional layers, e.g. AlexNet\cite{dnn:alexnet12} ResNet\cite{dnn:resnet16}, VGG\cite{dnn:vgg14}, U-Net\cite{dnn:unet15}.
+
+\textit{Generative Adversarial Networks} (GAN,  \cite{dnn:gan14}) is an optimization framework for DNNs that advanced image synthesis a lot since CNNs. In essence, it represents a competing game. A generator network $G$ learns the data distribution. A discriminator network $D$ learns to classify input as either real observation, or produced by $G$ (fake). Importantly, the losses for $G$ don't need to measure similarity of the real and generated data, it's optimize $G$ to minimize accuracy of $D$, by making more realistic fakes. Ever since, many GAN models were proposed \cite{survey:gans:18}, the most notable of which is StyleGAN \cite{dnn:stylegan-v1-19,dnn:stylegan-v2-20,dnn:stylegan-v3-21} that is able to generate artificial high-resolution images of human faces, but far from real-time inference and rich articulation. Apart from that, GANs can be a part of architecture to generate any data at training time and optimize with respect to it \cite{dnn:stylepeople21, dnn:hyperstyle21}.
+
+Speaking of DNN optimization, it's desirable to prevent overfitting and at the same time speed up convergence of results to the optimum (escaping underfitting). Overfitting can be prevented with more diverse real data, or by making the existing data diverse via augmenting, e.g. replicating data with varying color, erased content, affine transformations. Also, regularization of weights can be applied to make training harder, e.g. dropout\cite{aux:dropout14} -- random nullifying of activation values; or weight decay\cite{aux:adamw17} -- small decrease of weights towards 0 absolute value on every optimization step.
+
+The reason of underfitting can be a deficit parameters number to fit the data. Also, a covariate shift can be frequently observed, e.g. training and novel (test) data may have slightly different distributions, or even activations of internal layers may have different distributions after updating weights of a network. To compensate the shift, normalization techniques are applied. Batch Normalization (BN, \cite{dnn:bn15}) algorithm during training normalizes intermediate activations to the mean and variance of the whole batch of data, see Formula \ref{lit:eq:bn}. Here $\gamma$ and $\beta$ are learned vectors of same size as number of input channels. Besides, the batch statistics are accumulated on each step with exponential averaging, so that during inference batches of any size could be processed. Instance Normalization (IN, \cite{dnn:in16}) follows the same formula, but the statistics are computed over each sample, rather than a batch of samples. These and other normalization schemes may increase DNNs convergence speed and reduce sensitivity to hyperparameters.
+\begin{equation}
+	\setlength\abovedisplayskip{2pt}y = \frac{x - \mathrm{E}[x]}{\sqrt{\mathrm{Var}[x] + \epsilon}} * \gamma + \beta
+	\setlength\belowdisplayskip{2pt}
+	\label{lit:eq:bn}
+\end{equation}
+
+There is a branch of research called \textit{deferred neural rendering}, where 3D meshes of objects are rendered with a neural texture -- a tensor, that unlike usual textures with 3 color channels (RGB), has generally $C$ channels \cite{dnn:deferred19}. A DNN is trained to map this neural image to a colorful RGB image with segmentation (RGBS/RGBA), see Figure \ref{lit:fig:stylepeople}. The motivation is to give a clue to the DNN on what to synthesize, and to optimize the neural texture to implicitly model specular properties of real materials. Also a coarse mesh of the object can be used, that doesn't model small details, and the DNN will have to put information into the neural texture about reconstruction of these details \cite{dnn:stylepeople21, dnn:anr21}. Crucially, the algorithm that renders the mesh with the neural texture has to be differentiable \cite{survey:diff-render20}, to optimize the texture.
+
+This thesis focuses on human avatars neural rendering, i.e. recovering of photo-realistic appearance, and modeling movements of limbs, face, hair, clothes. The reconstruction may cover the full-body \cite{dnn:fb-cloth-avatar21, dnn:stylepeople21, dnn:anr21}, upper-body \cite{dnn:upper-avatar21}, or only face of a person \cite{dnn:volumetric-primitives21, dnn:hyperstyle21}. The source data may vary, e.g. a single frontal photo (one-shot avatar), multiple photos from sides (few-shot avatar), a video sequence (video-based avatar). Either can be captured on a monocular camera\cite{dnn:stylepeople21}, stereo camera\cite{dnn:stereo-avatars11}, multiple cameras\cite{dnn:volumetric-primitives21, dnn:textured-avatars19}; with or without camera calibration parameters (intrinsics as in Formula \ref{lit:eq:intrinsic}). Images alone impose depth ambiguity, i.e. the true size of objects on an image is unknown. Depending on proximity to the camera, they appear smaller or bigger. It can be resolved with depth sensor information \cite{dnn:depth-avatar11}, or by scanning 3D meshes of objects \cite{dnn:phorhum22}, both requiring expensive equipment. Thus, it's desired to make realistic avatars from common data in-the-wild -- a few images or videos taken on a monocular uncalibrated camera. The task is ill-posed and combining quality with real-time inference is challenging. That said, photo-realism isn't achieved yet. 
+
+We follow StylePeople \cite{dnn:stylepeople21} architecture as a baseline for this thesis. It's based on deferred neural rendering, as described above (see Figure \ref{lit:fig:stylepeople}). The input of a neural renderer network is a rasterized image of a generic human body mesh, that doesn't contain any personal details, such as facial features, hair, clothes. It's rasterized with a neural texture tensor, that has usually between 4 and 16 channels. Feeding this "neural" image through the renderer, the personal features are filled in, and colorful image is returned, along with body contour segmentation. Both neural renderer and neural texture are jointly optimized using image-based losses (more details in Section \ref{lit:metrics}), including an adversarial loss using a discriminator network (see the paragraph on GANs above). 
+
+The neural renderer's architecture is a CNN called U-Net \cite{dnn:unet15}, consisting of an encoder and decoder part. In encoder, input is gradually down-scaled and processed with convolutional filters. In the decoder part the input data and corresponding encoder layer's output are further processed and gradually up-scaled to the original resolution. The resulting output is fed through color and segmentation "heads" to make the final RGBA image. Commonly to improve training, the encoder part is replaced with a powerful CNN backbone, in our case ResNet\cite{dnn:resnet-unet20,dnn:resnet16}. The discriminator's architecture is exactly as in StyleGANv2 \cite{dnn:stylegan-v2-20}, the details of which are irrelevant for this work.
+
+The generic human body model used in StylePeople is \textit{Skinned Multi-Person Linear Model - Expressive} (SMPL-X \cite{dnn:smplx19}, derived from \cite{dnn:smpl15, dnn:smplify16}). It allows representing a variety of human bodies, including expressive faces and hands as 3D triangular meshes with $N = 10475$ vertices, and $K = 54$ joints for limbs, face and fingers (See Figure \ref{lit:fig:smplx}). It does so by learning bodies distribution from many 3D scans of people. A particular body shape is derived as a linear combination of learned body blend shapes $\mathcal{S}=[S_1, ..., S_{\lvert \beta \rvert}] \in \mathbb{R}^{3 N \times \lvert \beta \rvert}$, where $\beta$ is vector of linear coefficients. The body blend shapes are orthonormal principle components of the learned mesh vertex displacements. Typically, about 10 body shape components are enough for reconstruction of any body constitution. Face vertices have their own blend shapes $\mathcal{E}=[\mathcal{E}_1, ..., \mathcal{E}_{\lvert \psi \rvert}]$, combined with $\psi$ coefficients, similarly about 10 is usually enough.
+
+Body mesh can be posed using learned orthonormal components $\mathcal{P}=[P_1, ..., P_{9K}] \in \mathbb{R}^{3 N \times 9 K}$ of vertex displacement with respect to a pose. The pose is defined by axis aligned rotations of body joints $\theta$ ($\lvert \theta \rvert = 3 K$). It's then expanded into rotation matrices $K \times 3 \times 3$ using Rodrigues formula \cite{aux:rodrigues11}, notated further as $R : \mathbb{R}^{\lvert \theta \rvert} \rightarrow \mathbb{R}^{9 K}$. The computed body shape offsets, face shape offsets and pose offsets are simply added to an average body mesh $\bar{T}$ in a default pose $\theta^{*}$. Formally, a posed triangular mesh $T_p$ can be obtained as:
+
+\setlength\abovedisplayskip{0pt}
+\noindent
+\begin{equation}
+	\setlength\abovedisplayskip{0pt} T_p(\beta, \theta, \psi) = \bar{T} + B_S(\beta; \mathcal{S}) + B_E(\psi; \mathcal{E}) + B_P(\theta; \mathcal{P})
+\end{equation}
+\begin{equation}
+	B_S(\beta; \mathcal{S}) = \sum_{n=1}^{\lvert \beta \rvert}\beta_n S_n, 
+	\quad
+	B_E(\psi; \mathcal{E}) = \sum_{n=1}^{\lvert \psi \rvert}\psi_n \mathcal{E}_n
+	\quad
+	B_P(\theta; \mathcal{P}) = \sum_{n=1}^{9K} \left( R(\theta)_n - R(\theta^{*})_n \right) P_n
+\end{equation}
+\setlength\belowdisplayskip{0pt} 
+
+SMPL-X also solves issues of mesh deformations and self-intersections, e.g. in poses with bent arms or rotated neck. However, it's computationally expensive to compute and may be skipped, since the neural rendering may handle these artifacts. SMPL-X also proposes an algorithm for optimization-based fitting of the body model to a single image, which is used in StylePeople too. 
+
+\begin{figure}[h!]
+	%\fboxrule=2pt
+	\centering
+	\begin{subfigure}[b]{0.39\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{\imgfp/smplx}
+		\caption{}
+		\label{lit:fig:smplx}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.60\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{\imgfp/stylep}
+		\caption{}
+		\label{lit:fig:stylepeople}
+	\end{subfigure}
+	\label{lit:fig:avatars}
+	\caption{(\protect\subref{lit:fig:smplx}) SMPL-X body model results. Joints are predicted in image space, then body shape and 3D pose are fit to maximize alignment with the source image. The final mesh is generic, lacking person-specific features as hair and clothes. (\protect\subref{lit:fig:stylepeople}) StylePeople data flow. SMPL-X body mesh is rasterized with the neural texture, the image is then refined by a neural renderer, to fill in the person's appearance, clothes, hair. A discriminator network adds supervision to the renderer, by classifying generated and real images of the person. Images adapted from \cite{dnn:smplx19} and \cite{dnn:stylepeople21}.}
+\end{figure}
 
 \section{Metrics of image similarity}
 \label{lit:metrics}
 
-For comparison of real and synthesized, many metrics can be applied. Those that are differentiable and fast to compute, are usually used as training losses, by minimizing which the DNN learns how to generate images similar to the real. The next description will follow the notation: $\bmr{f}$ - a fake synthesized image, $\bmr{r}$ - a real image, $\bmr{f}_{segm}$/$\bmr{r}_{segm}$ are segmentation masks for fake and real images respectively, $\bmr{A_f}$/$\bmr{A_r}$ are intermediate DNN layers activations when processing fake and real images respectively.
+For comparison of real and synthesized images, many metrics can be applied. Those that are differentiable and fast to compute, are usually used as training losses, by minimizing which the DNN learns how to generate images similar to the real. The next description will follow the notation: $\bmr{f}$ - a fake synthesized image, $\bmr{r}$ - a real image, $\bmr{f}_{segm}$/$\bmr{r}_{segm}$ - their segmentation masks, $\bmr{A_f}$/$\bmr{A_r}$ - intermediate DNN layers activations when processing fake and real images respectively.
 
-\textit{Mean Absolute Error} (MAE or L1, ideal value 0, \cite{metric:l1-95}) measures absolute differences between corresponding pixels. It simplifies training process, by forcing the pixels to be the same, but doesn't capture many image degradation like blur, warping, etc: 
+\textit{Mean Absolute Error} (MAE or L1 \cite{metric:l1-95}, ideal value 0) measures absolute differences between corresponding pixels. It simplifies the training process, by pushing pixels to equality, but doesn't capture many image degradation effects like blur, warping, etc: 
 \begin{equation}
-	\setlength\abovedisplayskip{0pt} 
-	\text{MAE}(\bmr{f}, \bmr{r}) = \frac{1}{N}\sum_{i=1}^{N}\lvert \bmr{f}_i - \bmr{r}_i \rvert \in [0, +\infty] \setlength\belowdisplayskip{0pt}
+	\setlength\abovedisplayskip{2pt}\text{MAE}(\bmr{f}, \bmr{r}) = \frac{1}{N}\sum_{i=1}^{N}\lvert \bmr{f}_i - \bmr{r}_i \rvert \in [0, +\infty]\setlength\belowdisplayskip{2pt}
 \end{equation}
 
-\textit{Mean Squared Error} (MSE or L2, ideal value 0, \cite{metric:l1-95}) measures squared differences between corresponding pixels. In terms of image comparison, similar to MAE. However, it has smoother values distribution, and penalizes high differences much more, which is sometimes harmful. For example, a single pixel may be very different, but it's hardly seen by a human, thus should not necessarily be penalized. 
+\textit{Mean Squared Error} (MSE or L2 \cite{metric:l1-95}, ideal value 0) measures squared differences between corresponding pixels. In terms of image comparison, similar to MAE. However, it has smoother values distribution, and penalizes high differences much more, which is sometimes harmful. For example, a single pixel may be very different, but it's hardly seen by a human, thus should not be necessarily penalized. 
 \begin{equation}
-	\setlength\abovedisplayskip{0pt} 
-	\text{MSE}(\bmr{f}, \bmr{r}) = \frac{1}{N}\sum_{i=1}^{N}(\bmr{f}_i - \bmr{r}_i)^2 \in [0, +\infty] \setlength\belowdisplayskip{0pt}
+	\setlength\abovedisplayskip{2pt}\text{MSE}(\bmr{f}, \bmr{r}) = \frac{1}{N}\sum_{i=1}^{N}(\bmr{f}_i - \bmr{r}_i)^2 \in [0, +\infty]\setlength\belowdisplayskip{2pt}
 \end{equation}
 
-\textit{Learned Perceptual Image Patch Similarity} (LPIPS, ideal value 0, \cite{metric:lpips18}) is based on an observation, that image-based neural networks (commonly VGG \cite{dnn:vgg14}) tend to learn structured patterns on images inside intermediate weights tensors. Given a new image, activations of the network will contain a proportion of those patterns that can be found on the image. Thus, we could infer such network with fake and real images, and compare activations. They should be identical, and such loss is applied during training. The metric is computed as an average MSE distance between corresponding activations (also normalized by the tensors size to equalize contribution of deep layers).
+\textit{Learned Perceptual Image Patch Similarity} (LPIPS \cite{metric:lpips18}, ideal value 0) is based on an observation, that image-based neural networks (commonly VGG \cite{dnn:vgg14}) tend to learn inside their weights structured patterns from images. Given a new image, activations of the network will contain a proportion of those patterns that can be found on the image. Thus, we could infer such network with fake and real images, and compare activations. If they're identical, then the original images are perceptually similar on a global level. The difference in activations is applied as a loss during training. The metric is computed as an average MSE distance between corresponding activations (also normalized by the tensors size to equalize contribution of deep layers).
 \begin{equation}
 	\setlength\abovedisplayskip{0pt} 
 	\text{LPIPS}(\bmr{f}, \bmr{r}) = \frac{1}{L}\sum_{l=1}^L \frac{1}{\text{size}(\bmr{A_f}^l)}\text{MSE}(\bmr{A_f}^l, \bmr{A_r}^l) \in [0, +\infty], L \text{ is number of VGG layers} \setlength\belowdisplayskip{0pt}
@@ -172,7 +207,7 @@ For comparison of real and synthesized, many metrics can be applied. Those that 
 \end{equation}
 where $C_1 = (K_1L)^2$, $C_2 = (K_2L)^2$,  $L$ is a range of values stored in pixel channels (usually it's 1 for channels in floating-point format, or 255 for byte channel format), $K_1$ and $K_2$ are arbitrary constants to ensure numerical stability for near-zero denominator. SSIM is usually computed in a $11 \times 11$ sliding window and averaged over the whole image. It can detect degradation due to noise, but might be insensitive to blur and color shift.
 
-\textit{Multi-Scale Structural Similarity} (MS-SSIM, ideal value 1\cite{metric:msssim03}) is an extension of SSIM, but contrast and structure terms are computed on multiple scales, i.e. the original images are processed with a low-pass filter and downsampled by a factor of 2, a total of $M$ times. All the computed multi-scale components are multiplied to the metric. The metric was shown to be same or better than SSIM in detecting many types of distortions:
+\textit{Multi-Scale Structural Similarity} (MS-SSIM \cite{metric:msssim03}, ideal value 1) is an extension of SSIM, but contrast and structure terms are computed on multiple scales, i.e. the original images are processed with a low-pass filter and downsampled by a factor of 2, a total of $M$ times. All the computed multi-scale components are multiplied to the metric. The metric was shown to be the same or better than SSIM in detecting many types of distortions:
 \begin{equation}
 	\setlength\abovedisplayskip{0pt} 
 	\text{MS-SSIM}(\bmr{f}, \bmr{r}) = 
@@ -183,13 +218,13 @@ where $C_1 = (K_1L)^2$, $C_2 = (K_2L)^2$,  $L$ is a range of values stored in pi
 \end{equation}
 
 	
-\textit{Peak Signal-to-Noise ratio} (PSNR, ideal value $+\infty$, \cite{metric:psnr13}) metric comes from signal processing theory. It captures a ratio of the maximum value in an noise-free signal to the average noise magnitude (can be captured by MSE). The metric indeed helps to detect noise levels, but it's much less useful as image similarity measure than other metrics, such as SSIM.
+\textit{Peak Signal-to-Noise ratio} (PSNR \cite{metric:psnr13}, ideal value $+\infty$) metric comes from signal processing theory. It captures a ratio of the maximum value in an noise-free signal to the average noise magnitude (can be captured by MSE). The metric indeed helps to detect noise levels, but it's much less useful as image similarity measure than other metrics, such as SSIM.
 \begin{equation}
 	\setlength\abovedisplayskip{0pt} 
 	\text{PSNR}(\bmr{f}, \bmr{r}) = 20 \cdot \log_{10} \left( \max(\bmr{r}) \right) - 10 \cdot \log_{10}\left( \text{MSE}(\bmr{f}, \bmr{r}) \right) \in \mathbb{R} \setlength\belowdisplayskip{0pt} 
 \end{equation}
 	
-\textit{Adversarial} loss (GAN-loss, ideal value 0.5, \cite{dnn:gan14}) is used as a part of Generator - Discriminator DNN training architecture. It measures how well the discriminator learned to distinguish real images from fake (by assigning probabilities of realism: 0 is fake, 1 is real). The generator's task is to synthesize images that cannot be detected by the discriminator. Ideally, discriminator should report probability 0.5 on average, indicating that it essentially reports a random guess.
+\textit{Adversarial} loss (GAN-loss \cite{dnn:gan14}, ideal value 0.5) is used as a part of Generator - Discriminator DNN training architecture. It measures how well the discriminator learned to distinguish real images from fake (by assigning probabilities of realism: 0 is fake, 1 is real). The generator's task is to synthesize images that cannot be detected by the discriminator. Ideally, discriminator should report probability 0.5 on average, indicating that it essentially reports a random guess.
 
 \textit{Feature matching} loss (ideal value 0, \cite{metric:fm16}) is analogous to LPIPS, but the intermediate activations on fake and real images are taken not from external image network, but from discriminator network. The motivation is that the generator network will learn to produce images that are perceived as real by the discriminator.
 
@@ -242,9 +277,9 @@ Since many operations in neural networks can be computed using dot products of v
 \end{split}
 \end{align} The last two terms shown in blue can be pre-computed for the whole DNN, and merged with the bias vector $\bm{b}$ \cite{dnn:quant-white21}. However since there's still an extra overhead from computation of $\bm{x}_{\mathtt{int}} z_{\bm{w}}$, specifically for weights it's common to use symmetric quantization, where floating-point values are mapped to $(-2^{b-1}, 2^{b-1}-1)$ integer range, with floating-point 0 mapped precisely to integer 0, thus making $z_{\bm{w}} = 0$, and eliminating the overhead. 
 
-Typically, a post training quantization (PTQ) is applied to weights and activations of a DNN, it's easy to apply and automatically get performance benefits of quantization. On the other hand, if precision of the outputs is a priority, a  quantization-aware training (QAT) \cite{quant:qat18} approach is used. Here architecture tweaks are required to do quantized inference and weights updates, with an idea to make the model learn to deal with quantization imprecision. As a downside, it enlarges training time and adds issues with analytic gradients back-propagation through rounded values \cite{quant:straight-through-estimator13}.
+Typically, a post training quantization (PTQ) is applied to weights and activations of a DNN, because a complete experiment can be quantized with via a provided software tool, and automatically be sped up from quantized computations. On the other hand, if precision of the outputs is a priority, a  quantization-aware training (QAT) \cite{quant:qat18} approach is used. Here architecture tweaks are required to do quantized inference and weights updates, with an idea to make the model learn to deal with the quantization imprecision. As a downside, it enlarges training time and adds issues with analytic gradients back-propagation through rounded values \cite{quant:straight-through-estimator13}.
 
-Usually, the uniform quantization is appealing for simplicity of hardware implementation. However, the quantization range defined by constants $s$ and $z$ may be selected too wide, e.g. min-max range of values in a tensor where outliers are present. Thus, a lot of precision will be lost as different numbers will be mapped to the same integer value. Instead, the range can be selected to minimize a mean squared error with respect to the original floating-point values \cite{quant:mse19, speed:quant-error-analysis15}. If hardware supports it, instead of defining per-tensor quantization constants, they can be defined per-channel for more precision. Alternatively, a Cross Layer Equalization \cite{quant:cle20} can be applied to re-parameterize quantized weights and biases, compensating the channels' discrepancy of ranges, without adding runtime overhead. A non-uniform quantization can also be used to devote more precision to near mean values, and less to the outliers, but the hardware support of it is very limited \cite{quant:non-uniform21}.
+Usually, the uniform quantization is appealing for simplicity of hardware implementation. However, the quantization range defined by constants $s$ and $z$ may be selected too wide, e.g. min-max range of values in a tensor with existing outliers. Thus, a lot of precision will be lost as different numbers will be mapped to the same integer value. Instead, the range can be selected to minimize MSE with respect to the original floating-point values \cite{quant:mse19, speed:quant-error-analysis15}. If hardware supports it, instead of defining per-tensor quantization constants, they can be defined per-channel for more precision. Alternatively, a Cross Layer Equalization \cite{quant:cle20} can be applied to re-parameterize quantized weights and biases, compensating the channels' discrepancy of ranges, without adding runtime overhead. A non-uniform quantization can also be used to devote more precision to near mean values, and less to the outliers, but the hardware support of it is very limited \cite{quant:non-uniform21}.
 
 Moving on, DNNs also suffer from computational inefficiency, when similar input data leads to computing identical activations of layers. The DNN's architecture can be designed to cache and reuse these values. It can be applied to video stream processing or synthesis, where multiple consecutive frames have similarity \cite{aux:reusing19}. Additionally, filters of CNNs may frequently contain repeated weights after being quantized. Thus, as a filter slides over the data, certain dot-products can be reused \cite{dnn:reusing18}. While having a potential to speed up a certain DNN architecture, it requires immense manual hand-craft, which slows down active research and experimentation.
 
@@ -259,7 +294,7 @@ Traditional desktop computers have hardware, where components are designed to be
 
 The latest chip called Qualcomm Snapdragon 888 consists of an 8-core CPU, a GPU with mixed precision AI inference support (vectorized half-float/full-float), a sensing processor, and a Digital Signal Processor (DSP). The latter is especially optimized for parallel integer computations, which are common in real-time 1D or 2D digital signal processing (e.g. Fast Fourier Transform algorithm). It supports parallel scalar, vector and tensor operations, while retaining state-of-the-art low level of power usage. Besides, it's possible to use DSP as an AI accelerator to infer a quantized DNN, and get massive benefit in inference speed and energy consumption. All accelerators of the SoC are located on the same chip and have access to shared memory, allowing to reduce overhead of data transfer (which is common in desktop systems). The claimed performance of the combined accelerators is 26 TOPS (Trillion Operations per Second). The platform also offers a triple-core chip for multithreaded camera processing with up to 2.7 Gigapixels per second of throughput \cite{soc:snapdragon888}.
 
-Importantly for this work, Qualcomm Snapdragon's DSP works with tensors layout called BHWC (Batch-Height-Width-Channel), that is, data of a single spatial element (pixel) is stored contiguously (e.g. $N$ values for pixel 1 are followed by $N$ values for pixel 2, and so on). This will be utilized during real-time input data generation for the DNN researched in this work. The other possible format is BCHW (Batch-Channel-Height-Width), which is usually used in software libraries for DNN training on desktop computers.
+Importantly for this work, Qualcomm Snapdragon's DSP works with tensors layout called BHWC (Batch-Height-Width-Channel), that is, the data of a single spatial element (pixel) is stored contiguously (e.g. $C$ values for a pixel 1 are followed by $C$ values for a pixel 2, and so on). This will be utilized during real-time input data generation for the DNN researched in this work. The other possible format is BCHW (Batch-Channel-Height-Width), which is usually used in software libraries for DNN training on desktop computers.
 
 As well as usual quantization approaches described in Section \ref{lit:dnn-speedup}, for Snapdragon DSP a data-free quantization algorithm is implemented, which doesn't require estimating quantization ranges from example input dataset \cite{speed:datafreequant19}. It features high quantization speed, which used to be critical with big datasets, and also achieves near-identical outputs' quality for quantized DNNs.
 
