@@ -296,7 +296,8 @@ on \@thesisdate
 \usepackage{kantlipsum}
 
 %%%% A.LARIONOV's code
-\clubpenalty10000
+\widowpenalty10000
+\clubpenalty100000
 \usepackage{bm}
 \usepackage{tabularx}
 \usepackage{algorithm}
