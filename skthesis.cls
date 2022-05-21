@@ -298,6 +298,7 @@ on \@thesisdate
 %%%% A.LARIONOV's code
 \widowpenalty10000
 \clubpenalty100000
+\usepackage{changepage}
 \usepackage{bm}
 \usepackage{tabularx}
 \usepackage{algorithm}
@@ -317,6 +318,17 @@ on \@thesisdate
 }
 
 \newcommand{\bmr}[1]{\bm{\mathrm{#1}}}
+
+\newenvironment{changemargin}[2]{%
+\begin{list}{}{%
+\setlength{\topsep}{0pt}%
+\setlength{\leftmargin}{#1}%
+\setlength{\rightmargin}{#2}%
+\setlength{\listparindent}{\parindent}%
+\setlength{\itemindent}{\parindent}%
+\setlength{\parsep}{\parskip}%
+}%
+\item[]}{\end{list}}
 
 %\renewcommand{\cite}[1]{\hypersetup{citecolor=red}\cite{#1}}
 

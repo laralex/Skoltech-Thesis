@@ -22,62 +22,76 @@ The described mobile application for Android OS has been developed from scratch 
 	\item implementing frustum cropping w.r.t. camera angle relative to the rendered avatar position.
 \end{itemize}
 
-The research on avatars quality in both far-out and close-up scales has been carried out in isolation from research directions of the other lab members. All the presented experiments with the neural network training were implemented by the author. This includes implementation of the camera-space affine augmentations module in Python. However, many of subsequent conclusions and further ideas were suggested by the thesis supervisors and the lab members.
+The research on avatars quality in both far-out and close-up scales has been carried out in isolation from research directions of the other lab members. All the presented experiments with the neural network training were implemented by the author. Among other things this includes: implementation of the PyTorch module for camera-space affine augmentations, retrieval of demonstrative images for the appendix. Many of experiment conclusions and further ideas were suggested by the thesis supervisors and the lab members.
  
 \newpage
 \section*{\centering Abbreviations}
 \addcontentsline{toc}{chapter}{Abbreviations}
 
-\begin{table}[!ht]
-	\vspace{-1em}
-	\centering
-	\begin{tabular}{>{\bf}r l}
-		2D & Two Dimensional \\
-		3D & Three Dimensional \\
-		AR & Augmented Reality \\
-		VR & Virtual Reality \\
-		AI & Artificial Intelligence \\
-		DNN & Deep Neural Network \\
-		ML & Machine Learning \\
-		CNN & Convolutional Neural Network \\
-		GAN & Generative Adversarial Network \\
-		MAE (L1) & Mean Squared Error \\
-		MSE (L2) & Mean Squared Error \\
-		SSIM & Structural Similarity \\
-		MS-SSIM & Multi-Scale Structural Similarity \\
-		PSNR & Peak Signal-to-Noise ratio \\
-		SoC & System-on-a-chip \\
-		CPU & Central Processing Unit \\
-		GPU & Graphics Processing Unit \\
-		NPU & Neural Processing Unit \\
-		TPU & Tensor Processing Unit \\
-		DSP & Digital Signal Processor \\
-		API & Application Programming Interface \\
-		SDK & Software Development Kit \\
-		ADB & Android Debug Bridge \\
-		OpenGL & Open Graphics Library \\
-		OpenCL & Open Computing Language \\
-		ONNX & Open Neural Network Exchange \\
-		SNPE & Snapdragon Neural Processing Engine \\
-		RGB & Red-Green-Blue (pixel channels) \\
-		RGBA & Red-Green-Blue-Alpha \\
-		RGBS & Red-Green-Blue-Segmentation \\
-		BCHW & Batch-Channel-Height-Width \\
-		BHWC & Batch-Height-Width-Channel \\
-		SMPL & Skinned Multi-Person Linear model \cite{dnn:smpl15} \\
-		SMPL-X & Skinned Multi-Person Linear model - Expressive \cite{dnn:smplx19}\\
-		BN & Batch normalization \\
-		IN & Instance normalization \\
-		%FB & Full-body \\
-		FPS (fps) & Frames per second\\
-		MS (ms) & Milliseconds \\
-		FP16 & Half-Float, Floating point number of 16 bits \\
-		FP32 & Full-Float, Floating point number of 32 bits \\
-		INT8 & Integer number of 8 bits \\
-		INT16 & Integer number of 16 bits \\
-		INT32 & Integer number of 32 bits \\
-		PQT & Post training quantization \\
-		QAT & Quantization-aware training \\
-		MLP & Multi-layer perceptron \\
-	\end{tabular}
-\end{table}
+%\makebox[0pt][l]{\parbox{1.0\textwidth}{%
+%\begin{minipage}[s]{0.4\linewidth}
+\begin{changemargin}{-1.5cm}{0cm}
+\begin{tabular}{@{}>{\bf}r l}
+	2D & Two Dimensional \\
+	3D & Three Dimensional \\
+	ADB & Android Debug Bridge \\
+	AI & Artificial Intelligence \\
+	API & Application Programming Interface \\
+	AR & Augmented Reality \\
+	BCHW & Batch-Channel-Height-Width \\
+	BHWC & Batch-Height-Width-Channel \\
+	BN & Batch normalization \\
+	CNN & Convolutional Neural Network \\
+	CPU & Central Processing Unit \\
+	DNN & Deep Neural Network \\
+	DSP & Digital Signal Processor \\
+	FB & Full-body \\
+	FP16 & 16 bits floating point number \\
+	FP32 & 32 bits floating point number \\
+	FPS & Frames per second\\
+	GAN & Generative Adversarial Network \\
+	GPU & Graphics Processing Unit \\
+	IN & Instance normalization \\
+	INT16 & Integer number of 16 bits \\
+	INT32 & Integer number of 32 bits \\
+	INT8 & Integer number of 8 bits \\
+	KIMGS & Kilo-images, 1000 images \\
+	L1 & Synonym of Mean Absolute Error \\
+	L2 & Synonym of Mean Squared Error \\
+\end{tabular}
+%\end{minipage}
+\quad
+%\begin{minipage}[s]{.4\linewidth}
+%\vspace{-1em}
+%Rcentering
+\begin{tabular}{>{\bf}r l@{}}
+	MAE & Mean Absolute Error \\
+	ML & Machine Learning \\
+	MLP & Multi-layer perceptron \\
+	MS (ms) & Milliseconds \\
+	MS-SSIM & Multi-Scale Structural Similarity \\
+	MSE & Mean Squared Error \\
+	NPU & Neural Processing Unit \\
+	ONNX & Open Neural Network Exchange \\
+	OpenCL & Open Computing Language \\
+	OpenGL & Open Graphics Library \\
+	PQT & Post training quantization \\
+	PSNR & Peak Signal-to-Noise ratio \\
+	QAT & Quantization-aware training \\
+	RGB & Red-Green-Blue (pixel channels) \\
+	RGBA & Red-Green-Blue-Alpha \\
+	RGBS & Red-Green-Blue-Segmentation \\
+	SDK & Software Development Kit \\
+	SMPL & Skinned Multi-Person Linear model \\
+	SMPL-X & SMPL - Expressive \cite{dnn:smplx19}\\
+	SNPE & Snapdragon Neural Processing Engine \\
+	SSIM & Structural Similarity \\
+	SoC & System-on-a-chip \\
+	TPU & Tensor Processing Unit \\
+	UB & Upper-body \\
+	VR & Virtual Reality \\
+\end{tabular}
+\end{changemargin}
+
+%\end{minipage}
+%}}
