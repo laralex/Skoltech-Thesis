@@ -296,7 +296,7 @@ on \@thesisdate
 \usepackage{kantlipsum}
 
 %%%% A.LARIONOV's code
-\widowpenalty10000
+\widowpenalty100000
 \clubpenalty100000
 \usepackage{changepage}
 \usepackage{bm}

@@ -152,6 +152,7 @@ SMPL-X also solves issues of mesh deformations and self-intersections, e.g. in p
 
 \begin{figure}[h!]
 	%\fboxrule=2pt
+	\setlength\abovedisplayskip{0pt}
 	\centering
 	\begin{subfigure}[b]{0.39\textwidth}
 		\centering
@@ -167,9 +168,11 @@ SMPL-X also solves issues of mesh deformations and self-intersections, e.g. in p
 		\label{lit:fig:stylepeople}
 	\end{subfigure}
 	\label{lit:fig:avatars}
+	\vspace*{-2em}
 	\caption{(\protect\subref{lit:fig:smplx}) SMPL-X body model results. Joints are predicted in image space, then body shape and 3D pose are fit to maximize alignment with the source image. The final mesh is generic, lacking person-specific features as hair and clothes. (\protect\subref{lit:fig:stylepeople}) StylePeople data flow. SMPL-X body mesh is rasterized with the neural texture, the image is then refined by a neural renderer, to fill in the person's appearance, clothes, hair. A discriminator network adds supervision to the renderer, by classifying generated and real images of the person. Images adapted from \cite{dnn:smplx19} and \cite{dnn:stylepeople21}.}
+	\setlength\belowdisplayskip{0pt}
 \end{figure}
-
+\vspace*{-2em}
 \section{Metrics of image similarity}
 \label{lit:metrics}
 
@@ -180,12 +183,12 @@ For comparison of real and synthesized images, many metrics can be applied. Thos
 	\setlength\abovedisplayskip{2pt}\text{MAE}(\bmr{f}, \bmr{r}) = \frac{1}{N}\sum_{i=1}^{N}\lvert \bmr{f}_i - \bmr{r}_i \rvert \in [0, +\infty]\setlength\belowdisplayskip{2pt}
 \end{equation}
 
-\textit{Mean Squared Error} (MSE or L2 \cite{metric:l1-95}, ideal value 0) measures squared differences between corresponding pixels. In terms of image comparison, similar to MAE. However, it has smoother values distribution, and penalizes high differences much more, which is sometimes harmful. For example, a single pixel may be very different, but it's hardly seen by a human, thus should not be necessarily penalized. 
+\textit{Mean Squared Error} (MSE or L2 \cite{metric:l1-95}, ideal value 0) measures squared differences between corresponding pixels. In terms of image comparison, similar to MAE. However, it has smoother values distribution, and penalizes high differences much more. Sometimes such penalization is too harsh, even though perceptually the difference is very small. 
 \begin{equation}
 	\setlength\abovedisplayskip{2pt}\text{MSE}(\bmr{f}, \bmr{r}) = \frac{1}{N}\sum_{i=1}^{N}(\bmr{f}_i - \bmr{r}_i)^2 \in [0, +\infty]\setlength\belowdisplayskip{2pt}
-\end{equation}
+\end{equation} 
 
-\textit{Learned Perceptual Image Patch Similarity} (LPIPS \cite{metric:lpips18}, ideal value 0) is based on an observation, that image-based neural networks (commonly VGG \cite{dnn:vgg14}) tend to learn inside their weights structured patterns from images. Given a new image, activations of the network will contain a proportion of those patterns that can be found on the image. Thus, we could infer such network with fake and real images, and compare activations. If they're identical, then the original images are perceptually similar on a global level. The difference in activations is applied as a loss during training. The metric is computed as an average MSE distance between corresponding activations (also normalized by the tensors size to equalize contribution of deep layers).
+\textit{Learned Perceptual Image Patch Similarity} (LPIPS \cite{metric:lpips18}, ideal value 0) is based on an observation, that image-based neural networks (commonly VGG \cite{dnn:vgg14}, Pix2Pix \cite{dnn:pix2pix17}, AlexNet \cite{dnn:alexnet12}) tend to learn inside their weights structured patterns from images. Given a new image, activations of the network will contain a proportion of those patterns that can be found on the image. Thus, we could infer such network with fake and real images, and compare activations. If they're identical, then the original images are perceptually similar on a global level. The difference in activations is applied as a loss during training. The metric is computed as an average MSE distance between corresponding activations (also normalized by the tensors size to equalize contribution of deep layers).
 \begin{equation}
 	\setlength\abovedisplayskip{0pt} 
 	\text{LPIPS}(\bmr{f}, \bmr{r}) = \frac{1}{L}\sum_{l=1}^L \frac{1}{\text{size}(\bmr{A_f}^l)}\text{MSE}(\bmr{A_f}^l, \bmr{A_r}^l) \in [0, +\infty], L \text{ is number of VGG layers} \setlength\belowdisplayskip{0pt}

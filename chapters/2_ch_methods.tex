@@ -35,8 +35,9 @@ The intermediate conversion to ONNX format is required due to absence of softwar
 
 Preparation of an input tensor for the DNN is a trivially parallel task. In essence, it's a rendering of a human mesh with a multichannel texture. It's suitable for execution on GPU and can be done using OpenGL API or OpenCL API.
 
+Spectral coordinates \cite{aux:spectral10}.
 
-\section{Neural rendering as a mobile application}
+\section{Mobile application development}
 \label{methods:app}
 
 %TODO
@@ -87,7 +88,7 @@ Preparation of an input tensor for the DNN is a trivially parallel task. In esse
 %	\caption{Blah blah example}\label{res:code:example}
 %\end{figure}
 
-\section{Avatars quality on both far-out and close-up scales}\label{methods:zooms}
+\section{Improving quality of synthesized images}\label{methods:zooms}
 
 The baseline DNN architecture \cite{dnn:stylepeople21} proved to be sufficient to render FB images of avatars. However, we found out that the rendering network cannot reliably render parts on the body that were never seen during training, most commonly under boots surface, and top of the head. At best, these places can be rendered as random patches of color, e.g. from clothes or skin. Intuitively it is so, because in these areas the neural texture will contain default values during the whole training process. If the renderer learns quickly enough to map such default values to skin or clothes, the chance is that the texture overall won't move much away from the defaults. Although the unseen parts aren't rendered correctly from reconstruction point of view, it doesn't hurt overall accuracy. On the other hand, there's a chance that the neural texture will significantly move away from the default initialization. Thus, after many epochs the default values contained in the unseen parts will be outliers that the renderer doesn't expect to see. This may trigger it to render abnormal color or fail segmentation prediction. Attempts on dealing with this artifact will be given shortly after.
 
