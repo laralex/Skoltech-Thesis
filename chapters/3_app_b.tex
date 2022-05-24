@@ -8,7 +8,7 @@ In this appendix we present: Section \ref{appb:fig} -- pictures, that additional
 \begin{figure}[!h]
 	\centering
 	\includegraphics[height=10cm]{\imgfp/other/spectral_ntex}
-	\caption{Baseline initialization of a neural texture with $C$ channels, containing $C$ dimensional spectral coordinates of a graph composed from mesh vertices. Notice that in different channels it distinguishes body parts, there's a channel where two legs are colored is an opposite way, similarly for arms, hands, head, upper body, etc. Compared to random initialization, it helps to convey information to the neural renderer about which body part it renders.}
+	\caption{Baseline initialization of a neural texture with $C$ channels, containing $C$ dimensional spectral coordinates of a graph composed from mesh vertices. Notice that in different channels it distinguishes body parts, there is a channel where two legs are colored is an opposite way, similarly for arms, hands, head, upper body, etc. Compared to random initialization, it helps to convey information to the neural renderer about which body part it renders.}
 	\label{fig:spectral_ntex}
 \end{figure}
 \begin{figure}
@@ -69,7 +69,7 @@ In this appendix we present: Section \ref{appb:fig} -- pictures, that additional
 		\caption{}
 		\label{fig:anisotropic}
 	\end{subfigure}
-	\caption{(\protect\subref{fig:mipmap}) An example collation of MIP-maps for a texture. It's repeatedly downscaled by a factor of 2, and each scale is pre-processed with an offline filtering algorithm. During rasterization, if a triangle spans a small area on the image, a particular MIP-map scale is chosed to interpolate the texture values. (\protect\subref{fig:anisotropic}) Anisotropic filtering pre-processes with additional variants for each level of downscales, that are squashed along axes. Images from \href{https://en.wikipedia.org/wiki/Anisotropic_filtering}{en.wikipedia.org/wiki/Anisotropic\_filtering}} 
+	\caption{(\protect\subref{fig:mipmap}) An example collation of MIP-maps for a texture. It is repeatedly downscaled by a factor of 2, and each scale is pre-processed with an offline filtering algorithm. During rasterization, if a triangle spans a small area on the image, a particular MIP-map scale is chosed to interpolate the texture values. (\protect\subref{fig:anisotropic}) Anisotropic filtering pre-processes with additional variants for each level of downscales, that are squashed along axes. Images from \href{https://en.wikipedia.org/wiki/Anisotropic_filtering}{en.wikipedia.org/wiki/Anisotropic\_filtering}} 
 \end{figure}
 \begin{figure}
 	\centering
@@ -118,7 +118,7 @@ In this appendix we present: Section \ref{appb:fig} -- pictures, that additional
 		\caption{}
 		\label{fig:ntex-fixed}
 	\end{subfigure}
-	\caption{(\protect\subref{fig:ntex-grad}) A mask of non-zero gradients for a neural texture after seeing the whole training sequence. It's common that some body parts are never seen during training, e.g. bottom of shoes, top of the head, armpits. (\protect\subref{fig:ntex-artifact}) Example of rendering instability due to that. (\protect\subref{fig:ntex-fixed}) A crude solution is to replace the unseen parts with a texture part that was actually optimized (e.g. a part of legs or skin). Although it solves the particular artifact on feet, it may not be applicable to the head or armpits.}
+	\caption{(\protect\subref{fig:ntex-grad}) A mask of non-zero gradients for a neural texture after seeing the whole training sequence. It is common that some body parts are never seen during training, e.g. bottom of shoes, top of the head, armpits. (\protect\subref{fig:ntex-artifact}) Example of rendering instability due to that. (\protect\subref{fig:ntex-fixed}) A crude solution is to replace the unseen parts with a texture part that was actually optimized (e.g. a part of legs or skin). Although it solves the particular artifact on feet, it may not be applicable to the head or armpits.}
 \end{figure}
 \begin{figure}
 	%\fboxrule=2pt
@@ -143,7 +143,7 @@ In this appendix we present: Section \ref{appb:fig} -- pictures, that additional
 		\caption{}
 		\label{fig:explain_crop_best}
 	\end{subfigure}
-	\caption{Comparison of projection modes. (\protect\subref{fig:explain_crop_joints}) A projection that spans the whole screen (the default mode). It's additionally widened to make square images (as required for the DNN), and a big part of the generated image is wasted -- time was spent on its computing, but these parts are never shown on the screen. Moreover, the input contains a very tiny rasterization of the avatar's body, and unless the neural network was trained to process such small inputs, it may produce visual artifacts (as can be seen on Figure \ref{fig:far_screen_crop}). (\protect\subref{fig:explain_crop_joints}) A dynamic projection crop, that modifies rasterization to always contain the full body in it, regardless of the viewing position. It automatically solves the issues with far-out viewpoints, but still frame parts may be wasted. (\protect\subref{fig:explain_crop_best}) The absolute best dynamic crop that would fit only the part of the body that will be shown on the screen. A fraction of the frame may be wasted to center the body inside the crop. }
+	\caption{Comparison of projection modes. (\protect\subref{fig:explain_crop_joints}) A projection that spans the whole screen (the default mode). It is additionally widened to make square images (as required for the DNN), and a big part of the generated image is wasted -- time was spent on its computing, but these parts are never shown on the screen. Moreover, the input contains a very tiny rasterization of the avatar's body, and unless the neural network was trained to process such small inputs, it may produce visual artifacts (as can be seen on Figure \ref{fig:far_screen_crop}). (\protect\subref{fig:explain_crop_joints}) A dynamic projection crop, that modifies rasterization to always contain the full body in it, regardless of the viewing position. It automatically solves the issues with far-out viewpoints, but still frame parts may be wasted. (\protect\subref{fig:explain_crop_best}) The absolute best dynamic crop that would fit only the part of the body that will be shown on the screen. A fraction of the frame may be wasted to center the body inside the crop. }
 \end{figure}
 \begin{figure}
 	\centering%
