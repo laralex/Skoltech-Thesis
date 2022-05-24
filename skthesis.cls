@@ -399,6 +399,7 @@ on \@thesisdate
 \usepackage{xargs}
 \usepackage{xparse}
 \usepackage{xifthen}% provides \isempty test
+\usepackage{setspace}
 
 % \myfilelisting[<\lstset arguments, e.g. language=XML>]{<fp>}[<\label value>]
 \NewDocumentCommand{\myfilelisting}{D[]{} m d[] d<>}{%
@@ -406,7 +407,7 @@ on \@thesisdate
 	#1,
 	style=myCode,
 	caption=\getlstname\IfValueT{#3}{\label{#3}}
-	\IfValueT{#4}{\hspace{\textwidth}\centering Comment: #4},
+	\IfValueT{#4}{\hspace{\textwidth}\centering\setstretch{1.0}Comment: #4},
 	%title=\getlstname\IfValueT{#3}{\label{#3}},
 	]{#2}
 }

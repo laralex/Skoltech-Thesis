@@ -1,5 +1,8 @@
 \chapter{Images of the experiments}
 In this appendix we present: Section \ref{appb:fig} -- pictures, that additionally illustrate the discussion from chapters on the methods, results and future work; Section \ref{appb:mobile-screenshots} -- screenshots with use of the developed mobile application, and avatars images synthesized on the mobile hardware; Section \ref{appb:exps} -- training and test images; loss and metrics plots of the performed experiments.
+
+\setkeys{Gin}{draft}
+
 \section{Auxiliary illustrations}
 \label{appb:fig}
 \begin{figure}[!h]
@@ -125,6 +128,7 @@ In this appendix we present: Section \ref{appb:fig} -- pictures, that additional
 	\label{fig:multiavatar}%
 	\setlength\belowdisplayskip{0pt}%
 \end{figure}
+
 \clearpage
 \newpage
 
@@ -159,48 +163,66 @@ In this appendix we present: Section \ref{appb:fig} -- pictures, that additional
 \begin{figure}[hb]
 	%\fboxrule=2pt
 	\centering
-%	\begin{subfigure}[b]{0.32\textwidth}
-%		\centering
-		\includegraphics[height=13cm]{\imgfp/mobile_screenshots/jump}%
-%		\caption{}
-		\label{fig:avatar_jump}
-%	\end{subfigure}
-%	\hfill
-%	\begin{subfigure}[b]{0.32\textwidth}
-%		\centering
-%		\includegraphics[width=\linewidth]{\imgfp/mobile_screenshots/screen-crop}
-%		\caption{}
-%		\label{mobile:zoom_screen_crop}
-%	\end{subfigure}
-%	\hfill
-%	\begin{subfigure}[b]{0.32\textwidth}
-%		\centering
-%		\includegraphics[width=\linewidth]{\imgfp/mobile_screenshots/smallest-crop}
-%		\caption{}
-%		\label{mobile:zoom_smallest_crop}
-%	\end{subfigure}
-	\caption{Examples of avatar images in the mobile application. We have predefined animations that can be played with any avatar.}
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{\imgfp/mobile_screenshots/c/jump}%
+		\caption{}
+		\label{fig:mobile_example_jump}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{\imgfp/mobile_screenshots/c/example_egor}
+		\caption{}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{\imgfp/mobile_screenshots/c/example_minsoo}
+		\caption{}
+	\end{subfigure}
+	\vspace{1em}
+		\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{\imgfp/mobile_screenshots/c/example_ilya}%
+		\caption{}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{\imgfp/mobile_screenshots/c/example_renat}
+		\caption{}
+		\label{fig:mobile_example_renat}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{\imgfp/mobile_screenshots/c/tf_effnet_dsp}
+		\caption{}
+		\label{fig:mobile_tf_effent_fail}
+	\end{subfigure}
+	\caption{(\protect\subref{fig:mobile_example_jump}-\protect\subref{fig:mobile_example_renat}) Examples of avatar images in the mobile application. We have predefined animations that can be played with any avatar. (\protect\subref{fig:mobile_tf_effent_fail}) A case of using another backbone for the renderer (EfficientNet \cite{dnn:efficientnetv1-19}), it has worse quality after training, moreover on mobile DSP it fails to synthesize correct segmentation. }
 \end{figure}
 \begin{figure}
 	%\fboxrule=2pt
 	\centering
 	\begin{subfigure}[b]{0.32\textwidth}
 		\centering
-		\includegraphics[width=\linewidth]{\imgfp/mobile_screenshots/far-away-screen-crop}%
+		\includegraphics[width=\linewidth]{\imgfp/mobile_screenshots/c/far-away-screen-crop}%
 		\caption{}
 		\label{fig:far_screen_crop}
 	\end{subfigure}
 	\hfill
 	\begin{subfigure}[b]{0.32\textwidth}
 		\centering
-		\includegraphics[width=\linewidth]{\imgfp/mobile_screenshots/far-away-crop}
+		\includegraphics[width=\linewidth]{\imgfp/mobile_screenshots/c/far-away-crop}
 		\caption{}
 		\label{fig:far_dynamic_crop}
 	\end{subfigure}
 	\hfill
 	\begin{subfigure}[b]{0.32\textwidth}
 		\centering
-		\includegraphics[width=\linewidth]{\imgfp/mobile_screenshots/far-away-crop-debug}
+		\includegraphics[width=\linewidth]{\imgfp/mobile_screenshots/c/far-away-crop-debug}
 		\caption{}
 		\label{fig:far_dynamic_crop_debug}
 	\end{subfigure}
@@ -211,28 +233,30 @@ In this appendix we present: Section \ref{appb:fig} -- pictures, that additional
 	\centering
 	\begin{subfigure}[b]{0.32\textwidth}
 		\centering
-		\includegraphics[width=\linewidth]{\imgfp/mobile_screenshots/inefficient-crop}%
+		\includegraphics[width=\linewidth]{\imgfp/mobile_screenshots/c/crop-joints}%
 		\caption{}
 		\label{fig:zoom_inefficient_crop}
 	\end{subfigure}
 	\hfill
 	\begin{subfigure}[b]{0.32\textwidth}
 		\centering
-		\includegraphics[width=\linewidth]{\imgfp/mobile_screenshots/screen-crop}
+		\includegraphics[width=\linewidth]{\imgfp/mobile_screenshots/c/screen-proj}
 		\caption{}
 		\label{fig:zoom_screen_crop}
 	\end{subfigure}
 	\hfill
 	\begin{subfigure}[b]{0.32\textwidth}
 		\centering
-		\includegraphics[width=\linewidth]{\imgfp/mobile_screenshots/smallest-crop}
+		\includegraphics[width=\linewidth]{\imgfp/mobile_screenshots/c/crop-custom}
 		\caption{}
 		\label{fig:zoom_smallest_crop}
 	\end{subfigure}
-	\caption{Comparison of projection modes in close view. (\protect\subref{mobile:zoom_inefficient_crop}) A projection matrix that spans the whole screen (default mode). Even if the avatar spans almost all the screen, parts of the frame are still being wasted, decreasing possible resolution of the avatar. Some artifacts appear, similarly to what shown on Figure \ref{mobile:far_screen_crop}. (\protect\subref{mobile:zoom_screen_crop}) A dynamic crop around all the joints. A bit higher quality in this scenario, but the crop is similar to full-screen projection. (\protect\subref{fig:zoom_smallest_crop}) A dynamic crop around only seen body parts. Yields the highest quality, since it minimizes the area of wasted space.}
+	\caption{Comparison of projection modes in close view. (\protect\subref{mobile:zoom_inefficient_crop}) A projection matrix that spans the whole screen (default mode). Even if the avatar spans almost all the screen, parts of the frame are still being wasted, decreasing possible resolution of the avatar. (\protect\subref{mobile:zoom_screen_crop}) A dynamic crop around all the joints. A bit higher quality in this scenario, but the crop is similar to full-screen projection. (\protect\subref{fig:zoom_smallest_crop}) A dynamic crop around only seen body parts. Yields the highest quality, since it minimizes the area of wasted space.}
 \end{figure}
 \clearpage
 \newpage
+
+\setkeys{Gin}{draft=false}
 
 \section{Training procedure experiments}
 \label{appb:exps}
