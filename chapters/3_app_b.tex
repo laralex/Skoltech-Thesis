@@ -1,13 +1,13 @@
+\setkeys{Gin}{draft}
 \chapter{Images of the experiments}
 In this appendix we present: Section \ref{appb:fig} -- pictures, that additionally illustrate the discussion from chapters on the methods, results and future work; Section \ref{appb:mobile-screenshots} -- screenshots with use of the developed mobile application, and avatars images synthesized on the mobile hardware; Section \ref{appb:exps} -- training and test images; loss and metrics plots of the performed experiments.
 
-\setkeys{Gin}{draft}
 
 \section{Auxiliary illustrations}
 \label{appb:fig}
 \begin{figure}[!h]
 	\centering
-	\includegraphics[height=10cm]{\imgfp/spectral_ntex}
+	\includegraphics[height=10cm]{\imgfp/other/spectral_ntex}
 	\caption{Baseline initialization of a neural texture with $C$ channels, containing $C$ dimensional spectral coordinates of a graph composed from mesh vertices. Notice that in different channels it distinguishes body parts, there's a channel where two legs are colored is an opposite way, similarly for arms, hands, head, upper body, etc. Compared to random initialization, it helps to convey information to the neural renderer about which body part it renders.}
 	\label{fig:spectral_ntex}
 \end{figure}
@@ -50,7 +50,7 @@ In this appendix we present: Section \ref{appb:fig} -- pictures, that additional
 	\hfill\includegraphics[width=0.9\textwidth]{\imgfp/interm_features/bnf_d3}%
 	\hfill\includegraphics[width=0.9\textwidth]{\imgfp/interm_features/bnf_dout}%
 	\hfill\includegraphics[width=0.9\textwidth]{\imgfp/interm_features/bnf_rgb}%
-	\caption{Intermediate activattions of the neural renderer's \textit{decoder}, trained on zoomed images, but Batch Normalization layers collect running statistics only on full-body images. Notice that the space starts to form a structure that retains one value near image border, and a sharply different number around the body. We speculate, that leads to failure in segmentation, and thus the "bubble" effect around feet and the head. }
+	\caption{Intermediate activations of the neural renderer's \textit{decoder}, trained on zoomed images, but Batch Normalization layers collect running statistics only on full-body images. Notice that the space starts to form a structure that retains one value near image border, and a sharply different number around the body. We speculate, that leads to failure in segmentation, and thus the "bubble" effect around feet and the head. }
 	\label{fig:interm06_decoder}
 \end{figure}
 \begin{figure}
@@ -121,9 +121,34 @@ In this appendix we present: Section \ref{appb:fig} -- pictures, that additional
 	\caption{(\protect\subref{fig:ntex-grad}) A mask of non-zero gradients for a neural texture after seeing the whole training sequence. It's common that some body parts are never seen during training, e.g. bottom of shoes, top of the head, armpits. (\protect\subref{fig:ntex-artifact}) Example of rendering instability due to that. (\protect\subref{fig:ntex-fixed}) A crude solution is to replace the unseen parts with a texture part that was actually optimized (e.g. a part of legs or skin). Although it solves the particular artifact on feet, it may not be applicable to the head or armpits.}
 \end{figure}
 \begin{figure}
+	%\fboxrule=2pt
+	\centering
+	\begin{subfigure}[b]{0.45\textwidth}
+		\centering
+		\includegraphics[height=8cm]{\imgfp/dynamic_crop/fullscreen_projection}%
+		\caption{}
+		\label{fig:explain_crop_fullscreen}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.27\textwidth}
+		\centering
+		\includegraphics[height=8cm]{\imgfp/dynamic_crop/crop_joints}
+		\caption{}
+		\label{fig:explain_crop_joints}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.25\textwidth}
+		\centering
+		\includegraphics[height=8cm]{\imgfp/dynamic_crop/crop_best}
+		\caption{}
+		\label{fig:explain_crop_best}
+	\end{subfigure}
+	\caption{Comparison of projection modes. (\protect\subref{fig:explain_crop_joints}) A projection that spans the whole screen (the default mode). It's additionally widened to make square images (as required for the DNN), and a big part of the generated image is wasted -- time was spent on its computing, but these parts are never shown on the screen. Moreover, the input contains a very tiny rasterization of the avatar's body, and unless the neural network was trained to process such small inputs, it may produce visual artifacts (as can be seen on Figure \ref{fig:far_screen_crop}). (\protect\subref{fig:explain_crop_joints}) A dynamic projection crop, that modifies rasterization to always contain the full body in it, regardless of the viewing position. It automatically solves the issues with far-out viewpoints, but still frame parts may be wasted. (\protect\subref{fig:explain_crop_best}) The absolute best dynamic crop that would fit only the part of the body that will be shown on the screen. A fraction of the frame may be wasted to center the body inside the crop. }
+\end{figure}
+\begin{figure}
 	\centering%
 	\setlength\abovedisplayskip{0pt}%
-	\includegraphics[width=0.6\linewidth]{\imgfp/multiavatar}%
+	\includegraphics[width=0.6\linewidth]{\imgfp/other/multiavatar}%
 	\caption{Example of a future work on inferring images of multiple avatars. Inputs can be dynamically cropped, rasterized at resolution proportional to occupied space, and collated into a single input tensor. Knowing the screen location of the avatars, the synthesized images can be rendered at proper locations in AR.}%
 	\label{fig:multiavatar}%
 	\setlength\belowdisplayskip{0pt}%
@@ -165,39 +190,39 @@ In this appendix we present: Section \ref{appb:fig} -- pictures, that additional
 	\centering
 	\begin{subfigure}[b]{0.3\textwidth}
 		\centering
-		\includegraphics[width=\linewidth]{\imgfp/mobile_screenshots/c/jump}%
+		\includegraphics[width=\linewidth]{\imgfp/mobile_screenshots/jump}%
 		\caption{}
 		\label{fig:mobile_example_jump}
 	\end{subfigure}
 	\hfill
 	\begin{subfigure}[b]{0.3\textwidth}
 		\centering
-		\includegraphics[width=\linewidth]{\imgfp/mobile_screenshots/c/example_egor}
+		\includegraphics[width=\linewidth]{\imgfp/mobile_screenshots/example_egor}
 		\caption{}
 	\end{subfigure}
 	\hfill
 	\begin{subfigure}[b]{0.3\textwidth}
 		\centering
-		\includegraphics[width=\linewidth]{\imgfp/mobile_screenshots/c/example_minsoo}
+		\includegraphics[width=\linewidth]{\imgfp/mobile_screenshots/example_minsoo}
 		\caption{}
 	\end{subfigure}
 	\vspace{1em}
 		\begin{subfigure}[b]{0.3\textwidth}
 		\centering
-		\includegraphics[width=\linewidth]{\imgfp/mobile_screenshots/c/example_ilya}%
+		\includegraphics[width=\linewidth]{\imgfp/mobile_screenshots/example_ilya}%
 		\caption{}
 	\end{subfigure}
 	\hfill
 	\begin{subfigure}[b]{0.3\textwidth}
 		\centering
-		\includegraphics[width=\linewidth]{\imgfp/mobile_screenshots/c/example_renat}
+		\includegraphics[width=\linewidth]{\imgfp/mobile_screenshots/example_renat}
 		\caption{}
 		\label{fig:mobile_example_renat}
 	\end{subfigure}
 	\hfill
 	\begin{subfigure}[b]{0.3\textwidth}
 		\centering
-		\includegraphics[width=\linewidth]{\imgfp/mobile_screenshots/c/tf_effnet_dsp}
+		\includegraphics[width=\linewidth]{\imgfp/mobile_screenshots/tf_effnet_dsp}
 		\caption{}
 		\label{fig:mobile_tf_effent_fail}
 	\end{subfigure}
@@ -208,21 +233,21 @@ In this appendix we present: Section \ref{appb:fig} -- pictures, that additional
 	\centering
 	\begin{subfigure}[b]{0.32\textwidth}
 		\centering
-		\includegraphics[width=\linewidth]{\imgfp/mobile_screenshots/c/far-away-screen-crop}%
+		\includegraphics[width=\linewidth]{\imgfp/mobile_screenshots/far-away-screen-crop}%
 		\caption{}
 		\label{fig:far_screen_crop}
 	\end{subfigure}
 	\hfill
 	\begin{subfigure}[b]{0.32\textwidth}
 		\centering
-		\includegraphics[width=\linewidth]{\imgfp/mobile_screenshots/c/far-away-crop}
+		\includegraphics[width=\linewidth]{\imgfp/mobile_screenshots/far-away-crop}
 		\caption{}
 		\label{fig:far_dynamic_crop}
 	\end{subfigure}
 	\hfill
 	\begin{subfigure}[b]{0.32\textwidth}
 		\centering
-		\includegraphics[width=\linewidth]{\imgfp/mobile_screenshots/c/far-away-crop-debug}
+		\includegraphics[width=\linewidth]{\imgfp/mobile_screenshots/far-away-crop-debug}
 		\caption{}
 		\label{fig:far_dynamic_crop_debug}
 	\end{subfigure}
@@ -233,21 +258,21 @@ In this appendix we present: Section \ref{appb:fig} -- pictures, that additional
 	\centering
 	\begin{subfigure}[b]{0.32\textwidth}
 		\centering
-		\includegraphics[width=\linewidth]{\imgfp/mobile_screenshots/c/crop-joints}%
+		\includegraphics[width=\linewidth]{\imgfp/mobile_screenshots/crop-joints}%
 		\caption{}
 		\label{fig:zoom_inefficient_crop}
 	\end{subfigure}
 	\hfill
 	\begin{subfigure}[b]{0.32\textwidth}
 		\centering
-		\includegraphics[width=\linewidth]{\imgfp/mobile_screenshots/c/screen-proj}
+		\includegraphics[width=\linewidth]{\imgfp/mobile_screenshots/screen-proj}
 		\caption{}
 		\label{fig:zoom_screen_crop}
 	\end{subfigure}
 	\hfill
 	\begin{subfigure}[b]{0.32\textwidth}
 		\centering
-		\includegraphics[width=\linewidth]{\imgfp/mobile_screenshots/c/crop-custom}
+		\includegraphics[width=\linewidth]{\imgfp/mobile_screenshots/crop-custom}
 		\caption{}
 		\label{fig:zoom_smallest_crop}
 	\end{subfigure}
@@ -256,63 +281,84 @@ In this appendix we present: Section \ref{appb:fig} -- pictures, that additional
 \clearpage
 \newpage
 
-\setkeys{Gin}{draft=false}
+%\setkeys{Gin}{draft=false}
 
 \section{Training procedure experiments}
 \label{appb:exps}
+
 Next we demonstrate most of the experiments as collations of training and test images, as well as plots of training losses and plots of validation metrics. Images encased with a gray border are \textit{synthesized}, the border-less images are ground truth. Each column of the images has a colored mark at the bottom. It represents a corresponding line color on the plots for the given experiment. The legends of the plots contain a short description of the experimental setup and adjustments. To shorten the descriptions, we use a notation like $\Omega=$ to show that any other usage of $\Omega$ on the same plot uses or extends from this experiment. 
 
-To keep this section compact, we demonstrate only a subset of loss and metric curves, namely LPIPS, L1, MS-SSIM, and adversarial losses. A single plot of the adversarial loss will combine two lines: generator's loss (solid line) is accuracy of the discriminator on the synthesized images, the discriminator's loss (translucent line with colored dots) is accuracy of the discriminator on the real images. The former should decrease, indicating that the generator produces plausible images, and the latter should increase, indicating that the discriminator learns the realism of ground truth images.
-
-As a minimal subset of training images, we show full-body and upper body frames with the most difficult poses available, frames from front and back, as well as a close-up shot of a face. The selected test frames contain:
+The images were compressed to reduce the file size of this manuscript (from almost a gigabyte, to a few megabytes). This may affect quality of the images. The originally synthesized images are sharper and less noisy. On the other hand, the general visual artifacts are mostly preserved. As a minimal subset of training images, we show full-body and upper body frames with the most difficult poses available, frames from front and back, as well as a close-up shot of a face. The selected test frames contain:
 \begin{itemize}
 	\item Bottom of the shoes -- showing artifacts for the body parts that were unseen during training.
 	\item A face close-up -- may lose similarity with the person's face due to overfitting.
 	\item A top-down view, which may show overfitting to the frames in the training set, where the person bends forward, and a shadow is cast upon their upper body (see training images, first row). Even though the test pose is different, the overfitting triggers the same shadow to appear on the synthesized image.
 	\item An upper-body, to compare clarity of T-shirt ornaments, which may be lost due to possible misalignment of the ground truth images and the body model \cite{dnn:smplx19}. Thus, the pixels of the neural texture may fit different locations on the body.
-	\item A front full-body view, to compare overall body quality.
 \end{itemize}
 
-\newcounter{experiments-group}
-\setcounter{experiments-group}{1}
+To keep this section compact, we demonstrate only a subset of loss and metric curves, namely LPIPS, L1, MS-SSIM, and adversarial losses. A single plot of the adversarial loss will combine two lines: generator's loss (solid line) is accuracy of the discriminator on the synthesized images, the discriminator's loss (translucent line with colored dots) is accuracy of the discriminator on the real images. The former should decrease, indicating that the generator produces plausible images, and the latter should increase, indicating that the discriminator learns the realism of ground truth images.
 
-\setkeys{Gin}{draft}
-\clearpage
-\newpage
-\arabic{experiments-group}. \alert{Experiments on neural texture's MIP-maps (no Omega definition for test plot)}
-\stepcounter{experiments-group}
-%\begin{adjustwidth}{-20em}{-8em}
+\newcounter{experiments-counter}
+\setcounter{experiments-counter}{1}
 
-% convert -strip -interlace Plane -quality 95% -adaptive-resize 85% TEST_05_54_r1\@vA01_41\@vA01_41_learnmips\@vA01_41_nomips.png out2.jpg
-\begin{figure}[!h]
-	\makebox[\textwidth]{\makebox[1.1\textwidth]{
-	\begin{minipage}[b]{.59\textwidth}
-		\centering%
-		\setlength\abovedisplayskip{0pt}%
-		\centerline{\includegraphics[width=1.0\textwidth]{\imgfp/exp_train/TRAIN_05_54_r1@vA01_41@vA01_41_learnmips@vA01_41_nomips}}%
-		\caption{Fit to ground truth}
-		\setlength\belowdisplayskip{0pt}%
-	\end{minipage}\hfill
-	\begin{minipage}[b]{.50\textwidth}
-		\centering%
-		\setlength\abovedisplayskip{0pt}%
-		\centerline{\includegraphics[width=1.0\textwidth]{\imgfp/exp_test/TEST_05_54_r1@vA01_41@vA01_41_learnmips@vA01_41_nomips}}%
-		\caption{Test images}
-		\setlength\belowdisplayskip{0pt}%
-	\end{minipage}
-	}}
-	\centering%
-	%\hspace{.1\textwidth}%
-	\setlength\abovedisplayskip{0pt}%
-	\centerline{\includegraphics[width=0.99\linewidth]{\imgfp/exp_train/train_plot_05_54_r1@vA01_41@vA01_41_learnmips@vA01_41_nomips}}%
-	\hspace{.1\textwidth}
-	\centerline{\includegraphics[width=0.99\linewidth]{\imgfp/exp_test/val_plot_05_54_r1@vA01_41@vA01_41_learnmips@vA01_41_nomips}}%
-	\setlength\belowdisplayskip{0pt}%
-	\caption{Training losses and validation metrics}
-\end{figure}
-%\end{adjustwidth}
+\appendixexperiment[experiments-counter]{\imgfp/exps}{05_54_r1@va41@va41_learnmips@va41_nomips.jpg}{
+	Experiments on neural texture's MIP-maps.
+}<fig:exp:learnmips>
 
-\newpage
+\appendixexperiment[experiments-counter]{\imgfp/exps}{a03_ai_retrain_val@a29_ai@a30_ai.jpg}{}
+\appendixexperiment[experiments-counter]{\imgfp/exps}{a03_ai_retrain_val@a31_ai@a32_ai@a32_80.jpg}{}
+\appendixexperiment[experiments-counter]{\imgfp/exps}{a03_ai_retrain_val@a31_ai@a33_ai.jpg}{}
+\appendixexperiment[experiments-counter]{\imgfp/exps}{a03_ai_retrain_val@a35_2_01@a35_5_01@a35_dis_d1_01.jpg}{}
+\appendixexperiment[experiments-counter]{\imgfp/exps}{a03_ai_retrain_val@a35_d1_01@a35_d2_01@a35_d5_01.jpg}{}
+\appendixexperiment[experiments-counter]{\imgfp/exps}{a03_ai_retrain_val@a37_ai@a37_dis_in@a37_dis_bn.jpg}{}
+\appendixexperiment[experiments-counter]{\imgfp/exps}{a03_ai_retrain_val@a37_ai@a37_nodisnorm@a37_noheadnorm.jpg}{}
+\appendixexperiment[experiments-counter]{\imgfp/exps}{a03_ai_retrain_val@a38_ai@a38_cat@a38_cat_bnfix.jpg}{}
+\appendixexperiment[experiments-counter]{\imgfp/exps}{a03_ai_retrain_val@a39_ntex5@a39_ntex10.jpg}{}
+\appendixexperiment[experiments-counter]{\imgfp/exps}{a03_ai_retrain_val@a42_lr2m6@a42_lr2m6_gc10@a42_lr2m6_gc20.jpg}{}
+\appendixexperiment[experiments-counter]{\imgfp/exps}{a03_ai_retrain_val@a43_03v_r@a43_03v_rd.jpg}{}
+\appendixexperiment[experiments-counter]{\imgfp/exps}{a03_ai_retrain_val@a53_1@a53_ntexlr.jpg}{}
+\appendixexperiment[experiments-counter]{\imgfp/exps}{a03_ai_retrain_val@va03_vtr@va03_vt.jpg}{}
+\appendixexperiment[experiments-counter]{\imgfp/exps}{a03_ai_retrain_val@va10@va11@va12@va13.jpg}{}
+\appendixexperiment[experiments-counter]{\imgfp/exps}{a03_ai_retrain_val@va14@va15@va16.jpg}{}
+\appendixexperiment[experiments-counter]{\imgfp/exps}{a07_ai@a07_ai@a07_minsoo@a07_renat@a07_egor.jpg}{}
+\appendixexperiment[experiments-counter]{\imgfp/exps}{a31_ai@a34_ai@a34_defaultopt.jpg}{}
+\appendixexperiment[experiments-counter]{\imgfp/exps}{a32_ai@a40_ai@a40_low_ntexlr.jpg}{}
+\appendixexperiment[experiments-counter]{\imgfp/exps}{b01_bl@b07_nr2@b07_nr1@b07_nrp0.jpg}{}
+\appendixexperiment[experiments-counter]{\imgfp/exps}{b01_bl@b07_nr2@b07_nr2_d1_ntex1@b07_nr2_d2_ntex1.jpg}{}
+\appendixexperiment[experiments-counter]{\imgfp/exps}{b01_bl@b07_nr2@b07_nr2_d2_ntex2@b07_nr2_d1_ntex2.jpg}{}
+\appendixexperiment[experiments-counter]{\imgfp/exps}{b01_bl@b07_nr3@b07_nr3_d3@b07_nr3_d3_ntex3.jpg}{}
+\appendixexperiment[experiments-counter]{\imgfp/exps}{b01_bl@b07_nr4@b07_nr3@b07_nr2.jpg}{}
+\appendixexperiment[experiments-counter]{\imgfp/exps}{b01_bl@b07_nr6@b07_nr5@b07_nr4.jpg}{}
+\appendixexperiment[experiments-counter]{\imgfp/exps}{b01_bl@vb02_zstat@vb03_znod@vb03_fbnod.jpg}{}
+\appendixexperiment[experiments-counter]{\imgfp/exps}{v05_50@vae05_50@vae05_50_flips.jpg}{}
+\appendixexperiment[experiments-counter]{\imgfp/exps}{va02@a07_ai@a48_ai.jpg}{}
+\appendixexperiment[experiments-counter]{\imgfp/exps}{va02@b01_27.jpg}{}
+\appendixexperiment[experiments-counter]{\imgfp/exps}{va02@va06@va06_stat_zooms.jpg}{}
+\appendixexperiment[experiments-counter]{\imgfp/exps}{va02@va06@va07@va08@va09.jpg}{}
+\appendixexperiment[experiments-counter]{\imgfp/exps}{va02@vb01_nobnf@vb01_nobnf_ut@b01_bl.jpg}{}
+\appendixexperiment[experiments-counter]{\imgfp/exps}{va06@a27_ai@a27_dec50pct@a27_enc2221.jpg}{}
+\appendixexperiment[experiments-counter]{\imgfp/exps}{va06@a43_d@a43_din.jpg}{}
+\appendixexperiment[experiments-counter]{\imgfp/exps}{va06@a44_bnf@a45_ai@a46_d2.jpg}{}
+\appendixexperiment[experiments-counter]{\imgfp/exps}{va06@a47_m2@a47_m3@va49.jpg}{}
+\appendixexperiment[experiments-counter]{\imgfp/exps}{va06@b01_ai@vb01_uniform.jpg}{}
+\appendixexperiment[experiments-counter]{\imgfp/exps}{va06@va06_notrack2@va06_notrack5.jpg}{}
+\appendixexperiment[experiments-counter]{\imgfp/exps}{va06@va06_step2@va06_step4@va06_step2d.jpg}{}
+\appendixexperiment[experiments-counter]{\imgfp/exps}{va06@va17@va18@va18.jpg}{}
+\appendixexperiment[experiments-counter]{\imgfp/exps}{va06@va19@va21@va20.jpg}{}
+\appendixexperiment[experiments-counter]{\imgfp/exps}{va06@va20@a27_ai@a36_ai.jpg}{}
+\appendixexperiment[experiments-counter]{\imgfp/exps}{va06@va22@va23@va24.jpg}{}
+\appendixexperiment[experiments-counter]{\imgfp/exps}{va06@va24@va25@va26@va28.jpg}{}
+\appendixexperiment[experiments-counter]{\imgfp/exps}{va06@va43_r@a43_rd@va43_rdin.jpg}{}
+\appendixexperiment[experiments-counter]{\imgfp/exps}{va06@va50@va51_01@va51_025.jpg}{}
+\appendixexperiment[experiments-counter]{\imgfp/exps}{va06@va54_r@va54_rtex@va54_tex.jpg}{}
+\appendixexperiment[experiments-counter]{\imgfp/exps}{vae05_50_flips@va01@va02@a03_ai_retrain_val.jpg}{}
+\appendixexperiment[experiments-counter]{\imgfp/exps}{vae05_50_flips@va01@va04@va05.jpg}{}
+\appendixexperiment[experiments-counter]{\imgfp/exps}{vb01_nobnf_ut@b04_01d@b04_01e.jpg}{}
+\appendixexperiment[experiments-counter]{\imgfp/exps}{vb01_nobnf_ut@b04_01ed@b04_005ed.jpg}{}
+\appendixexperiment[experiments-counter]{\imgfp/exps}{vb01_nobnf_ut@b04_c01e@b04_c01ed@b04_c015ed@b04_c02ed.jpg}{}
+\appendixexperiment[experiments-counter]{\imgfp/exps}{vb01_nobnf_ut@b06_inp001@b06_inp002@b06_inp01.jpg}{}
+\appendixexperiment[experiments-counter]{\imgfp/exps}{vb01_nobnf_ut@b06_ntex001@b06_ntex002@b06_ntex01.jpg}{}
+\appendixexperiment[experiments-counter]{\imgfp/exps}{vb01_nobnf_ut@b06_rgb01@b06_rgb005.jpg}{}
 
 
 \setkeys{Gin}{draft=false}

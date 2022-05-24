@@ -433,4 +433,52 @@ on \@thesisdate
 \newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}p{#1}} 
 \newcolumntype{Q}[1]{p{#1\textwidth}}
 \newcolumntype{Z}[1]{C{#1\textwidth}}
+
+% \appendixexperiment[counter]{folder_root}{filename}{description}<label>
+\NewDocumentCommand{\appendixexperiment}{d[] m m m d<>}{
+	\clearpage
+	\newpage
+	\IfValueT{#1}{\arabic{#1}\stepcounter{#1}. }{#4} % description
+	\begin{figure}[!h]
+		\centering
+		\IfValueT{#5}{\label{#5}}
+		\begin{minipage}[b]{.72\textwidth}
+		\IfFileExists{#2/legend/#3}{\includegraphics[height=2cm,width=\textwidth,keepaspectratio]{#2/legend/#3}}{}
+		\IfFileExists{#2/train/#3}{\includegraphics[height=10cm,width=\textwidth,keepaspectratio]{#2/train/#3}}{}
+		\end{minipage}
+		\hfill
+		\IfFileExists{#2/plot_train/#3}{\includegraphics[height=12cm,width=0.25\textwidth,keepaspectratio]{#2/plot_train/#3}}{}
+		\\
+		\IfFileExists{#2/test/#3}{\includegraphics[height=12cm,width=0.72\textwidth,keepaspectratio]{#2/test/#3}}{}
+		\hfill
+		\IfFileExists{#2/plot_val/#3}{\includegraphics[height=12cm,width=0.25\textwidth,keepaspectratio]{#2/plot_val/#3}}{}
+	\end{figure}
+%		}}
+%		\makebox[\textwidth]{\makebox[1.1\textwidth]{
+%				\begin{minipage}[b]{.59\textwidth}
+	%					\centering%
+	%					\setlength\abovedisplayskip{0pt}%
+	%					\centerline{\includegraphics[width=\textwidth]{#2/train/#3}}%
+	%					\caption{Fit to ground truth}
+	%					\setlength\belowdisplayskip{0pt}%
+	%				\end{minipage}
+%				\\
+%				\hfill
+%				\begin{minipage}[b]{.50\textwidth}
+	%					\centering%
+	%					\setlength\abovedisplayskip{0pt}%
+	%					\centerline{\includegraphics[width=\textwidth]{#2/test/#3}}%
+	%					\caption{Test images}
+	%					\setlength\belowdisplayskip{0pt}%
+	%				\end{minipage}
+%		}}
+%		\centering%
+%		%\hspace{.1\textwidth}%
+%		\setlength\abovedisplayskip{0pt}%
+%		\centerline{\includegraphics[width=0.7\linewidth]{#2/plot_train/#3}}%
+%		\hspace{.1\textwidth}
+%		\centerline{\includegraphics[width=0.7\linewidth]{#2/plot_val/#3}}%
+%		\setlength\belowdisplayskip{0pt}%
+%\caption{Training losses and validation metrics}
+}
  	
