@@ -3,78 +3,188 @@
 \section{Mobile performance}\label{res:performance}
 
 \begin{table}[ht]
-	\begin{tabularx}{\textwidth}{X|c|cc|cc}
+	\begin{tabularx}{\textwidth}{Xcc|c|cc|cc}
 		\hline
-		\multirow{2}{*}{\textbf{\thead{Neural Renderer Configuration}}} 
-		& \multirow{2}{*}{\textbf{\thead{Input\\ Layout}}} 
-		& \multicolumn{2}{c|}{\thead{\textbf{on GPU (ms)}}}
-		& \multicolumn{2}{c}{\thead{\textbf{on DSP (ms)}}} \\ 
-		\cline{3-6}
+%		Encoder & \thead{Normalization\\Layers} & \thead{Parameters\\number} & \thead{Input\\Layout} & application & \thead{DNN\\alone}& application & \thead{DNN\\alone} \\
+		%\rowcolor{gray}
+		\multicolumn{3}{c|}{\textbf{\thead{Neural Renderer configuration}}}
+		& \multirow{2}{*}{\textbf{\thead{Input Layout}}} 
+		& \multicolumn{2}{c|}{\textbf{\thead{Application avg.\\frame time (ms)}}}
+		& \multicolumn{2}{c|}{\textbf{\thead{Benchmarked avg.\\inference time (ms)}}} \\ 
+		\cline{1-3}
+		\cline{5-8}
+		\multicolumn{1}{c|}{\thead{Encoder\\type}}
+		& \multicolumn{1}{c|}{\thead{Normali\\-zation}}
+		& \multicolumn{1}{c|}{\thead{Parameters\\number}}
 		& 
-		& \multicolumn{1}{r|}{\thead{application}}
-		& \multicolumn{1}{r|}{\thead{DNN\\alone}}
-		& \multicolumn{1}{r|}{\thead{application}}
-		& \multicolumn{1}{r}{\thead{DNN\\alone}} \\ 
-		\hline
-		\thead{ResNet18 encoder, 14.3M params}
+		& \multicolumn{1}{c|}{\thead{on GPU}}
+		& \multicolumn{1}{c|}{\thead{on DSP}}
+		& \multicolumn{1}{c|}{\thead{on GPU}}
+		& \multicolumn{1}{c|}{\thead{on DSP}} \\ 
+		\hline\hline
+		ResNet18
+		& Batch
+		& 14.3M
 		& 2-256-256-4 
-		& 55-57
-		& 49-50
-		& 19--21
-		& 19--21 \\
+		& 55--57
+		& 19--23
+		& 49.6
+		& 19.3 \\
 		\hline
-		\thead{ResNet18 encoder, 14.3M params}
+		ResNet18
+		& Batch
+		& 14.3M
 		& 1-256-256-8 
 		& 41--43
-		& 38--43
 		& 16.6 \underline{cap}
-		& 3--4 \\
+		& 39.1
+		& 3.2 \\
 		\hline
-		\thead{MobileNetV3 encoder, 6.7M params}
-		& 1-256-256-8 
-		& 37--38
-		& 30--37
-		& 16.6 \underline{cap}
-		& 3--4 \\
-		\hline
-		\thead{MobileNetV3 encoder, 6.7M params}
-		& 1-512-512-8
-		& 115--136
-		& 105--130
-		& 21--22
-		& 13--14 \\
-		\hline
-		\thead{ResNet18 encoder, 14.5M params}
+		ResNet18
+		& Batch
+		& 14.5M
 		& 1-512-512-8
 		& 112--136
-		& 105--130
 		& 21--22
-		& 13--14 \\
+		& 115.7
+		& 14.1 \\
 		\hline
-		\thead{MobileNetV2 encoder, 6.6M params}
-		& 1-512-512-8
-		& 166--181
-		& 150--175
-		& 19--21
-		& 12--13 \\
+		ResNet18
+		& Batch
+		& 14.5M
+		& 2-512-512-8
+		& 253--261
+		& 28--29
+		& 270.5
+		& 17.1 \\
 		\hline
-		\thead{EfficientNet-Lite0 encoder, 6.1M params}
+		ResNet18
+		& Batch
+		& 14.5M
 		& 1-512-512-16
-		& 71--78
-		& 65--75
-		& 16.6--17
-		& 6--7 \\
+		& 175--184
+		& 24--25
+		& 173.7
+		& 16.4 \\
 		\hline
-		\thead{ResNet18 encoder, 14.5M params}
+		ResNet18
+		& Batch
+		& 14.6M
 		& 1-640-640-16
-		& 200--215
-		& 190--200
-		& 29--31
-		& 28--30 \\
+		& 374--389
+		& 30--32
+		& 364.5
+		& 21.4 \\
 		\hline
+		ResNet18
+		& Batch
+		& 14.8M
+		& 1-1024-1024-16
+		& 875--920
+		& 71--73
+		& 863.9
+		& 57.6 \\
+		\hline
+		ResNet18
+		& Instance
+		& 14.5M
+		& 1-512-512-16
+		& 263--275
+		& 30--32
+		& 248.3
+		& 23.2 \\
+		\hline
+		MobileNetV2
+		& Instance
+		& 6.6M
+		& 1-512-512-16
+		& 220--244
+		& 44--47
+		& 221.4
+		& 37.1 \\
+		\hline
+		MobileNetV2
+		& Batch
+		& 6.6M
+		& 1-512-512-16
+		& 201--248
+		& 27--35
+		& 206.5
+		& 15.5 \\
+		\hline
+		MobileNetV2
+		& Batch
+		& 6.5M
+		& 1-512-512-8
+		& 176--236
+		& 25--29
+		& 188.2
+		& 13.6 \\
+		\hline
+		EfficientNet-Lite0
+		& Batch
+		& 6.1M
+		& 1-512-512-16
+		& 134--142
+		& 16.6 \underline{cap}
+		& 133.8
+		& 7.1 \\
+		\hline
+		ResNet18
+		& Group
+		& 14.5M
+		& 1-512-512-16
+		& --
+		& 1228
+		& --
+		& 1198.3 \\
+		\hline
+		MobileNetV3
+		& Batch
+		& 6.7M
+		& 1-256-256-8 
+		& 37--38
+		& 16.6 \underline{cap} 
+		& 35.8
+		& 3.7 \\
+		\hline
+		MobileNetV3
+		& any
+		& --
+		& any higher 
+		& \multicolumn{4}{c}{unsupported on hardware}\\
+%		\hline
+%		MobileNetV3
+%		& Batch
+%		& 6.7M
+%		& 1-512-512-8
+%		& 115--136
+%		& 105--130
+%		& 21--22
+%		& 13--14 \\
+%
+%		\hline
+%		MobileNetV2
+%		& Batch
+%		& 6.6M
+%		& 1-512-512-8
+%		& 166--181
+%		& 150--175
+%		& 19--21
+%		& 12--13 \\
+%		\hline
+%		EfficientNet-Lite0
+%		& Batch
+%		& 6.1M
+%		& 1-512-512-16
+%		& 71--78
+%		& 65--75
+%		& 16.6--17
+%		& 6--7 \\
+%		\hline
 	\end{tabularx}	
 	\centering
-	\caption{Neural Renderer's inference performance, reported for different encoder types, memory layout of input data, when executed on either mobile GPU or DSP devices. The input layout is specified by 4 numbers from left to right: number of OpenGL textures where input frame is rasterized, frame height, frame width, effective number of neural channels stored in a single texture. Since OpenGL textures always have 4 channels, the last number bigger than 4 indicates that quantized 8-bit values are packed into a single texture channel to achieve a contiguous memory layout. The performance of "DNN alone" columns is measured by continuously inferring the DNN with constant random input data, thus excluding: mesh inference, rasterization, output rendering in AR, overall mobile interaction. Application performance has software cap of 60 FPS (16.6 ms).}	\label{res:tab:other-solutions}		
+	\caption{Neural Renderer's inference performance, reported for different encoder types, memory layout of input data, normalization layers. The timings are profiled on either mobile GPU or DSP computing units. The input layout is specified by 4 numbers from left to right: number of OpenGL textures where input frame is rasterized, frame height, frame width, effective number of neural channels stored in a single texture. Since OpenGL textures always have 4 channels, the last number bigger than 4 indicates that quantized 8-bit values are packed into a single texture channel to achieve a contiguous memory layout. The performance of "Benchmarked inference time" columns is measured by continuously inferring the DNN with constant random input data, thus excluding: mesh inference, rasterization, output rendering in AR, overall mobile interaction. The application performance is measured at a single moments as an exponential average of last 20 frames. The minimum-maximum range of it is reported. The application performance has a software cap of 60 FPS (16.6 ms). Instance normalizations may be up to twice as slower than Batch normalizations, since every time statistics of each tensor have to be computed. Other normalization types lack support on the hardware, as well as architectures, such as MobileNetV3 \cite{dnn:mnv3-19}.}	\label{tab:mobile-performance}		
 \end{table} 
 
 \section{Quantitative analysis}\label{res:metrics}

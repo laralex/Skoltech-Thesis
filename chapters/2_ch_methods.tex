@@ -41,7 +41,11 @@ Spectral coordinates \cite{aux:spectral10}.
 \label{methods:app}
 \begin{figure}
 	\centering
-	\includegraphics[width=\textwidth]{\imgfp/dynamic_crop/dynamic_crop}
+	%\includegraphics[width=\textwidth]{\imgfp/dynamic_crop/dynamic_crop}
+	%\setkeys{Gin}{draft}
+	\centering{\includegraphics[width=\textwidth]{\imgfp/dynamic_crop/dynamic_crop_vect}}
+	%\setkeys{Gin}{draft=false}
+	%\includepdf[width=\textwidth]{\imgfp/dynamic_crop/dynamic_crop}
 	\caption{A 3D space with origin at the camera, and axes aligned with camera directions ($x$ - right, $y$ - top, $z$ - front). The figure shows a slice of this space with $x=0$, illustrating the dynamic projection crop. \textit{(Left)} The near plane of the old screen frustum is defined by a $z$ distance (arbitrary), and $x$/$y$ coordinates of the frustum borders (top/bottom coordinates on illustration). \textit{(Right)} To make the projection cropped around the avatar body, we compute an axis-aligned bounding box of the body, then project its spans onto the near plane, obtaining top/bottom borders, defined by intersection coordinates of the projection lines and the old near plane. The new frustum will have the same near and far planes as the old one, to ensure preservation of perspective.}
 	\label{fig:dynamic_crop_math}
 \end{figure}
@@ -111,6 +115,24 @@ Spectral coordinates \cite{aux:spectral10}.
 	\end{subfigure}
 	\caption{(\protect\subref{fig:cam_aug:before}) Implementation of zooming using image-space augmentations. The body mesh is rasterized in full-body, the ground truth is transformed once to be in an alignment with the rasterization. Then both are magnified, loosing a lot of quality. (\protect\subref{fig:cam_aug:after}) Using camera-space augmentations, the virtual camera used for rasterization replicates zooming by moving towards the avatar. The input image can be made arbitrarily sharp. The ground truth image is still transformed with image-space augmentations, but only once, preserving a bit of quality. }
 	\label{fig:cam_aug}
+\end{figure}
+
+\begin{figure}
+	\centering
+%	\begin{subfigure}[b]{0.3\textwidth}
+%		\centering
+		\includegraphics[width=\textwidth]{\imgfp/smplx/one-joint-vertices}%
+%		\caption{}
+%		\label{fig:smplx:4-joints-vertices}
+%	\end{subfigure}
+%	\begin{subfigure}[b]{0.69\textwidth}
+%		\centering
+%		\includegraphics[height=5cm]{\imgfp/smplx/vert2joint}%
+%		\caption{}
+%		\label{fig:smplx:all-joints-vertices}
+%	\end{subfigure}
+	\caption{Assignment of mesh vertices (red) to body joints (blue). For each vertex, we take the joint with the most significant skinning weight from SMPL-X body model, that determines how movement of the joint affects the given vertex's movement. We use this assignment to select mesh vertices as centers of camera-space augmentations. We speculate that choosing vertices rather than plain joints improves augmentations variance and decreases overfitting.}
+	\label{fig:smplx-vert2joint}
 \end{figure}
 
 The baseline DNN architecture \cite{dnn:stylepeople21} proved to be sufficient to render FB images of avatars. However, we found out that the rendering network cannot reliably render parts on the body that were never seen during training, most commonly under boots surface, and top of the head. At best, these places can be rendered as random patches of color, e.g. from clothes or skin. Intuitively it is so, because in these areas the neural texture will contain default values during the whole training process. If the renderer learns quickly enough to map such default values to skin or clothes, the chance is that the texture overall will not move much away from the defaults. Although the unseen parts are not rendered correctly from reconstruction point of view, it does not hurt overall accuracy. On the other hand, there is a chance that the neural texture will significantly move away from the default initialization. Thus, after many epochs the default values contained in the unseen parts will be outliers that the renderer does not expect to see. This may trigger it to render abnormal color or fail segmentation prediction. Attempts on dealing with this artifact will be given shortly after.

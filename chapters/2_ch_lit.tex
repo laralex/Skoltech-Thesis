@@ -229,7 +229,7 @@ where $C_1 = (K_1L)^2$, $C_2 = (K_2L)^2$,  $L$ is a range of values stored in pi
 	
 \textit{Adversarial} loss (GAN-loss \cite{dnn:gan14}, ideal value 0.5) is used as a part of Generator - Discriminator DNN training architecture. It measures how well the discriminator learned to distinguish real images from fake (by assigning probabilities of realism: 0 is fake, 1 is real). The generator's task is to synthesize images that cannot be detected by the discriminator. Ideally, discriminator should report probability 0.5 on average, indicating that it essentially reports a random guess.
 
-\textit{Feature matching} loss (ideal value 0, \cite{metric:fm16}) is analogous to LPIPS, but the intermediate activations on fake and real images are taken not from external image network, but from discriminator network. The motivation is that the generator network will learn to produce images that are perceived as real by the discriminator.
+\textit{Feature matching} loss (FM \cite{metric:fm16}, ideal value 0) is analogous to LPIPS, but the intermediate activations on fake and real images are taken not from external image network, but from discriminator network. The motivation is that the generator network will learn to produce images that are perceived as real by the discriminator.
 
 \textit{Dice} loss (ideal value 1, \cite{metric:dice17}) is widely used in various pixel segmentation tasks to learn segmentation masks. It maximizes area of masks intersection and minimizes union of the areas (to prevent false positives in the predicted mask). The formula treats masks as sets of pixels where segmentation value is greater than 0.
 \begin{equation}

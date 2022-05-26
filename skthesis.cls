@@ -296,6 +296,7 @@ on \@thesisdate
 \usepackage{kantlipsum}
 
 %%%% A.LARIONOV's code
+\usepackage{color, colortbl}
 \widowpenalty100000
 \clubpenalty100000
 \usepackage{changepage}
@@ -400,6 +401,7 @@ on \@thesisdate
 \usepackage{xparse}
 \usepackage{xifthen}% provides \isempty test
 \usepackage{setspace}
+\usepackage[bottom]{footmisc}
 
 % \myfilelisting[<\lstset arguments, e.g. language=XML>]{<fp>}[<\label value>]
 \NewDocumentCommand{\myfilelisting}{D[]{} m d[] d<>}{%
@@ -411,6 +413,14 @@ on \@thesisdate
 	%title=\getlstname\IfValueT{#3}{\label{#3}},
 	]{#2}
 }
+
+\makeatletter
+\def\blfootnote{\gdef\@thefnmark{}\@footnotetext}
+\makeatother
+
+\usepackage{tabularray}
+\usepackage{svg}
+\usepackage{pdfpages}
 
 %\usepackage{pdfpages} % insert pdf documents
 %\usepackage{titlepages}
@@ -438,9 +448,12 @@ on \@thesisdate
 \NewDocumentCommand{\appendixexperiment}{d[] m m m d<>}{
 	\clearpage
 	\newpage
-	\IfValueT{#1}{\arabic{#1}\stepcounter{#1}. }{#4} % description
+	\renewcommand{\arraystretch}{0.25}
+	\linespread{0.25}\selectfont\centering
+	%\noindent\IfValueT{#1}{\arabic{#1}\stepcounter{#1}. }{#4} % description
 	\begin{figure}[!h]
 		\centering
+		\caption{#4} % description}
 		\IfValueT{#5}{\label{#5}}
 		\begin{minipage}[b]{.72\textwidth}
 		\IfFileExists{#2/legend/#3}{\includegraphics[height=2cm,width=\textwidth,keepaspectratio]{#2/legend/#3}}{}
