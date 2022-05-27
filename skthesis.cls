@@ -311,7 +311,7 @@ on \@thesisdate
 \usepackage{setspace} % override spacing in some block
 \usepackage{caption}
 \usepackage{subcaption}
-\usepackage[dvipsnames]{xcolor}
+\usepackage[dvipsnames,table]{xcolor}
 \newcommand{\cfbox}[2]{%
 	\colorlet{currentcolor}{.}%
 	{\color{#1}%

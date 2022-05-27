@@ -319,7 +319,7 @@ In this appendix we present: Section \ref{appb:fig} -- pictures, that additional
 \section{Experiments on DNN training}
 \label{appb:exps}
 
-Firstly, we present a table of training losses and validation metrics for the experiments. The experiments are sorted by validation metrics from best to worst. We notate columns: "GAN G" is Adversarial loss of the Generator, "GAN D-R" is Adversarial loss of the Discriminator on real images, "GAN D-F" is Adversarial loss of the Discriminator on synthesized (fake) images. Next, we demonstrate most of the experiments as collations of training and test images, as well as plots of training losses and plots of validation metrics. We show images synthesized on training epochs with the best visual quality (visually assessed). Images encased with a gray border are \textit{synthesized}, the border-less images are ground truth. Each column of the images has a colored mark at the bottom. It represents a corresponding line color on the plots for the given experiment. Each page includes a legend with a short description of the experimental setup and adjustments. To shorten the descriptions, we use a notation like $\Omega=$ to show that any other usage of $\Omega$ on the same plot uses or extends from this experiment. We use notation $\nabla=0$ a few times, which means only those values in analytic gradient tensors that are very close to 0. We shorten description of experiments, where Batch normalization layers do not collect running batch statistics on zoomed frames, as "no zoom stats BN".
+Firstly, we present a table of training losses and validation metrics for the experiments. The experiments are sorted by validation metrics from best to worst. The Top-5 metric values are emphasized with a bold underlined font, and the best value of all is additionally colored in blue. We notate the table columns: "GAN G" is Adversarial loss of the Generator, "GAN D-R" is Adversarial loss of the Discriminator on real images, "GAN D-F" is Adversarial loss of the Discriminator on synthesized (fake) images. We shorten description of experiments, where Batch normalization layers do not collect running batch statistics on zoomed frames, as "no zoom stats BN". Next, we demonstrate most of the experiments as collations of training and test images, as well as plots of training losses and plots of validation metrics. We show images synthesized on training epochs with the best visual quality (visually assessed). Images encased with a gray border are \textit{synthesized}, the border-less images are ground truth. Each column of the images has a colored mark at the bottom. It represents a corresponding line color on the plots for the given experiment. Each page includes a legend with a short description of the experimental setup and adjustments. To shorten the descriptions, we use a notation like $\Omega=$ to show that any other usage of $\Omega$ on the same plot uses or extends from this experiment. We use notation $\nabla=0$ a few times, which means only those values in analytic gradient tensors that are very close to 0.
 
 The images were compressed to reduce the file size of this manuscript (from almost a gigabyte, to a few megabytes). This may affect quality of the images. The originally synthesized images are sharper and less noisy. On the other hand, the general visual artifacts are mostly preserved. As a minimal subset of training images, we show full-body and upper body frames with the most difficult poses available, frames from front and back, as well as a close-up shot of a face. The selected test frames contain:
 \begin{itemize}
@@ -337,532 +337,548 @@ To keep this section compact, we omit from the table experiments, that were trai
 	\renewcommand{\arraystretch}{0.25}
 	\linespread{0.25}\selectfont\centering\small
 	\setlength\tabcolsep{1.5pt}
+	\rowcolors{2}{gray!15}{white}
 	\caption{Table of training losses for the performed experiments}
 	\begin{tabularx}{\textwidth}{>{\centering\arraybackslash}X|c|c|c|c|c|c|c}\hline
-		\textbf{Experiment} & {\footnotesize\textbf{\thead{GAN\\G↓\\$\cdot10^1$}}} & {\footnotesize\textbf{\thead{GAN\\D-R↑}}} & {\footnotesize\textbf{\thead{GAN\\D-F↑}}} & {\footnotesize\textbf{\thead{FM↓\\$\cdot10^2$}}} & {\footnotesize\textbf{\thead{L1↓\\$\cdot10^3$}}} & {\footnotesize\textbf{\thead{Dice↓\\$\cdot10^3$}}} & {\footnotesize\textbf{\thead{LPIPS↓\\$\cdot10^2$}}}\\\hline
+		\rowcolor{white}
+		\textbf{Experiment} & {\footnotesize\textbf{\thead{GAN\\G↓}}} & {\footnotesize\textbf{\thead{GAN\\D-R↑}}} & {\footnotesize\textbf{\thead{GAN\\D-F↑}}} & {\footnotesize\textbf{\thead{FM↓\\$\cdot10^2$}}} & {\footnotesize\textbf{\thead{L1↓\\$\cdot10^3$}}} & {\footnotesize\textbf{\thead{Dice↓\\$\cdot10^3$}}} & {\footnotesize\textbf{\thead{LPIPS↓\\$\cdot10^2$}}}\\\hline
 		\thead[l]{1. Baseline, add camera-space augmentations \textsuperscript{Fig.\ref{fig:exp:baselines}}}
-		& 5.80 & 0.88 & 0.94 & 37.77 & \textbf{\underline{9.93}} & \textbf{\underline{1.91}} & \textbf{\underline{11.19}} \\ % vA01_e05_50
+		& 0.58 & 0.88 & 0.94 & 37.77 & \textbf{\underline{9.93}} & \textbf{\underline{1.91}} & \textbf{\underline{11.19}} \\ % vA01_e05_50
 		\thead[l]{2. Baseline, add camera-space,\\\-\quad\quad horizontal flip augment \textsuperscript{Fig.\ref{fig:exp:baselines}}}
-		& 5.63 & 0.88 & 1.32 & 37.84 & \textbf{\underline{10.43}} & 2.32 & \textbf{\underline{10.60}} \\ % vA01_e05_50_flips
+		& 0.56 & 0.88 & 1.32 & 37.84 & \textbf{\underline{10.43}} & 2.32 & \textbf{\underline{10.60}} \\ % vA01_e05_50_flips
 		\thead[l]{3. No GAN losses on zooms \textsuperscript{Fig.\ref{fig:exp:scale-distr-enable-disable-stat-or-gan}}}
-		& 5.62 & 0.91 & 0.95 & 29.16 & 13.19 & 3.20 & 12.95 \\ % vA03_03_znod
+		& 0.56 & 0.91 & 0.95 & 29.16 & 13.19 & 3.20 & 12.95 \\ % vA03_03_znod
 		\thead[l]{4. Baseline, resolution $512\times512$ \textsuperscript{Fig.\ref{fig:exp:baselines}}}
-		& 5.59 & 0.85 & 1.64 & 33.94 & \textbf{\underline{8.05}} & \textbf{\underline{1.58}} & \textbf{\underline{8.94}} \\ % v05_50
+		& 0.56 & 0.85 & 1.64 & 33.94 & \textbf{\underline{8.05}} & \textbf{\underline{1.58}} & \textbf{\underline{8.94}} \\ % v05_50
 		\thead[l]{5. Instance normalizations instead of BN \textsuperscript{Fig.\ref{fig:exp:different-norms}}}
-		& 4.51 & 1.23 & 1.03 & 36.89 & 13.48 & 4.41 & 14.25 \\ % A01_07_ai
+		& 0.45 & 1.23 & 1.03 & 36.89 & 13.48 & 4.41 & 14.25 \\ % A01_07_ai
 		\thead[l]{6. No GAN losses on FB images \textsuperscript{Fig.\ref{fig:exp:scale-distr-enable-disable-stat-or-gan}}}
-		& \textbf{\underline{3.00}} & 1.07 & 1.08 & 42.37 & 12.76 & 3.42 & 12.57 \\ % vA03_03_fbnod
+		& \textbf{\underline{0.30}} & 1.07 & 1.08 & 42.37 & 12.76 & 3.42 & 12.57 \\ % vA03_03_fbnod
 		\thead[l]{7. Zoom on joints up to x12,\\\-\quad\quad full-body is more probable \textsuperscript{Fig.\ref{fig:exp:a03-bl}}}
-		& 4.83 & 1.05 & 1.04 & 45.70 & 17.20 & 3.70 & 14.16 \\ % vA03_01_nobnf
+		& 0.48 & 1.05 & 1.04 & 45.70 & 17.20 & 3.70 & 14.16 \\ % vA03_01_nobnf
 		\thead[l]{8. Noise augmentation $\sigma=0.02$ on neural texture \textsuperscript{Fig.\ref{fig:exp:add-noise-ntex}}}
-		& 4.58 & 1.07 & 1.12 & 47.55 & 19.70 & 3.71 & 14.73 \\ % A03_06_ntex002
+		& 0.46 & 1.07 & 1.12 & 47.55 & 19.70 & 3.71 & 14.73 \\ % A03_06_ntex002
 		\thead[l]{9. All losses with equal weights \textsuperscript{Fig.\ref{fig:exp:loss-weights}}}
-		& 5.20 & 0.81 & 0.85 & 36.30 & 22.89 & 5.01 & 22.30 \\ % A01_53_1
+		& 0.52 & 0.81 & 0.85 & 36.30 & 22.89 & 5.01 & 22.30 \\ % A01_53_1
 		\thead[l]{10. Noise augmentation $\sigma=0.1$ on input tensor \textsuperscript{Fig.\ref{fig:exp:add-noise-input}}}
-		& 4.57 & 1.19 & 1.09 & 49.95 & 20.14 & 4.05 & 14.32 \\ % A03_06_inp01
+		& 0.46 & 1.19 & 1.09 & 49.95 & 20.14 & 4.05 & 14.32 \\ % A03_06_inp01
 		\thead[l]{11. Noise augmentation $\sigma=0.01$ on input tensor \textsuperscript{Fig.\ref{fig:exp:add-noise-input}}}
-		& 4.48 & 1.09 & 1.03 & 47.64 & 19.04 & 3.64 & 13.42 \\ % A03_06_inp001
+		& 0.45 & 1.09 & 1.03 & 47.64 & 19.04 & 3.64 & 13.42 \\ % A03_06_inp001
 		\thead[l]{12. Noise augmentation $\sigma=0.02$ on input tensor \textsuperscript{Fig.\ref{fig:exp:add-noise-input}}}
-		& 4.41 & 1.08 & 1.00 & 49.54 & 18.92 & 3.69 & 14.54 \\ % A03_06_inp002
+		& 0.44 & 1.08 & 1.00 & 49.54 & 18.92 & 3.69 & 14.54 \\ % A03_06_inp002
 		\thead[l]{13. Discriminator w/o normalization layers \textsuperscript{Fig.\ref{fig:exp:nonorm:d:rd:rhead}}}
-		& 5.26 & 0.80 & 1.00 & \textcolor{blue}{\textbf{\underline{1.46}}} & 25.86 & 3.67 & 20.11 \\ % A01_37_nodisnorm
+		& 0.53 & 0.80 & 1.00 & \textcolor{blue}{\textbf{\underline{1.46}}} & 25.86 & 3.67 & 20.11 \\ % A01_37_nodisnorm
 		\thead[l]{14. Dropout $p=0.1$ in encoder layers \textsuperscript{Fig.\ref{fig:exp:dropout-e-d}}}
-		& 4.60 & 1.18 & 1.03 & 51.76 & 22.12 & 5.25 & 17.11 \\ % A03_04_01e
+		& 0.46 & 1.18 & 1.03 & 51.76 & 22.12 & 5.25 & 17.11 \\ % A03_04_01e
 		\thead[l]{15. Zoom on vertices, selected with equal probability \textsuperscript{Fig.\ref{fig:exp:zoom-vertices}}}
-		& 4.57 & 1.16 & 1.24 & 42.64 & 25.16 & 3.52 & 19.05 \\ % A01_30_ai
+		& 0.46 & 1.16 & 1.24 & 42.64 & 25.16 & 3.52 & 19.05 \\ % A01_30_ai
 		\thead[l]{16. Noise augmentation $\sigma=0.01$ on neural texture \textsuperscript{Fig.\ref{fig:exp:add-noise-input}}}
-		& 4.35 & 1.09 & 1.11 & 44.68 & 19.49 & 3.96 & 15.50 \\ % A03_06_ntex001
+		& 0.44 & 1.09 & 1.11 & 44.68 & 19.49 & 3.96 & 15.50 \\ % A03_06_ntex001
 		\thead[l]{17. Gradient clip discriminator to mean norm \textsuperscript{Fig.\ref{fig:exp:gradclip-constant-or-mean}}}
-		& 4.48 & 1.07 & 1.08 & 44.48 & 25.62 & 4.01 & 19.88 \\ % A01_35_dis_d1_01
+		& 0.45 & 1.07 & 1.08 & 44.48 & 25.62 & 4.01 & 19.88 \\ % A01_35_dis_d1_01
 		\thead[l]{18. Encoder 25\% fewer parameters \textsuperscript{Fig.\ref{fig:exp:neural-renderer-capacity}}}
-		& 4.30 & 0.97 & 1.09 & 38.94 & 26.47 & \textbf{\underline{1.98}} & 21.19 \\ % A01_27_enc2221
+		& 0.43 & 0.97 & 1.09 & 38.94 & 26.47 & \textbf{\underline{1.98}} & 21.19 \\ % A01_27_enc2221
 		\thead[l]{19. Gradient clip renderer to 5 norm \textsuperscript{Fig.\ref{fig:exp:gradclip-constant-or-mean}}}
-		& 4.30 & 1.16 & 1.27 & 41.06 & 23.31 & 4.34 & 18.50 \\ % A01_35_5_01
+		& 0.43 & 1.16 & 1.27 & 41.06 & 23.31 & 4.34 & 18.50 \\ % A01_35_5_01
 		\thead[l]{20. Gradient clip renderer to mean$\times0.5$ norm \textsuperscript{Fig.\ref{fig:exp:gradclip-mean-fraction}}}
-		& 4.28 & 1.27 & 1.09 & 45.93 & 21.33 & 4.29 & 18.85 \\ % A01_35_d2_01
+		& 0.43 & 1.27 & 1.09 & 45.93 & 21.33 & 4.29 & 18.85 \\ % A01_35_d2_01
 		\thead[l]{21. Weight decay $10^{-3}$ renderer/discriminator \textsuperscript{Fig.\ref{fig:exp:wdecay-nr3:ntex+disc}}}
-		& 4.76 & 1.18 & 1.15 & 45.38 & 17.69 & 3.52 & 17.61 \\ % A03_07_nr3_d3
+		& 0.48 & 1.18 & 1.15 & 45.38 & 17.69 & 3.52 & 17.61 \\ % A03_07_nr3_d3
 		\thead[l]{22. Noise augmentation $\sigma=0.01$ on neural texture \textsuperscript{Fig.\ref{fig:exp:add-noise-ntex}}}
-		& 4.72 & 1.19 & 1.09 & 53.14 & 19.50 & 4.60 & 17.24 \\ % A03_06_ntex01
+		& 0.47 & 1.19 & 1.09 & 53.14 & 19.50 & 4.60 & 17.24 \\ % A03_06_ntex01
 		\thead[l]{23. Weight decay $10^{-2}$ renderer/discriminator/texture \textsuperscript{Fig.\ref{fig:exp:wdecay-nr2:ntex2+disc}}}
-		& 4.61 & 1.21 & 1.15 & 42.81 & 22.16 & 2.97 & 16.65 \\ % A03_07_nr2_d2_ntex2
+		& 0.46 & 1.21 & 1.15 & 42.81 & 22.16 & 2.97 & 16.65 \\ % A03_07_nr2_d2_ntex2
 		\thead[l]{24. Neural texture's learning rate $\times5$ \textsuperscript{Fig.\ref{fig:exp:ntex-lr-higher}}}
-		& 4.00 & 1.10 & 1.06 & 48.54 & 24.38 & 3.42 & 19.67 \\ % A01_39_ntex5
+		& 0.40 & 1.10 & 1.06 & 48.54 & 24.38 & 3.42 & 19.67 \\ % A01_39_ntex5
 		\thead[l]{25. Pass input tensor to inner layers of encoder \textsuperscript{Fig.\ref{fig:exp:pass-input-in-encoder}}}
-		& 4.49 & 1.15 & 1.09 & 44.48 & 22.04 & 3.40 & 17.88 \\ % A01_38_cat
+		& 0.45 & 1.15 & 1.09 & 44.48 & 22.04 & 3.40 & 17.88 \\ % A01_38_cat
 		\thead[l]{26. Weight decay $10^{-3}$ renderer \textsuperscript{Fig.\ref{fig:exp:wdecay-nr3:ntex+disc}}}
-		& 4.76 & 1.19 & 1.31 & 43.32 & 18.98 & 3.20 & 16.86 \\ % A03_07_nr3
+		& 0.48 & 1.19 & 1.31 & 43.32 & 18.98 & 3.20 & 16.86 \\ % A03_07_nr3
 		\thead[l]{27. Decoder 50\% fewer parameters \textsuperscript{Fig.\ref{fig:exp:neural-renderer-capacity}}}
-		& 4.14 & 1.13 & 1.03 & 42.69 & 21.49 & 3.00 & 19.75 \\ % A01_27_dec50pct
+		& 0.41 & 1.13 & 1.03 & 42.69 & 21.49 & 3.00 & 19.75 \\ % A01_27_dec50pct
 		\thead[l]{28. Zoom on vertices, prioritize person's head \textsuperscript{Fig.\ref{fig:exp:zoom-vertices}}}
-		& 4.50 & 1.16 & 1.06 & 45.07 & 24.04 & 3.66 & 21.23 \\ % A01_29_ai
+		& 0.45 & 1.16 & 1.06 & 45.07 & 24.04 & 3.66 & 21.23 \\ % A01_29_ai
 		\thead[l]{29. Gradient clip renderer to mean$\times0.2$ norm \textsuperscript{Fig.\ref{fig:exp:gradclip-mean-fraction}}}
-		& 4.57 & 1.20 & 1.45 & 43.52 & 24.49 & 3.86 & 18.74 \\ % A01_35_d5_01
+		& 0.46 & 1.20 & 1.45 & 43.52 & 24.49 & 3.86 & 18.74 \\ % A01_35_d5_01
 		\thead[l]{30. Gradient clip renderer to mean norm \textsuperscript{Fig.\ref{fig:exp:gradclip-mean-fraction}}}
-		& 5.08 & 1.07 & 1.14 & 48.25 & 21.74 & 4.12 & 19.09 \\ % A01_35_d1_01
+		& 0.51 & 1.07 & 1.14 & 48.25 & 21.74 & 4.12 & 19.09 \\ % A01_35_d1_01
 	\end{tabularx}
 \end{table}\clearpage\newpage
 \begin{table}
 	\renewcommand{\arraystretch}{0.25}
 	\linespread{0.25}\selectfont\centering\small
 	\setlength\tabcolsep{1.5pt}
+	\rowcolors{2}{gray!15}{white}
 	\begin{tabularx}{\textwidth}{>{\centering\arraybackslash}X|c|c|c|c|c|c|c}\hline
-		\textbf{Experiment} & {\footnotesize\textbf{\thead{GAN\\G↓\\$\cdot10^1$}}} & {\footnotesize\textbf{\thead{GAN\\D-R↑}}} & {\footnotesize\textbf{\thead{GAN\\D-F↑}}} & {\footnotesize\textbf{\thead{FM↓\\$\cdot10^2$}}} & {\footnotesize\textbf{\thead{L1↓\\$\cdot10^3$}}} & {\footnotesize\textbf{\thead{Dice↓\\$\cdot10^3$}}} & {\footnotesize\textbf{\thead{LPIPS↓\\$\cdot10^2$}}}\\\hline
+		\rowcolor{white}
+		\textbf{Experiment} & {\footnotesize\textbf{\thead{GAN\\G↓}}} & {\footnotesize\textbf{\thead{GAN\\D-R↑}}} & {\footnotesize\textbf{\thead{GAN\\D-F↑}}} & {\footnotesize\textbf{\thead{FM↓\\$\cdot10^2$}}} & {\footnotesize\textbf{\thead{L1↓\\$\cdot10^3$}}} & {\footnotesize\textbf{\thead{Dice↓\\$\cdot10^3$}}} & {\footnotesize\textbf{\thead{LPIPS↓\\$\cdot10^2$}}}\\\hline
 		\thead[l]{31. Weight decay $10^{-5}$ renderer \textsuperscript{Fig.\ref{fig:exp:wdecay-nr654}}}
-		& 4.29 & 1.20 & 1.14 & 46.83 & 19.53 & 4.03 & 15.83 \\ % A03_07_nr5
+		& 0.43 & 1.20 & 1.14 & 46.83 & 19.53 & 4.03 & 15.83 \\ % A03_07_nr5
 		\thead[l]{32. Weight decay $10^{-2}$ renderer/discriminator,\\\-\quad\quad $10^{-1}$ for texture \textsuperscript{Fig.\ref{fig:exp:wdecay-nr2:ntex1+disc}}}
-		& 4.05 & 1.11 & 1.35 & 42.14 & 20.21 & 3.83 & 17.92 \\ % A03_07_nr2_d2_ntex1
+		& 0.41 & 1.11 & 1.35 & 42.14 & 20.21 & 3.83 & 17.92 \\ % A03_07_nr2_d2_ntex1
 		\thead[l]{33. Replace a few channels of encoder's inner layers\\\-\quad\quad with an input tensor \textsuperscript{Fig.\ref{fig:exp:pass-input-in-encoder}}}
-		& 4.31 & 1.07 & 1.13 & 49.04 & 19.83 & 3.85 & 18.28 \\ % A01_38_ai
+		& 0.43 & 1.07 & 1.13 & 49.04 & 19.83 & 3.85 & 18.28 \\ % A01_38_ai
 		\thead[l]{34. Neural texture's learning rate $\times10$ \textsuperscript{Fig.\ref{fig:exp:ntex-lr-higher}}}
-		& 4.38 & 1.08 & 1.09 & 48.74 & 18.06 & 3.90 & 13.50 \\ % A01_39_ntex10
+		& 0.44 & 1.08 & 1.09 & 48.74 & 18.06 & 3.90 & 13.50 \\ % A01_39_ntex10
 		\thead[l]{35. Weight decay $10^{-2}$ renderer \textsuperscript{Fig.\ref{fig:exp:wdecay-nr432}}}
-		& 3.75 & 1.18 & 1.08 & 41.50 & 20.94 & 3.61 & 16.68 \\ % A03_07_nr2
+		& 0.38 & 1.18 & 1.08 & 41.50 & 20.94 & 3.61 & 16.68 \\ % A03_07_nr2
 		\thead[l]{36. Equal loss weights + higher texture learning rate \textsuperscript{Fig.\ref{fig:exp:loss-weights}}}
-		& 5.92 & 0.81 & 0.90 & 33.03 & 22.19 & 3.78 & 20.14 \\ % A01_53_ntexlr
+		& 0.59 & 0.81 & 0.90 & 33.03 & 22.19 & 3.78 & 20.14 \\ % A01_53_ntexlr
 		\thead[l]{37. Zoom on vertices with equal probability,\\\-\quad\quad zoom scale is mostly full-body \textsuperscript{Fig.\ref{fig:exp:a03-bl}}}
-		& 3.95 & 1.07 & 1.22 & 46.77 & 18.99 & 4.50 & 14.83 \\ % vA03_01_nobnf_ut
+		& 0.40 & 1.07 & 1.22 & 46.77 & 18.99 & 4.50 & 14.83 \\ % vA03_01_nobnf_ut
 		\thead[l]{38. Strong affine translation \textsuperscript{Fig.\ref{fig:exp:strong-affine-aug}}}
-		& 4.60 & 1.18 & 1.07 & 49.83 & 22.89 & 4.32 & 17.15 \\ % vA01_03_vt
+		& 0.46 & 1.18 & 1.07 & 49.83 & 22.89 & 4.32 & 17.15 \\ % vA01_03_vt
 		\thead[l]{39. Gradient clip renderer to 2 norm \textsuperscript{Fig.\ref{fig:exp:gradclip-constant-or-mean}}}
-		& 3.89 & 1.18 & 1.18 & 42.27 & 22.66 & 4.19 & 19.53 \\ % A01_35_2_01
+		& 0.39 & 1.18 & 1.18 & 42.27 & 22.66 & 4.19 & 19.53 \\ % A01_35_2_01
 		\thead[l]{40. Weight decay $10^{-2}$ renderer,\\\-\quad\quad $10^{-1}$ for texture/discriminator \textsuperscript{Fig.\ref{fig:exp:wdecay-nr2:ntex1+disc}}}
-		& 3.95 & 1.16 & 1.03 & 48.79 & 15.23 & 3.97 & 15.79 \\ % A03_07_nr2_d1_ntex1
+		& 0.39 & 1.16 & 1.03 & 48.79 & 15.23 & 3.97 & 15.79 \\ % A03_07_nr2_d1_ntex1
 		\thead[l]{41. Texture optimizer's state does not update if $\nabla=0$ \textsuperscript{Fig.\ref{fig:exp:nza-or-bnfix}}}
-		& 4.35 & 1.02 & 1.16 & 48.58 & 17.18 & 4.30 & 18.70 \\ % A01_31_ai
+		& 0.44 & 1.02 & 1.16 & 48.58 & 17.18 & 4.30 & 18.70 \\ % A01_31_ai
 		\thead[l]{42. LR scheduler with warmup,\\\-\quad\quad gradient clip renderer to 10 norm \textsuperscript{Fig.\ref{fig:exp:gradclip-scheduler}}}
-		& 4.74 & 1.03 & 1.16 & 46.70 & 19.77 & 4.16 & 19.49 \\ % A01_42_lr2m6_gc10
+		& 0.47 & 1.03 & 1.16 & 46.70 & 19.77 & 4.16 & 19.49 \\ % A01_42_lr2m6_gc10
 		\thead[l]{43. Weight decay $10^{-4}$ renderer \textsuperscript{Fig.\ref{fig:exp:wdecay-nr654}}}
-		& 3.75 & 1.08 & 1.17 & 45.94 & 20.77 & 3.34 & 16.26 \\ % A03_07_nr4
+		& 0.37 & 1.08 & 1.17 & 45.94 & 20.77 & 3.34 & 16.26 \\ % A03_07_nr4
 		\thead[l]{44. Weight decay $10^{-6}$ renderer \textsuperscript{Fig.\ref{fig:exp:wdecay-nr654}}}
-		& 4.47 & 1.14 & 1.18 & 45.95 & 19.66 & 3.87 & 14.58 \\ % A03_07_nr6
+		& 0.45 & 1.14 & 1.18 & 45.95 & 19.66 & 3.87 & 14.58 \\ % A03_07_nr6
 		\thead[l]{45. Renderer's last layers w/o normalization layers \textsuperscript{Fig.\ref{fig:exp:nonorm:d:rd:rhead}}}
-		& 5.02 & 1.15 & 1.21 & 43.62 & 21.65 & 3.81 & 19.93 \\ % A01_37_noheadnorm
+		& 0.50 & 1.15 & 1.21 & 43.62 & 21.65 & 3.81 & 19.93 \\ % A01_37_noheadnorm
 		\thead[l]{46. Renderer and discriminator's BN layers\\\-\quad\quad w/o learned affine parameters \textsuperscript{Fig.\ref{fig:exp:norm-noaffine}}}
-		& 4.82 & 1.11 & 1.16 & 48.05 & 25.22 & 3.95 & 17.84 \\ % A01_43_03v_rd
+		& 0.48 & 1.11 & 1.16 & 48.05 & 25.22 & 3.95 & 17.84 \\ % A01_43_03v_rd
 		\thead[l]{47. Dropout $p=0.1$ in encoder after convolutions \textsuperscript{Fig.\ref{fig:exp:dropout-all-conv-ed-ed}}}
-		& 4.12 & 1.12 & 1.02 & 50.83 & 19.58 & 5.19 & 17.27 \\ % A03_04_c01e
+		& 0.41 & 1.12 & 1.02 & 50.83 & 19.58 & 5.19 & 17.27 \\ % A03_04_c01e
 		\thead[l]{48. LR scheduler with warmup \textsuperscript{Fig.\ref{fig:exp:gradclip-scheduler}}}
-		& 4.43 & 1.15 & 1.09 & 46.67 & 20.97 & 4.07 & 19.21 \\ % A01_42_lr2m6
+		& 0.44 & 1.15 & 1.09 & 46.67 & 20.97 & 4.07 & 19.21 \\ % A01_42_lr2m6
 		\thead[l]{49. Renderer's BN layers w/o learned affine parameters \textsuperscript{Fig.\ref{fig:exp:norm-noaffine}}}
-		& 4.70 & 1.06 & 1.27 & 50.03 & 20.41 & 3.34 & 20.62 \\ % A01_43_03v_r
+		& 0.47 & 1.06 & 1.27 & 50.03 & 20.41 & 3.34 & 20.62 \\ % A01_43_03v_r
 		\thead[l]{50. Zoom on vertices with equal probability,\\\-\quad\quad no zoom stats BN \textsuperscript{Fig.\ref{fig:exp:nza-bnfix-zoomvertices}}}
-		& 3.63 & 1.25 & 1.59 & 44.42 & 15.87 & 4.50 & 14.03 \\ % vA01_24
+		& 0.36 & 1.25 & 1.59 & 44.42 & 15.87 & 4.50 & 14.03 \\ % vA01_24
 		\thead[l]{51. Zoom on vertices with equal probability,\\\-\quad\quad mostly full-body input, no zoom stats BN \textsuperscript{Fig.\ref{fig:exp:a03-uniform}}}
-		& \textbf{\underline{2.77}} & \textbf{\underline{1.51}} & \textbf{\underline{1.78}} & 45.22 & 15.31 & 5.10 & 14.35 \\ % vA03_01_uniform
+		& \textbf{\underline{0.28}} & \textbf{\underline{1.51}} & \textbf{\underline{1.78}} & 45.22 & 15.31 & 5.10 & 14.35 \\ % vA03_01_uniform
 		\thead[l]{52. Weight decay $10^{-3}$ renderer/discriminator/texture \textsuperscript{Fig.\ref{fig:exp:wdecay-nr3:ntex+disc}}}
-		& 4.23 & 1.26 & 1.19 & 48.55 & 21.09 & 3.06 & 14.78 \\ % A03_07_nr3_d3_ntex3
+		& 0.42 & 1.26 & 1.19 & 48.55 & 21.09 & 3.06 & 14.78 \\ % A03_07_nr3_d3_ntex3
 		\thead[l]{53. Neural texture 8 channels, not 16 \textsuperscript{Fig.\ref{fig:exp:nza-or-ntex8}}}
-		& 4.86 & 1.10 & 1.04 & 47.85 & 25.88 & 3.84 & 18.18 \\ % A01_33_ai
+		& 0.49 & 1.10 & 1.04 & 47.85 & 25.88 & 3.84 & 18.18 \\ % A01_33_ai
 		\thead[l]{54. LR scheduler with warmup,\\\-\quad\quad gradient clip renderer to 20 norm \textsuperscript{Fig.\ref{fig:exp:gradclip-scheduler}}}
-		& 4.44 & 1.10 & 1.00 & 48.72 & 25.09 & 4.02 & 19.47 \\ % A01_42_lr2m6_gc20
+		& 0.44 & 1.10 & 1.00 & 48.72 & 25.09 & 4.02 & 19.47 \\ % A01_42_lr2m6_gc20
 		\thead[l]{55. Zooms on joints x4.5 \textsuperscript{Fig.\ref{fig:exp:basic-zooms}}}
-		& 4.14 & 1.03 & 1.15 & 48.69 & 24.51 & 4.21 & 20.20 \\ % A01_03_ai_retrain_val
+		& 0.41 & 1.03 & 1.15 & 48.69 & 24.51 & 4.21 & 20.20 \\ % A01_03_ai_retrain_val
 		\thead[l]{56. Dropout $p=0.05$ in renderer layers \textsuperscript{Fig.\ref{fig:exp:dropout-ed-ed}}}
-		& 4.16 & 1.07 & 1.41 & 56.26 & 21.35 & 6.00 & 17.40 \\ % A03_04_005ed
+		& 0.42 & 1.07 & 1.41 & 56.26 & 21.35 & 6.00 & 17.40 \\ % A03_04_005ed
 		\thead[l]{57. Zoom to vertices with equal probability,\\\-\quad\quad mostly full-body input \textsuperscript{Fig.\ref{fig:exp:a03-bl}}}
-		& 4.56 & 1.40 & 1.17 & 48.61 & 23.19 & 3.80 & 17.70 \\ % A03_01_bl
+		& 0.46 & 1.40 & 1.17 & 48.61 & 23.19 & 3.80 & 17.70 \\ % A03_01_bl
 		\thead[l]{58. Weight decay $10^{-2}$ renderer/texture,\\\-\quad\quad $10^{-1}$ for discriminator \textsuperscript{Fig.\ref{fig:exp:wdecay-nr2:ntex2+disc}}}
-		& 3.99 & 1.11 & 1.16 & 42.80 & 20.00 & 3.38 & 17.32 \\ % A03_07_nr2_d1_ntex2
+		& 0.40 & 1.11 & 1.16 & 42.80 & 20.00 & 3.38 & 17.32 \\ % A03_07_nr2_d1_ntex2
 		\thead[l]{59. Weight decay $10^{-1}$ renderer \textsuperscript{Fig.\ref{fig:exp:wdecay-nr2:nronly}}}
-		& 4.47 & 1.25 & 1.12 & 46.20 & 23.79 & 3.12 & 18.10 \\ % A03_07_nr1
+		& 0.45 & 1.25 & 1.12 & 46.20 & 23.79 & 3.12 & 18.10 \\ % A03_07_nr1
 		\thead[l]{60. Neural texture 8 channels, no zoom stats BN,\\\-\quad\quad texture optimizer's state does not update if $\nabla=0$ \textsuperscript{Fig.\ref{fig:exp:nza-bnfix-ntex8}}}
-		& 3.72 & 1.04 & \textcolor{blue}{\textbf{\underline{1.91}}} & 43.76 & 15.49 & 5.13 & 14.74 \\ % vA01_28
+		& 0.37 & 1.04 & \textcolor{blue}{\textbf{\underline{1.91}}} & 43.76 & 15.49 & 5.13 & 14.74 \\ % vA01_28
 	\end{tabularx}
 \end{table}\clearpage\newpage
 \begin{table}
 	\renewcommand{\arraystretch}{0.25}
 	\linespread{0.25}\selectfont\centering\small
 	\setlength\tabcolsep{1.5pt}
+	\rowcolors{2}{gray!15}{white}
 	\begin{tabularx}{\textwidth}{>{\centering\arraybackslash}X|c|c|c|c|c|c|c}\hline
-		\textbf{Experiment} & {\footnotesize\textbf{\thead{GAN\\G↓\\$\cdot10^1$}}} & {\footnotesize\textbf{\thead{GAN\\D-R↑}}} & {\footnotesize\textbf{\thead{GAN\\D-F↑}}} & {\footnotesize\textbf{\thead{FM↓\\$\cdot10^2$}}} & {\footnotesize\textbf{\thead{L1↓\\$\cdot10^3$}}} & {\footnotesize\textbf{\thead{Dice↓\\$\cdot10^3$}}} & {\footnotesize\textbf{\thead{LPIPS↓\\$\cdot10^2$}}}\\\hline
+		\rowcolor{white}
+		\textbf{Experiment} & {\footnotesize\textbf{\thead{GAN\\G↓}}} & {\footnotesize\textbf{\thead{GAN\\D-R↑}}} & {\footnotesize\textbf{\thead{GAN\\D-F↑}}} & {\footnotesize\textbf{\thead{FM↓\\$\cdot10^2$}}} & {\footnotesize\textbf{\thead{L1↓\\$\cdot10^3$}}} & {\footnotesize\textbf{\thead{Dice↓\\$\cdot10^3$}}} & {\footnotesize\textbf{\thead{LPIPS↓\\$\cdot10^2$}}}\\\hline
 		\thead[l]{61. Strong affine translation and rotation \textsuperscript{Fig.\ref{fig:exp:strong-affine-aug}}}
-		& 4.89 & 1.12 & 1.34 & 54.53 & 17.92 & 5.09 & 17.49 \\ % vA01_03_vtr
+		& 0.49 & 1.12 & 1.34 & 54.53 & 17.92 & 5.09 & 17.49 \\ % vA01_03_vtr
 		\thead[l]{62. Zooms on joints x2.0 \textsuperscript{Fig.\ref{fig:exp:basic-zooms-2}}}
-		& 3.27 & 1.04 & 1.16 & 48.68 & 19.26 & 3.85 & 18.29 \\ % vA01_04
+		& 0.33 & 1.04 & 1.16 & 48.68 & 19.26 & 3.85 & 18.29 \\ % vA01_04
 		\thead[l]{63. Texture optimizer's state does not update if $\nabla=0$,\\\-\quad\quad all normalization layers are removed \textsuperscript{Fig.\ref{fig:exp:nonorm:d:rd:rhead}}}
-		& 5.77 & 0.83 & 0.93 & \textbf{\underline{1.63}} & 26.69 & 4.60 & 17.89 \\ % A01_37_ai
+		& 0.58 & 0.83 & 0.93 & \textbf{\underline{1.63}} & 26.69 & 4.60 & 17.89 \\ % A01_37_ai
 		\thead[l]{64. Texture optimizer's state does not update\\\-\quad\quad if $\nabla=0$, no zoom stats BN \textsuperscript{Fig.\ref{fig:exp:nza-bnfix-zoomvertices}}}
-		& 4.42 & 1.11 & 1.30 & 15.78 & 16.79 & 5.39 & 15.88 \\ % vA01_23
+		& 0.44 & 1.11 & 1.30 & 15.78 & 16.79 & 5.39 & 15.88 \\ % vA01_23
 		\thead[l]{65. All normalization layers are removed \textsuperscript{Fig.\ref{fig:exp:different-norms}}}
-		& 4.81 & 1.31 & 1.19 & 21.57 & 16.43 & 6.05 & 15.38 \\ % vA01_08
+		& 0.48 & 1.31 & 1.19 & 21.57 & 16.43 & 6.05 & 15.38 \\ % vA01_08
 		\thead[l]{66. Zooms on limbs x8.0 \textsuperscript{Fig.\ref{fig:exp:basic-zooms-2}}}
-		& 3.84 & 1.12 & 1.06 & 54.46 & 22.75 & 5.18 & 18.37 \\ % vA01_01
+		& 0.38 & 1.12 & 1.06 & 54.46 & 22.75 & 5.18 & 18.37 \\ % vA01_01
 		\thead[l]{67. Zooms on joints x3.5 \textsuperscript{Fig.\ref{fig:exp:basic-zooms-2}}}
-		& 4.17 & 1.03 & 1.04 & 48.62 & 20.33 & 3.44 & 17.79 \\ % vA01_05
+		& 0.42 & 1.03 & 1.04 & 48.62 & 20.33 & 3.44 & 17.79 \\ % vA01_05
 		\thead[l]{68. Dropout $p=0.01$ in decoder layers \textsuperscript{Fig.\ref{fig:exp:dropout-e-d}}}
-		& 3.92 & 1.22 & 1.13 & 59.68 & 18.84 & 5.80 & 17.75 \\ % A03_04_01d
+		& 0.39 & 1.22 & 1.13 & 59.68 & 18.84 & 5.80 & 17.75 \\ % A03_04_01d
 		\thead[l]{69. No zoom stats BN for 20\% of frames \textsuperscript{Fig.\ref{fig:exp:bnf-disable-track}}}
-		& 4.17 & 1.15 & 1.56 & 54.05 & 15.95 & 4.93 & 14.75 \\ % vA01_06_notrack2
+		& 0.42 & 1.15 & 1.56 & 54.05 & 15.95 & 4.93 & 14.75 \\ % vA01_06_notrack2
 		\thead[l]{70. Renderer BN w/o learned affine parameters,\\\-\quad\quad discriminator with Instance norms \textsuperscript{Fig.\ref{fig:exp:renderer-noaffinenorm}}}
-		& 3.97 & 1.06 & 1.42 & 9.38 & 14.79 & 4.74 & 13.62 \\ % vA01_43_rdin
+		& 0.40 & 1.06 & 1.42 & 9.38 & 14.79 & 4.74 & 13.62 \\ % vA01_43_rdin
 		\thead[l]{71. Neural texture 8 channels, no zoom stats BN \textsuperscript{Fig.\ref{fig:exp:nza-bnfix-ntex8}}}
-		& 3.82 & 1.06 & 1.17 & 50.84 & 16.89 & 6.05 & 15.78 \\ % vA01_25
+		& 0.38 & 1.06 & 1.17 & 50.84 & 16.89 & 6.05 & 15.78 \\ % vA01_25
 		\thead[l]{72. Group Normalization layers instead of BN \textsuperscript{Fig.\ref{fig:exp:different-norms}}}
-		& 4.37 & 1.09 & 1.26 & 25.29 & 15.05 & 4.57 & 15.45 \\ % vA01_09
+		& 0.44 & 1.09 & 1.26 & 25.29 & 15.05 & 4.57 & 15.45 \\ % vA01_09
 		\thead[l]{73. Texture optimizer's state does not update\\\-\quad\quad if $\nabla=0$, no normalizations in renderer \textsuperscript{Fig.\ref{fig:exp:nonorm:r:rd:r+dinstancenorm}}}
-		& \textcolor{blue}{\textbf{\underline{2.53}}} & 1.36 & 1.65 & 58.29 & 26.52 & 4.94 & 21.41 \\ % A01_37_dis_bn
+		& \textcolor{blue}{\textbf{\underline{0.25}}} & 1.36 & 1.65 & 58.29 & 26.52 & 4.94 & 21.41 \\ % A01_37_dis_bn
 		\thead[l]{74. Disable GAN losses, no zoom stats BN \textsuperscript{Fig.\ref{fig:exp:bn-momentum-high}}}
 		& --   & --   & --   & --   & 14.91 & 5.73 & 15.18 \\ % vA01_49
 		\thead[l]{75. Zoom to joints x8.0 \textsuperscript{Fig.\ref{fig:exp:basic-zooms}}}
-		& 3.50 & 1.21 & 1.30 & 52.59 & 32.40 & 4.79 & 22.34 \\ % vA01_02
+		& 0.35 & 1.21 & 1.30 & 52.59 & 32.40 & 4.79 & 22.34 \\ % vA01_02
 		\thead[l]{76. Dropout $p=0.01$ in renderer layers \textsuperscript{Fig.\ref{fig:exp:dropout-ed-ed}}}
-		& 4.79 & 1.44 & 1.14 & 65.75 & 23.83 & 6.55 & 17.09 \\ % A03_04_01ed
+		& 0.48 & 1.44 & 1.14 & 65.75 & 23.83 & 6.55 & 17.09 \\ % A03_04_01ed
 		\thead[l]{77. Dropout $p=0.1$ in renderer after convolutions \textsuperscript{Fig.\ref{fig:exp:dropout-all-conv-ed-ed}}}
-		& 4.63 & 1.25 & 1.03 & 62.38 & 22.60 & 6.77 & 18.01 \\ % A03_04_c01ed
+		& 0.46 & 1.25 & 1.03 & 62.38 & 22.60 & 6.77 & 18.01 \\ % A03_04_c01ed
 		\thead[l]{78. Resolution $640\times640$, No texture MIP maps \textsuperscript{Fig.\ref{fig:exp:ntex-mip-maps}}}
-		& 4.43 & 1.09 & 1.15 & 47.06 & 24.63 & 4.03 & 18.89 \\ % vA01_41_nomips
+		& 0.44 & 1.09 & 1.15 & 47.06 & 24.63 & 4.03 & 18.89 \\ % vA01_41_nomips
 		\thead[l]{79. Resolution $640\times640$, Learned texture MIP maps \textsuperscript{Fig.\ref{fig:exp:ntex-mip-maps}}}
-		& 4.47 & 1.06 & 1.08 & 50.18 & 21.07 & 3.54 & 16.83 \\ % vA01_41_learnmips
+		& 0.45 & 1.06 & 1.08 & 50.18 & 21.07 & 3.54 & 16.83 \\ % vA01_41_learnmips
 		\thead[l]{80. Texture optimizer's state does not update\\\-\quad\quad if $\nabla=0$, only Instance norms in discriminator \textsuperscript{Fig.\ref{fig:exp:nonorm:r:rd:r+dinstancenorm}}}
-		& 5.37 & 1.09 & 0.94 & 52.38 & 27.04 & 6.19 & 20.63 \\ % A01_37_dis_in
+		& 0.54 & 1.09 & 0.94 & 52.38 & 27.04 & 6.19 & 20.63 \\ % A01_37_dis_in
 		\thead[l]{81. Resolution $640\times640$ \textsuperscript{Fig.\ref{fig:exp:ntex-mip-maps}}}
-		& 4.33 & 1.32 & 1.11 & 48.20 & 27.20 & 3.54 & 19.93 \\ % vA01_41
+		& 0.43 & 1.32 & 1.11 & 48.20 & 27.20 & 3.54 & 19.93 \\ % vA01_41
 		\thead[l]{82. Noise augmentation $\sigma=0.05$ on ground truth \textsuperscript{Fig.\ref{fig:exp:add-noise-rgb}}}
-		& 5.01 & 1.05 & 1.01 & 69.99 & 26.91 & 4.58 & 17.63 \\ % A03_06_rgb005
+		& 0.50 & 1.05 & 1.01 & 69.99 & 26.91 & 4.58 & 17.63 \\ % A03_06_rgb005
 		\thead[l]{83. Only 27 training frames \textsuperscript{Fig.\ref{fig:exp:27-frames}}}
-		& 3.31 & 1.09 & 1.28 & 52.38 & 15.39 & 2.53 & 12.46 \\ % A03_01_27
+		& 0.33 & 1.09 & 1.28 & 52.38 & 15.39 & 2.53 & 12.46 \\ % A03_01_27
 		\thead[l]{84. BN collect running statistics with momentum 0.2 \textsuperscript{Fig.\ref{fig:exp:bn-momentum-high}}}
-		& 4.18 & 1.13 & 1.47 & 45.02 & 16.57 & 6.14 & 14.19 \\ % A01_47_m2
+		& 0.42 & 1.13 & 1.47 & 45.02 & 16.57 & 6.14 & 14.19 \\ % A01_47_m2
 		\thead[l]{85. Texture Adam optimizer has first momentum 0 \textsuperscript{Fig.\ref{fig:exp:optimizer-momentum}}}
-		& 3.50 & 1.20 & 1.14 & 54.99 & 18.43 & 4.84 & 15.40 \\ % vA01_21
+		& 0.35 & 1.20 & 1.14 & 54.99 & 18.43 & 4.84 & 15.40 \\ % vA01_21
 		\thead[l]{86. Optimization step of discriminator every 4 batches \textsuperscript{Fig.\ref{fig:exp:optimizer-step-n}}}
-		& 3.25 & 1.27 & 1.49 & 54.07 & 17.66 & 4.91 & 15.97 \\ % vA01_06_step2d
+		& 0.33 & 1.27 & 1.49 & 54.07 & 17.66 & 4.91 & 15.97 \\ % vA01_06_step2d
 		\thead[l]{87. BN collect running statistics with momentum 0.3 \textsuperscript{Fig.\ref{fig:exp:bn-momentum-high}}}
-		& 3.55 & \textcolor{blue}{\textbf{\underline{1.57}}} & \textbf{\underline{1.74}} & 55.50 & 16.73 & 6.21 & 14.97 \\ % A01_47_m3
+		& 0.36 & \textcolor{blue}{\textbf{\underline{1.57}}} & \textbf{\underline{1.74}} & 55.50 & 16.73 & 6.21 & 14.97 \\ % A01_47_m3
 		\thead[l]{88. Texture+discriminator Adam optimizers\\\-\quad\quad have first momentum 0 \textsuperscript{Fig.\ref{fig:exp:optimizer-momentum}}}
-		& 3.16 & \textbf{\underline{1.49}} & \textbf{\underline{1.88}} & 60.42 & 18.53 & 6.83 & 15.77 \\ % vA01_19
+		& 0.32 & \textbf{\underline{1.49}} & \textbf{\underline{1.88}} & 60.42 & 18.53 & 6.83 & 15.77 \\ % vA01_19
 		\thead[l]{89. Additive noise $\sigma=0.25$ to texture initializaiton \textsuperscript{Fig.\ref{fig:exp:add-noise-ntex-init}}}
-		& 3.55 & 1.23 & 1.31 & 37.99 & 17.65 & 6.34 & 15.82 \\ % vA01_51_025
+		& 0.36 & 1.23 & 1.31 & 37.99 & 17.65 & 6.34 & 15.82 \\ % vA01_51_025
 		\thead[l]{90. Texture optimizer's state does not update\\\-\quad\quad if $\nabla=0$, no zoom stats BN \textsuperscript{Fig.\ref{fig:exp:nza-bnfix-zoomvertices}}}
-		& 3.83 & 1.12 & 1.44 & 19.01 & 18.18 & 7.00 & 15.24 \\ % vA01_22
+		& 0.38 & 1.12 & 1.44 & 19.01 & 18.18 & 7.00 & 15.24 \\ % vA01_22
 	\end{tabularx}
 \end{table}\clearpage\newpage
 \begin{table}
 	\renewcommand{\arraystretch}{0.25}
 	\linespread{0.25}\selectfont\centering\small
 	\setlength\tabcolsep{1.5pt}
+	\rowcolors{2}{gray!15}{white}
 	\begin{tabularx}{\textwidth}{>{\centering\arraybackslash}X|c|c|c|c|c|c|c}\hline
-		\textbf{Experiment} & {\footnotesize\textbf{\thead{GAN\\G↓\\$\cdot10^1$}}} & {\footnotesize\textbf{\thead{GAN\\D-R↑}}} & {\footnotesize\textbf{\thead{GAN\\D-F↑}}} & {\footnotesize\textbf{\thead{FM↓\\$\cdot10^2$}}} & {\footnotesize\textbf{\thead{L1↓\\$\cdot10^3$}}} & {\footnotesize\textbf{\thead{Dice↓\\$\cdot10^3$}}} & {\footnotesize\textbf{\thead{LPIPS↓\\$\cdot10^2$}}}\\\hline
+		\rowcolor{white}
+		\textbf{Experiment} & {\footnotesize\textbf{\thead{GAN\\G↓}}} & {\footnotesize\textbf{\thead{GAN\\D-R↑}}} & {\footnotesize\textbf{\thead{GAN\\D-F↑}}} & {\footnotesize\textbf{\thead{FM↓\\$\cdot10^2$}}} & {\footnotesize\textbf{\thead{L1↓\\$\cdot10^3$}}} & {\footnotesize\textbf{\thead{Dice↓\\$\cdot10^3$}}} & {\footnotesize\textbf{\thead{LPIPS↓\\$\cdot10^2$}}}\\\hline
 		\thead[l]{91. Zoom to joints, mostly full-body input \textsuperscript{Fig.\ref{fig:exp:a03-uniform}}}
-		& 4.62 & 1.34 & 1.28 & 54.93 & 16.48 & 6.84 & 14.04 \\ % A03_01_ai
+		& 0.46 & 1.34 & 1.28 & 54.93 & 16.48 & 6.84 & 14.04 \\ % A03_01_ai
 		\thead[l]{92. Discriminator Instance Normalizations without\\\-\quad\quad learned affine parameters \textsuperscript{Fig.\ref{fig:exp:bnf-disc-noaffinenorms}}}
-		& 3.95 & 1.31 & 1.11 & 52.66 & 17.82 & 6.96 & 14.84 \\ % A01_43_din
+		& 0.40 & 1.31 & 1.11 & 52.66 & 17.82 & 6.96 & 14.84 \\ % A01_43_din
 		\thead[l]{93. Pass input tensor to inner layers of encoder,\\\-\quad\quad no zoom stats BN \textsuperscript{Fig.\ref{fig:exp:pass-input-in-encoder}}}
-		& 4.70 & 1.02 & 1.14 & 32.33 & 16.19 & 7.18 & 14.76 \\ % A01_38_cat_bnfix
+		& 0.47 & 1.02 & 1.14 & 32.33 & 16.19 & 7.18 & 14.76 \\ % A01_38_cat_bnfix
 		\thead[l]{94. No zoom stats BN, 80\% of full-body input \textsuperscript{Fig.\ref{fig:exp:nza-or-bnfix}}}
-		& 4.89 & 1.36 & 1.18 & 54.25 & 18.73 & 6.95 & 15.06 \\ % A01_32_80
+		& 0.49 & 1.36 & 1.18 & 54.25 & 18.73 & 6.95 & 15.06 \\ % A01_32_80
 		\thead[l]{95. No multiscale neural texture \textsuperscript{Fig.\ref{fig:exp:bnf-samescalebatch-nomultiscaletex-highdice}}}
-		& 3.43 & 1.18 & 1.44 & 53.53 & 17.18 & 5.43 & 14.23 \\ % A01_44_bnf
+		& 0.34 & 1.18 & 1.44 & 53.53 & 17.18 & 5.43 & 14.23 \\ % A01_44_bnf
 		\thead[l]{96. Additive noise $\sigma=0.1$ to texture initializaiton \textsuperscript{Fig.\ref{fig:exp:add-noise-ntex-init}}}
-		& \textbf{\underline{2.99}} & 1.17 & 1.25 & \textbf{\underline{5.86}} & 17.43 & 6.39 & 16.49 \\ % vA01_51_01
+		& \textbf{\underline{0.30}} & 1.17 & 1.25 & \textbf{\underline{5.86}} & 17.43 & 6.39 & 16.49 \\ % vA01_51_01
 		\thead[l]{97. BN layers don't collect statistics on FB frames,\\\-\quad\quad mostly full-body input shown \textsuperscript{Fig.\ref{fig:exp:scale-distr-enable-disable-stat-or-gan}}}
-		& 3.69 & \textbf{\underline{1.46}} & 1.13 & 53.28 & 14.07 & 6.89 & 15.88 \\ % vA03_02_zstat
+		& 0.37 & \textbf{\underline{1.46}} & 1.13 & 53.28 & 14.07 & 6.89 & 15.88 \\ % vA03_02_zstat
 		\thead[l]{98. Renderer intialized from experiment\\\-\quad\quad with multi-person dataset \textsuperscript{Fig.\ref{fig:exp:multiperson-init}}}
-		& 4.75 & 1.24 & 1.16 & 8.87 & 17.82 & 7.74 & 14.57 \\ % vA01_54_r
+		& 0.47 & 1.24 & 1.16 & 8.87 & 17.82 & 7.74 & 14.57 \\ % vA01_54_r
 		\thead[l]{99. Renderer last layers have twice as fewer channels \textsuperscript{Fig.\ref{fig:exp:nza-bnfix-ntex8}}}
-		& 4.02 & 1.21 & 1.13 & 33.39 & 18.60 & 6.87 & 15.65 \\ % vA01_26
+		& 0.40 & 1.21 & 1.13 & 33.39 & 18.60 & 6.87 & 15.65 \\ % vA01_26
 		\thead[l]{100. Renderer has instance normalizations instead of BN,\\\-\quad\quad that collect running instance statistics \textsuperscript{Fig.\ref{fig:exp:instancenorm-and-switch-track-stat}}}
-		& 4.96 & 1.07 & 1.05 & 55.08 & 16.95 & 7.19 & 15.34 \\ % A01_48_ai
+		& 0.50 & 1.07 & 1.05 & 55.08 & 16.95 & 7.19 & 15.34 \\ % A01_48_ai
 		\thead[l]{101. No zoom stats BN, 35\% FB frames \textsuperscript{Fig.\ref{fig:exp:bnf-statfb-statzooms}}}
-		& 4.15 & 1.36 & 1.44 & 54.58 & 18.00 & 6.34 & 15.09 \\ % vA01_06
+		& 0.42 & 1.36 & 1.44 & 54.58 & 18.00 & 6.34 & 15.09 \\ % vA01_06
 		\thead[l]{102. Renderer BN without learned affine parameters \textsuperscript{Fig.\ref{fig:exp:renderer-noaffinenorm}}}
-		& 4.32 & 1.02 & 1.14 & 15.22 & 15.95 & 5.17 & 15.86 \\ % vA01_43_r
+		& 0.43 & 1.02 & 1.14 & 15.22 & 15.95 & 5.17 & 15.86 \\ % vA01_43_r
 		\thead[l]{103. Renderer+Discriminator BN without\\\-\quad\quad learned affine parameters \textsuperscript{Fig.\ref{fig:exp:renderer-noaffinenorm}}}
-		& 4.64 & 1.13 & \textbf{\underline{1.90}} & 52.62 & 17.01 & 5.83 & 15.14 \\ % A01_43_rd
+		& 0.46 & 1.13 & \textbf{\underline{1.90}} & 52.62 & 17.01 & 5.83 & 15.14 \\ % A01_43_rd
 		\thead[l]{104. Dropout $p=0.15$ in renderer after convolutions \textsuperscript{Fig.\ref{fig:exp:dropout-all-conv-ed-ed}}}
-		& 3.79 & 1.37 & 1.40 & 72.26 & 24.33 & 7.91 & 17.43 \\ % A03_04_c015ed
+		& 0.38 & 1.37 & 1.40 & 72.26 & 24.33 & 7.91 & 17.43 \\ % A03_04_c015ed
 		\thead[l]{105. Discriminator BN w/o learned affine parameters \textsuperscript{Fig.\ref{fig:exp:bnf-disc-noaffinenorms}}}
-		& 4.87 & 1.25 & 1.27 & \textbf{\underline{7.61}} & 17.58 & 6.48 & 15.84 \\ % A01_43_d
+		& 0.49 & 1.25 & 1.27 & \textbf{\underline{7.61}} & 17.58 & 6.48 & 15.84 \\ % A01_43_d
 		\thead[l]{106. Initialize texture with noise \textsuperscript{Fig.\ref{fig:exp:add-noise-ntex-init}}}
-		& 3.30 & 1.34 & 1.52 & 13.03 & 19.82 & 6.29 & 16.82 \\ % vA01_50
+		& 0.33 & 1.34 & 1.52 & 13.03 & 19.82 & 6.29 & 16.82 \\ % vA01_50
 		\thead[l]{107. No zoom stats BN, 35\% of full-body input \textsuperscript{Fig.\ref{fig:exp:nza-or-bnfix}}}
-		& 4.44 & 1.09 & 1.32 & \textbf{\underline{5.87}} & 19.94 & 6.99 & 17.11 \\ % A01_32_ai
+		& 0.44 & 1.09 & 1.32 & \textbf{\underline{5.87}} & 19.94 & 6.99 & 17.11 \\ % A01_32_ai
 		\thead[l]{108. Dice loss has $\times2$ weight, no zoom stats BN \textsuperscript{Fig.\ref{fig:exp:bnf-samescalebatch-nomultiscaletex-highdice}}}
-		& 4.94 & 1.25 & 1.37 & 13.07 & 18.98 & 6.58 & 16.76 \\ % A01_46_d2
+		& 0.49 & 1.25 & 1.37 & 13.07 & 18.98 & 6.58 & 16.76 \\ % A01_46_d2
 		\thead[l]{109. Same affine augmentations inside batch \textsuperscript{Fig.\ref{fig:exp:bnf-samescalebatch-nomultiscaletex-highdice}}}
-		& 3.33 & 1.45 & 1.68 & 8.96 & 16.01 & 4.98 & 15.15 \\ % A01_45_ai
+		& 0.33 & 1.45 & 1.68 & 8.96 & 16.01 & 4.98 & 15.15 \\ % A01_45_ai
 		\thead[l]{110. Batch size 1, texture optimizer's state\\\-\quad\quad does not update if $\nabla=0$ \textsuperscript{Fig.\ref{fig:exp:batch-size-1}}}
-		& 3.66 & 1.36 & 1.26 & 38.00 & \textcolor{blue}{\textbf{\underline{6.63}}} & \textcolor{blue}{\textbf{\underline{1.04}}} & \textbf{\underline{10.91}} \\ % A01_34_ai
+		& 0.37 & 1.36 & 1.26 & 38.00 & \textcolor{blue}{\textbf{\underline{6.63}}} & \textcolor{blue}{\textbf{\underline{1.04}}} & \textbf{\underline{10.91}} \\ % A01_34_ai
 		\thead[l]{111. BN collect statistics only on zoomed images \textsuperscript{Fig.\ref{fig:exp:bnf-statfb-statzooms}}}
-		& 4.15 & 1.25 & 1.36 & 47.43 & 18.97 & 6.43 & 16.03 \\ % vA01_06_stat_zooms
+		& 0.41 & 1.25 & 1.36 & 47.43 & 18.97 & 6.43 & 16.03 \\ % vA01_06_stat_zooms
 		\thead[l]{112. Batch size 1, no zoom stats BN \textsuperscript{Fig.\ref{fig:exp:batch-size-1}}}
-		& 3.95 & \textbf{\underline{1.51}} & 1.20 & 37.55 & \textbf{\underline{6.67}} & \textbf{\underline{1.41}} & \textcolor{blue}{\textbf{\underline{8.41}}} \\ % A01_34_defaultopt
+		& 0.40 & \textbf{\underline{1.51}} & 1.20 & 37.55 & \textbf{\underline{6.67}} & \textbf{\underline{1.41}} & \textcolor{blue}{\textbf{\underline{8.41}}} \\ % A01_34_defaultopt
 		\thead[l]{113. Optimization step is every 2 batches \textsuperscript{Fig.\ref{fig:exp:optimizer-step-n}}}
-		& 3.70 & 1.42 & 1.27 & 23.87 & 18.65 & 7.21 & 17.39 \\ % vA01_06_step2
+		& 0.37 & 1.42 & 1.27 & 23.87 & 18.65 & 7.21 & 17.39 \\ % vA01_06_step2
 		\thead[l]{114. Optimization step is every 4 batches \textsuperscript{Fig.\ref{fig:exp:optimizer-step-n}}}
-		& \textbf{\underline{2.79}} & 1.26 & 1.68 & 38.99 & 19.74 & 9.27 & 18.79 \\ % vA01_06_step4
+		& \textbf{\underline{0.28}} & 1.26 & 1.68 & 38.99 & 19.74 & 9.27 & 18.79 \\ % vA01_06_step4
 		\thead[l]{115. Dropout $p=0.2$ in renderer after convolutions \textsuperscript{Fig.\ref{fig:exp:dropout-all-conv-ed-ed}}}
-		& 4.83 & 1.24 & 1.23 & 76.65 & 26.66 & 8.88 & 18.34 \\ % A03_04_c02ed
+		& 0.48 & 1.24 & 1.23 & 76.65 & 26.66 & 8.88 & 18.34 \\ % A03_04_c02ed
 		\thead[l]{116. Noise augmentation $\sigma=0.1$ on ground truth \textsuperscript{Fig.\ref{fig:exp:add-noise-rgb}}}
-		& 4.67 & 1.27 & 1.17 & 80.95 & 33.61 & 5.85 & 16.43 \\ % A03_06_rgb01
+		& 0.47 & 1.27 & 1.17 & 80.95 & 33.61 & 5.85 & 16.43 \\ % A03_06_rgb01
 	\end{tabularx}
 \end{table}\clearpage\newpage
 \begin{table}
 	\renewcommand{\arraystretch}{0.25}
 	\linespread{0.25}\selectfont\centering\small
 	\setlength\tabcolsep{1.5pt}
+	\rowcolors{2}{gray!15}{white}
 	\caption{Table of validation metrics for the performed experiments}
 	\begin{tabularx}{\textwidth}{>{\centering\arraybackslash}X|c|c|c|c|c|c|c}\hline
+		\rowcolor{white}
 		\textbf{Experiment} & {\footnotesize\textbf{\thead{FM↓\\$\cdot10^2$}}} & {\footnotesize\textbf{\thead{L1↓\\$\cdot10^2$}}} & {\footnotesize\textbf{\thead{Dice↓\\$\cdot10^3$}}} & {\footnotesize\textbf{\thead{PSNR↑}}} & {\footnotesize\textbf{\thead{SSIM↑}}} & {\footnotesize\textbf{\thead{MS\\SSIM↑}}} & {\footnotesize\textbf{\thead{LPIPS↓\\$\cdot10^2$}}}\\\hline
 		\thead[l]{1. Baseline, add camera-space augmentations \textsuperscript{Fig.\ref{fig:exp:baselines}}}
-		& 72.10 & \textbf{\underline{2.62}} & \textcolor{blue}{\textbf{\underline{9.99}}} & \textbf{\underline{1.83}} & \textbf{\underline{9.12}} & \textbf{\underline{9.60}} & \textbf{\underline{3.09}} \\ % vA01_e05_50
+		& 72.10 & \textbf{\underline{2.62}} & \textcolor{blue}{\textbf{\underline{9.99}}} & \textbf{\underline{18.35}} & \textbf{\underline{0.91}} & \textbf{\underline{0.96}} & \textbf{\underline{3.09}} \\ % vA01_e05_50
 		\thead[l]{2. Baseline, add camera-space,\\\-\quad\quad horizontal flip augment \textsuperscript{Fig.\ref{fig:exp:baselines}}}
-		& 71.89 & \textbf{\underline{2.68}} & \textbf{\underline{11.50}} & \textbf{\underline{1.81}} & \textbf{\underline{9.09}} & \textbf{\underline{9.59}} & \textcolor{blue}{\textbf{\underline{3.05}}} \\ % vA01_e05_50_flips
+		& 71.89 & \textbf{\underline{2.68}} & \textbf{\underline{11.50}} & \textbf{\underline{18.12}} & \textbf{\underline{0.91}} & \textbf{\underline{0.96}} & \textcolor{blue}{\textbf{\underline{3.05}}} \\ % vA01_e05_50_flips
 		\thead[l]{3. No GAN losses on zooms \textsuperscript{Fig.\ref{fig:exp:scale-distr-enable-disable-stat-or-gan}}}
-		& \textbf{\underline{50.61}} & \textbf{\underline{2.65}} & 13.56 & \textbf{\underline{1.82}} & \textbf{\underline{9.09}} & \textbf{\underline{9.60}} & \textbf{\underline{3.46}} \\ % vA03_03_znod
+		& \textbf{\underline{50.61}} & \textbf{\underline{2.65}} & 13.56 & \textbf{\underline{18.22}} & \textbf{\underline{0.91}} & \textbf{\underline{0.96}} & \textbf{\underline{3.46}} \\ % vA03_03_znod
 		\thead[l]{4. Baseline, resolution $512\times512$ \textsuperscript{Fig.\ref{fig:exp:baselines}}}
-		& 74.08 & \textbf{\underline{2.71}} & \textbf{\underline{10.41}} & \textbf{\underline{1.82}} & \textbf{\underline{9.10}} & 9.58 & \textbf{\underline{3.31}} \\ % v05_50
+		& 74.08 & \textbf{\underline{2.71}} & \textbf{\underline{10.41}} & \textbf{\underline{18.16}} & \textbf{\underline{0.91}} & 0.96 & \textbf{\underline{3.31}} \\ % v05_50
 		\thead[l]{5. Instance normalizations instead of BN \textsuperscript{Fig.\ref{fig:exp:different-norms}}}
-		& 119.88 & \textcolor{blue}{\textbf{\underline{2.08}}} & 19.24 & \textcolor{blue}{\textbf{\underline{1.84}}} & \textcolor{blue}{\textbf{\underline{9.28}}} & \textcolor{blue}{\textbf{\underline{9.62}}} & \textbf{\underline{3.45}} \\ % A01_07_ai
+		& 119.88 & \textcolor{blue}{\textbf{\underline{2.08}}} & 19.24 & \textcolor{blue}{\textbf{\underline{18.40}}} & \textcolor{blue}{\textbf{\underline{0.93}}} & \textcolor{blue}{\textbf{\underline{0.96}}} & \textbf{\underline{3.45}} \\ % A01_07_ai
 		\thead[l]{6. No GAN losses on FB images \textsuperscript{Fig.\ref{fig:exp:scale-distr-enable-disable-stat-or-gan}}}
-		& 75.44 & 2.84 & 13.96 & 1.78 & 9.06 & 9.56 & 3.63 \\ % vA03_03_fbnod
+		& 75.44 & 2.84 & 13.96 & 17.78 & 0.91 & 0.96 & 3.63 \\ % vA03_03_fbnod
 		\thead[l]{7. Zoom on joints up to x12,\\\-\quad\quad full-body is more probable \textsuperscript{Fig.\ref{fig:exp:a03-bl}}}
-		& 76.54 & 2.80 & 14.06 & 1.78 & 9.05 & 9.58 & 3.53 \\ % vA03_01_nobnf
+		& 76.54 & 2.80 & 14.06 & 17.84 & 0.90 & 0.96 & 3.53 \\ % vA03_01_nobnf
 		\thead[l]{8. Noise augmentation $\sigma=0.02$ on neural texture \textsuperscript{Fig.\ref{fig:exp:add-noise-ntex}}}
-		& 78.74 & 2.80 & 13.56 & 1.79 & 9.05 & 9.58 & 3.57 \\ % A03_06_ntex002
+		& 78.74 & 2.80 & 13.56 & 17.87 & 0.91 & 0.96 & 3.57 \\ % A03_06_ntex002
 		\thead[l]{9. All losses with equal weights \textsuperscript{Fig.\ref{fig:exp:loss-weights}}}
-		& \textbf{\underline{59.64}} & 2.76 & 14.35 & 1.79 & 9.06 & 9.58 & 3.72 \\ % A01_53_1
+		& \textbf{\underline{59.64}} & 2.76 & 14.35 & 17.89 & 0.91 & 0.96 & 3.72 \\ % A01_53_1
 		\thead[l]{10. Noise augmentation $\sigma=0.1$ on input tensor \textsuperscript{Fig.\ref{fig:exp:add-noise-input}}}
-		& 79.21 & 2.80 & 14.18 & 1.79 & 9.06 & \textbf{\underline{9.59}} & 3.79 \\ % A03_06_inp01
+		& 79.21 & 2.80 & 14.18 & 17.92 & 0.91 & \textbf{\underline{0.96}} & 3.79 \\ % A03_06_inp01
 		\thead[l]{11. Noise augmentation $\sigma=0.01$ on input tensor \textsuperscript{Fig.\ref{fig:exp:add-noise-input}}}
-		& 79.12 & 2.91 & 14.52 & 1.77 & 9.04 & 9.57 & 3.73 \\ % A03_06_inp001
+		& 79.12 & 2.91 & 14.52 & 17.74 & 0.90 & 0.96 & 3.73 \\ % A03_06_inp001
 		\thead[l]{12. Noise augmentation $\sigma=0.02$ on input tensor \textsuperscript{Fig.\ref{fig:exp:add-noise-input}}}
-		& 81.17 & 2.90 & 14.37 & 1.76 & 9.04 & 9.56 & 3.70 \\ % A03_06_inp002
+		& 81.17 & 2.90 & 14.37 & 17.65 & 0.90 & 0.96 & 3.70 \\ % A03_06_inp002
 		\thead[l]{13. Discriminator w/o normalization layers \textsuperscript{Fig.\ref{fig:exp:nonorm:d:rd:rhead}}}
-		& \textcolor{blue}{\textbf{\underline{2.14}}} & 2.84 & 13.64 & 1.78 & 9.06 & 9.56 & 3.81 \\ % A01_37_nodisnorm
+		& \textcolor{blue}{\textbf{\underline{2.14}}} & 2.84 & 13.64 & 17.77 & 0.91 & 0.96 & 3.81 \\ % A01_37_nodisnorm
 		\thead[l]{14. Dropout $p=0.1$ in encoder layers \textsuperscript{Fig.\ref{fig:exp:dropout-e-d}}}
-		& 78.29 & 2.87 & 14.86 & 1.77 & 9.04 & 9.56 & 3.68 \\ % A03_04_01e
+		& 78.29 & 2.87 & 14.86 & 17.70 & 0.90 & 0.96 & 3.68 \\ % A03_04_01e
 		\thead[l]{15. Zoom on vertices, selected with equal probability \textsuperscript{Fig.\ref{fig:exp:zoom-vertices}}}
-		& 90.57 & 2.87 & 15.03 & 1.77 & 9.04 & 9.56 & 3.60 \\ % A01_30_ai
+		& 90.57 & 2.87 & 15.03 & 17.72 & 0.90 & 0.96 & 3.60 \\ % A01_30_ai
 		\thead[l]{16. Noise augmentation $\sigma=0.01$ on neural texture \textsuperscript{Fig.\ref{fig:exp:add-noise-input}}}
-		& 80.46 & 2.93 & 14.78 & 1.75 & 9.03 & 9.56 & 3.63 \\ % A03_06_ntex001
+		& 80.46 & 2.93 & 14.78 & 17.55 & 0.90 & 0.96 & 3.63 \\ % A03_06_ntex001
 		\thead[l]{17. Gradient clip discriminator to mean norm \textsuperscript{Fig.\ref{fig:exp:gradclip-constant-or-mean}}}
-		& 81.93 & 2.94 & 14.61 & 1.76 & 9.03 & 9.56 & 3.58 \\ % A01_35_dis_d1_01
+		& 81.93 & 2.94 & 14.61 & 17.63 & 0.90 & 0.96 & 3.58 \\ % A01_35_dis_d1_01
 		\thead[l]{18. Encoder 25\% fewer parameters \textsuperscript{Fig.\ref{fig:exp:neural-renderer-capacity}}}
-		& 85.91 & 2.85 & 15.06 & 1.78 & 9.05 & 9.57 & 3.82 \\ % A01_27_enc2221
+		& 85.91 & 2.85 & 15.06 & 17.76 & 0.91 & 0.96 & 3.82 \\ % A01_27_enc2221
 		\thead[l]{19. Gradient clip renderer to 5 norm \textsuperscript{Fig.\ref{fig:exp:gradclip-constant-or-mean}}}
-		& 72.80 & 2.88 & 14.55 & 1.76 & 9.03 & 9.56 & 3.63 \\ % A01_35_5_01
+		& 72.80 & 2.88 & 14.55 & 17.57 & 0.90 & 0.96 & 3.63 \\ % A01_35_5_01
 		\thead[l]{20. Gradient clip renderer to mean$\times0.5$ norm \textsuperscript{Fig.\ref{fig:exp:gradclip-mean-fraction}}}
-		& 83.16 & 2.94 & 14.44 & 1.77 & 9.03 & 9.55 & 3.67 \\ % A01_35_d2_01
+		& 83.16 & 2.94 & 14.44 & 17.69 & 0.90 & 0.96 & 3.67 \\ % A01_35_d2_01
 		\thead[l]{21. Weight decay $10^{-3}$ renderer/discriminator \textsuperscript{Fig.\ref{fig:exp:wdecay-nr3:ntex+disc}}}
-		& 83.03 & 2.93 & 15.00 & 1.76 & 9.03 & 9.54 & 3.67 \\ % A03_07_nr3_d3
+		& 83.03 & 2.93 & 15.00 & 17.55 & 0.90 & 0.95 & 3.67 \\ % A03_07_nr3_d3
 		\thead[l]{22. Noise augmentation $\sigma=0.01$ on neural texture \textsuperscript{Fig.\ref{fig:exp:add-noise-ntex}}}
-		& 84.41 & 2.83 & \textbf{\underline{12.86}} & 1.78 & 9.04 & 9.57 & 3.88 \\ % A03_06_ntex01
+		& 84.41 & 2.83 & \textbf{\underline{12.86}} & 17.82 & 0.90 & 0.96 & 3.88 \\ % A03_06_ntex01
 		\thead[l]{23. Weight decay $10^{-2}$ renderer/discriminator/texture \textsuperscript{Fig.\ref{fig:exp:wdecay-nr2:ntex2+disc}}}
-		& 80.17 & 2.98 & 15.16 & 1.74 & 9.05 & 9.54 & 3.75 \\ % A03_07_nr2_d2_ntex2
+		& 80.17 & 2.98 & 15.16 & 17.44 & 0.90 & 0.95 & 3.75 \\ % A03_07_nr2_d2_ntex2
 		\thead[l]{24. Neural texture's learning rate $\times5$ \textsuperscript{Fig.\ref{fig:exp:ntex-lr-higher}}}
-		& 77.86 & 2.96 & 15.00 & 1.75 & 9.03 & 9.54 & 3.70 \\ % A01_39_ntex5
+		& 77.86 & 2.96 & 15.00 & 17.47 & 0.90 & 0.95 & 3.70 \\ % A01_39_ntex5
 		\thead[l]{25. Pass input tensor to inner layers of encoder \textsuperscript{Fig.\ref{fig:exp:pass-input-in-encoder}}}
-		& 80.45 & 2.97 & 14.12 & 1.75 & 9.03 & 9.54 & 3.76 \\ % A01_38_cat
+		& 80.45 & 2.97 & 14.12 & 17.53 & 0.90 & 0.95 & 3.76 \\ % A01_38_cat
 		\thead[l]{26. Weight decay $10^{-3}$ renderer \textsuperscript{Fig.\ref{fig:exp:wdecay-nr3:ntex+disc}}}
-		& 80.51 & 2.97 & 14.13 & 1.75 & 9.03 & 9.54 & 3.79 \\ % A03_07_nr3
+		& 80.51 & 2.97 & 14.13 & 17.53 & 0.90 & 0.95 & 3.79 \\ % A03_07_nr3
 		\thead[l]{27. Decoder 50\% fewer parameters \textsuperscript{Fig.\ref{fig:exp:neural-renderer-capacity}}}
-		& 88.80 & 2.90 & 14.55 & 1.77 & 9.04 & 9.56 & 3.99 \\ % A01_27_dec50pct
+		& 88.80 & 2.90 & 14.55 & 17.67 & 0.90 & 0.96 & 3.99 \\ % A01_27_dec50pct
 		\thead[l]{28. Zoom on vertices, prioritize person's head \textsuperscript{Fig.\ref{fig:exp:zoom-vertices}}}
-		& 96.68 & 2.96 & 15.64 & 1.75 & 9.03 & 9.55 & 3.75 \\ % A01_29_ai
+		& 96.68 & 2.96 & 15.64 & 17.47 & 0.90 & 0.95 & 3.75 \\ % A01_29_ai
 		\thead[l]{29. Gradient clip renderer to mean$\times0.2$ norm \textsuperscript{Fig.\ref{fig:exp:gradclip-mean-fraction}}}
-		& 76.50 & 2.96 & 14.65 & 1.75 & 9.02 & 9.54 & 3.71 \\ % A01_35_d5_01
+		& 76.50 & 2.96 & 14.65 & 17.54 & 0.90 & 0.95 & 3.71 \\ % A01_35_d5_01
 		\thead[l]{30. Gradient clip renderer to mean norm \textsuperscript{Fig.\ref{fig:exp:gradclip-mean-fraction}}}
-		& 83.71 & 2.97 & 14.99 & 1.76 & 9.03 & 9.55 & 3.78 \\ % A01_35_d1_01
+		& 83.71 & 2.97 & 14.99 & 17.58 & 0.90 & 0.95 & 3.78 \\ % A01_35_d1_01
 	\end{tabularx}
 \end{table}\clearpage\newpage
 \begin{table}
 	\renewcommand{\arraystretch}{0.25}
 	\linespread{0.25}\selectfont\centering\small
 	\setlength\tabcolsep{1.5pt}
+	\rowcolors{2}{gray!15}{white}
 	\begin{tabularx}{\textwidth}{>{\centering\arraybackslash}X|c|c|c|c|c|c|c}\hline
+		\rowcolor{white}
 		\textbf{Experiment} & {\footnotesize\textbf{\thead{FM↓\\$\cdot10^2$}}} & {\footnotesize\textbf{\thead{L1↓\\$\cdot10^2$}}} & {\footnotesize\textbf{\thead{Dice↓\\$\cdot10^3$}}} & {\footnotesize\textbf{\thead{PSNR↑}}} & {\footnotesize\textbf{\thead{SSIM↑}}} & {\footnotesize\textbf{\thead{MS\\SSIM↑}}} & {\footnotesize\textbf{\thead{LPIPS↓\\$\cdot10^2$}}}\\\hline
 		\thead[l]{31. Weight decay $10^{-5}$ renderer \textsuperscript{Fig.\ref{fig:exp:wdecay-nr654}}}
-		& 83.61 & 2.97 & 14.14 & 1.74 & 9.04 & 9.52 & 3.78 \\ % A03_07_nr5
+		& 83.61 & 2.97 & 14.14 & 17.39 & 0.90 & 0.95 & 3.78 \\ % A03_07_nr5
 		\thead[l]{32. Weight decay $10^{-2}$ renderer/discriminator,\\\-\quad\quad $10^{-1}$ for texture \textsuperscript{Fig.\ref{fig:exp:wdecay-nr2:ntex1+disc}}}
-		& 82.53 & 2.99 & 14.74 & 1.74 & 9.04 & 9.53 & 3.82 \\ % A03_07_nr2_d2_ntex1
+		& 82.53 & 2.99 & 14.74 & 17.45 & 0.90 & 0.95 & 3.82 \\ % A03_07_nr2_d2_ntex1
 		\thead[l]{33. Replace a few channels of encoder's inner layers\\\-\quad\quad with an input tensor \textsuperscript{Fig.\ref{fig:exp:pass-input-in-encoder}}}
-		& 80.73 & 2.99 & 14.79 & 1.75 & 9.03 & 9.53 & 3.80 \\ % A01_38_ai
+		& 80.73 & 2.99 & 14.79 & 17.46 & 0.90 & 0.95 & 3.80 \\ % A01_38_ai
 		\thead[l]{34. Neural texture's learning rate $\times10$ \textsuperscript{Fig.\ref{fig:exp:ntex-lr-higher}}}
-		& 81.36 & 3.02 & 14.91 & 1.74 & 9.02 & 9.53 & 3.76 \\ % A01_39_ntex10
+		& 81.36 & 3.02 & 14.91 & 17.38 & 0.90 & 0.95 & 3.76 \\ % A01_39_ntex10
 		\thead[l]{35. Weight decay $10^{-2}$ renderer \textsuperscript{Fig.\ref{fig:exp:wdecay-nr432}}}
-		& 82.28 & 3.01 & 14.47 & 1.74 & 9.03 & 9.52 & 3.80 \\ % A03_07_nr2
+		& 82.28 & 3.01 & 14.47 & 17.36 & 0.90 & 0.95 & 3.80 \\ % A03_07_nr2
 		\thead[l]{36. Equal loss weights + higher texture learning rate \textsuperscript{Fig.\ref{fig:exp:loss-weights}}}
-		& 60.04 & 2.95 & 15.22 & 1.75 & 9.02 & 9.54 & 3.79 \\ % A01_53_ntexlr
+		& 60.04 & 2.95 & 15.22 & 17.47 & 0.90 & 0.95 & 3.79 \\ % A01_53_ntexlr
 		\thead[l]{37. Zoom on vertices with equal probability,\\\-\quad\quad zoom scale is mostly full-body \textsuperscript{Fig.\ref{fig:exp:a03-bl}}}
-		& 82.99 & 3.02 & 14.56 & 1.74 & 9.02 & 9.53 & 3.73 \\ % vA03_01_nobnf_ut
+		& 82.99 & 3.02 & 14.56 & 17.37 & 0.90 & 0.95 & 3.73 \\ % vA03_01_nobnf_ut
 		\thead[l]{38. Strong affine translation \textsuperscript{Fig.\ref{fig:exp:strong-affine-aug}}}
-		& 85.03 & 3.03 & 14.92 & 1.75 & 9.02 & 9.54 & 3.82 \\ % vA01_03_vt
+		& 85.03 & 3.03 & 14.92 & 17.49 & 0.90 & 0.95 & 3.82 \\ % vA01_03_vt
 		\thead[l]{39. Gradient clip renderer to 2 norm \textsuperscript{Fig.\ref{fig:exp:gradclip-constant-or-mean}}}
-		& 71.94 & 2.98 & 15.31 & 1.73 & 9.02 & 9.52 & 3.72 \\ % A01_35_2_01
+		& 71.94 & 2.98 & 15.31 & 17.34 & 0.90 & 0.95 & 3.72 \\ % A01_35_2_01
 		\thead[l]{40. Weight decay $10^{-2}$ renderer,\\\-\quad\quad $10^{-1}$ for texture/discriminator \textsuperscript{Fig.\ref{fig:exp:wdecay-nr2:ntex1+disc}}}
-		& 83.15 & 3.03 & 15.16 & 1.74 & 9.02 & 9.52 & 3.84 \\ % A03_07_nr2_d1_ntex1
+		& 83.15 & 3.03 & 15.16 & 17.42 & 0.90 & 0.95 & 3.84 \\ % A03_07_nr2_d1_ntex1
 		\thead[l]{41. Texture optimizer's state does not update if $\nabla=0$ \textsuperscript{Fig.\ref{fig:exp:nza-or-bnfix}}}
-		& 96.84 & 3.06 & 14.93 & 1.74 & 9.02 & 9.53 & 3.76 \\ % A01_31_ai
+		& 96.84 & 3.06 & 14.93 & 17.37 & 0.90 & 0.95 & 3.76 \\ % A01_31_ai
 		\thead[l]{42. LR scheduler with warmup,\\\-\quad\quad gradient clip renderer to 10 norm \textsuperscript{Fig.\ref{fig:exp:gradclip-scheduler}}}
-		& 80.27 & 3.00 & 15.78 & 1.74 & 9.01 & 9.53 & 3.75 \\ % A01_42_lr2m6_gc10
+		& 80.27 & 3.00 & 15.78 & 17.37 & 0.90 & 0.95 & 3.75 \\ % A01_42_lr2m6_gc10
 		\thead[l]{43. Weight decay $10^{-4}$ renderer \textsuperscript{Fig.\ref{fig:exp:wdecay-nr654}}}
-		& 86.03 & 3.04 & 14.16 & 1.73 & 9.02 & 9.51 & 3.81 \\ % A03_07_nr4
+		& 86.03 & 3.04 & 14.16 & 17.27 & 0.90 & 0.95 & 3.81 \\ % A03_07_nr4
 		\thead[l]{44. Weight decay $10^{-6}$ renderer \textsuperscript{Fig.\ref{fig:exp:wdecay-nr654}}}
-		& 82.79 & 3.05 & 14.74 & 1.72 & 9.02 & 9.51 & 3.84 \\ % A03_07_nr6
+		& 82.79 & 3.05 & 14.74 & 17.24 & 0.90 & 0.95 & 3.84 \\ % A03_07_nr6
 		\thead[l]{45. Renderer's last layers w/o normalization layers \textsuperscript{Fig.\ref{fig:exp:nonorm:d:rd:rhead}}}
-		& 99.49 & 3.13 & 15.79 & 1.73 & 9.01 & 9.53 & 3.80 \\ % A01_37_noheadnorm
+		& 99.49 & 3.13 & 15.79 & 17.34 & 0.90 & 0.95 & 3.80 \\ % A01_37_noheadnorm
 		\thead[l]{46. Renderer and discriminator's BN layers\\\-\quad\quad w/o learned affine parameters \textsuperscript{Fig.\ref{fig:exp:norm-noaffine}}}
-		& 79.37 & 3.05 & 15.60 & 1.73 & 9.02 & 9.52 & 3.83 \\ % A01_43_03v_rd
+		& 79.37 & 3.05 & 15.60 & 17.32 & 0.90 & 0.95 & 3.83 \\ % A01_43_03v_rd
 		\thead[l]{47. Dropout $p=0.1$ in encoder after convolutions \textsuperscript{Fig.\ref{fig:exp:dropout-all-conv-ed-ed}}}
-		& 81.34 & 3.03 & 15.17 & 1.74 & 9.01 & 9.52 & 3.84 \\ % A03_04_c01e
+		& 81.34 & 3.03 & 15.17 & 17.35 & 0.90 & 0.95 & 3.84 \\ % A03_04_c01e
 		\thead[l]{48. LR scheduler with warmup \textsuperscript{Fig.\ref{fig:exp:gradclip-scheduler}}}
-		& 80.54 & 3.02 & 15.76 & 1.73 & 9.01 & 9.52 & 3.85 \\ % A01_42_lr2m6
+		& 80.54 & 3.02 & 15.76 & 17.29 & 0.90 & 0.95 & 3.85 \\ % A01_42_lr2m6
 		\thead[l]{49. Renderer's BN layers w/o learned affine parameters \textsuperscript{Fig.\ref{fig:exp:norm-noaffine}}}
-		& 82.02 & 3.04 & 15.09 & 1.73 & 9.00 & 9.53 & 3.82 \\ % A01_43_03v_r
+		& 82.02 & 3.04 & 15.09 & 17.27 & 0.90 & 0.95 & 3.82 \\ % A01_43_03v_r
 		\thead[l]{50. Zoom on vertices with equal probability,\\\-\quad\quad no zoom stats BN \textsuperscript{Fig.\ref{fig:exp:nza-bnfix-zoomvertices}}}
-		& 68.06 & 3.10 & 16.37 & 1.73 & 9.02 & 9.50 & 4.15 \\ % vA01_24
+		& 68.06 & 3.10 & 16.37 & 17.27 & 0.90 & 0.95 & 4.15 \\ % vA01_24
 		\thead[l]{51. Zoom on vertices with equal probability,\\\-\quad\quad mostly full-body input, no zoom stats BN \textsuperscript{Fig.\ref{fig:exp:a03-uniform}}}
-		& 68.01 & 3.05 & 15.83 & 1.73 & 9.02 & 9.50 & 4.28 \\ % vA03_01_uniform
+		& 68.01 & 3.05 & 15.83 & 17.29 & 0.90 & 0.95 & 4.28 \\ % vA03_01_uniform
 		\thead[l]{52. Weight decay $10^{-3}$ renderer/discriminator/texture \textsuperscript{Fig.\ref{fig:exp:wdecay-nr3:ntex+disc}}}
-		& 82.42 & 3.02 & 15.22 & 1.73 & 9.01 & 9.51 & 3.95 \\ % A03_07_nr3_d3_ntex3
+		& 82.42 & 3.02 & 15.22 & 17.33 & 0.90 & 0.95 & 3.95 \\ % A03_07_nr3_d3_ntex3
 		\thead[l]{53. Neural texture 8 channels, not 16 \textsuperscript{Fig.\ref{fig:exp:nza-or-ntex8}}}
-		& 95.60 & 3.06 & 15.26 & 1.73 & 9.01 & 9.52 & 3.85 \\ % A01_33_ai
+		& 95.60 & 3.06 & 15.26 & 17.30 & 0.90 & 0.95 & 3.85 \\ % A01_33_ai
 		\thead[l]{54. LR scheduler with warmup,\\\-\quad\quad gradient clip renderer to 20 norm \textsuperscript{Fig.\ref{fig:exp:gradclip-scheduler}}}
-		& 85.34 & 3.05 & 15.08 & 1.72 & 9.01 & 9.52 & 3.81 \\ % A01_42_lr2m6_gc20
+		& 85.34 & 3.05 & 15.08 & 17.23 & 0.90 & 0.95 & 3.81 \\ % A01_42_lr2m6_gc20
 		\thead[l]{55. Zooms on joints x4.5 \textsuperscript{Fig.\ref{fig:exp:basic-zooms}}}
-		& 98.99 & 3.04 & 15.58 & 1.72 & 9.02 & 9.51 & 3.81 \\ % A01_03_ai_retrain_val
+		& 98.99 & 3.04 & 15.58 & 17.19 & 0.90 & 0.95 & 3.81 \\ % A01_03_ai_retrain_val
 		\thead[l]{56. Dropout $p=0.05$ in renderer layers \textsuperscript{Fig.\ref{fig:exp:dropout-ed-ed}}}
-		& 78.59 & 3.10 & 16.05 & 1.73 & 9.01 & 9.52 & 3.95 \\ % A03_04_005ed
+		& 78.59 & 3.10 & 16.05 & 17.34 & 0.90 & 0.95 & 3.95 \\ % A03_04_005ed
 		\thead[l]{57. Zoom to vertices with equal probability,\\\-\quad\quad mostly full-body input \textsuperscript{Fig.\ref{fig:exp:a03-bl}}}
-		& 84.98 & 3.12 & 14.42 & 1.71 & 9.02 & 9.50 & 3.89 \\ % A03_01_bl
+		& 84.98 & 3.12 & 14.42 & 17.14 & 0.90 & 0.95 & 3.89 \\ % A03_01_bl
 		\thead[l]{58. Weight decay $10^{-2}$ renderer/texture,\\\-\quad\quad $10^{-1}$ for discriminator \textsuperscript{Fig.\ref{fig:exp:wdecay-nr2:ntex2+disc}}}
-		& 85.94 & 3.11 & 15.34 & 1.71 & 9.02 & 9.50 & 3.93 \\ % A03_07_nr2_d1_ntex2
+		& 85.94 & 3.11 & 15.34 & 17.11 & 0.90 & 0.95 & 3.93 \\ % A03_07_nr2_d1_ntex2
 		\thead[l]{59. Weight decay $10^{-1}$ renderer \textsuperscript{Fig.\ref{fig:exp:wdecay-nr2:nronly}}}
-		& 84.19 & 3.13 & 15.47 & 1.72 & 9.01 & 9.50 & 3.88 \\ % A03_07_nr1
+		& 84.19 & 3.13 & 15.47 & 17.19 & 0.90 & 0.95 & 3.88 \\ % A03_07_nr1
 		\thead[l]{60. Neural texture 8 channels, no zoom stats BN,\\\-\quad\quad texture optimizer's state does not update if $\nabla=0$ \textsuperscript{Fig.\ref{fig:exp:nza-bnfix-ntex8}}}
-		& 67.66 & 3.10 & 16.31 & 1.72 & 9.01 & 9.49 & 4.21 \\ % vA01_28
+		& 67.66 & 3.10 & 16.31 & 17.18 & 0.90 & 0.95 & 4.21 \\ % vA01_28
 	\end{tabularx}
 \end{table}\clearpage\newpage
 \begin{table}
 	\renewcommand{\arraystretch}{0.25}
 	\linespread{0.25}\selectfont\centering\small
 	\setlength\tabcolsep{1.5pt}
+	\rowcolors{2}{gray!15}{white}
 	\begin{tabularx}{\textwidth}{>{\centering\arraybackslash}X|c|c|c|c|c|c|c}\hline
+		\rowcolor{white}
 		\textbf{Experiment} & {\footnotesize\textbf{\thead{FM↓\\$\cdot10^2$}}} & {\footnotesize\textbf{\thead{L1↓\\$\cdot10^2$}}} & {\footnotesize\textbf{\thead{Dice↓\\$\cdot10^3$}}} & {\footnotesize\textbf{\thead{PSNR↑}}} & {\footnotesize\textbf{\thead{SSIM↑}}} & {\footnotesize\textbf{\thead{MS\\SSIM↑}}} & {\footnotesize\textbf{\thead{LPIPS↓\\$\cdot10^2$}}}\\\hline
 		\thead[l]{61. Strong affine translation and rotation \textsuperscript{Fig.\ref{fig:exp:strong-affine-aug}}}
-		& 88.56 & 3.10 & 15.45 & 1.73 & 9.00 & 9.51 & 4.00 \\ % vA01_03_vtr
+		& 88.56 & 3.10 & 15.45 & 17.26 & 0.90 & 0.95 & 4.00 \\ % vA01_03_vtr
 		\thead[l]{62. Zooms on joints x2.0 \textsuperscript{Fig.\ref{fig:exp:basic-zooms-2}}}
-		& 77.67 & 3.22 & \textbf{\underline{12.88}} & 1.73 & 8.90 & 9.50 & 3.83 \\ % vA01_04
+		& 77.67 & 3.22 & \textbf{\underline{12.88}} & 17.34 & 0.89 & 0.95 & 3.83 \\ % vA01_04
 		\thead[l]{63. Texture optimizer's state does not update if $\nabla=0$,\\\-\quad\quad all normalization layers are removed \textsuperscript{Fig.\ref{fig:exp:nonorm:d:rd:rhead}}}
-		& \textbf{\underline{2.19}} & 3.16 & 15.68 & 1.71 & 9.02 & 9.50 & 4.10 \\ % A01_37_ai
+		& \textbf{\underline{2.19}} & 3.16 & 15.68 & 17.07 & 0.90 & 0.95 & 4.10 \\ % A01_37_ai
 		\thead[l]{64. Texture optimizer's state does not update\\\-\quad\quad if $\nabla=0$, no zoom stats BN \textsuperscript{Fig.\ref{fig:exp:nza-bnfix-zoomvertices}}}
-		& 66.71 & 3.17 & 16.29 & 1.70 & 9.02 & 9.48 & 4.20 \\ % vA01_23
+		& 66.71 & 3.17 & 16.29 & 16.98 & 0.90 & 0.95 & 4.20 \\ % vA01_23
 		\thead[l]{65. All normalization layers are removed \textsuperscript{Fig.\ref{fig:exp:different-norms}}}
-		& 69.85 & 3.12 & 15.86 & 1.72 & 8.99 & 9.50 & 4.22 \\ % vA01_08
+		& 69.85 & 3.12 & 15.86 & 17.21 & 0.90 & 0.95 & 4.22 \\ % vA01_08
 		\thead[l]{66. Zooms on limbs x8.0 \textsuperscript{Fig.\ref{fig:exp:basic-zooms-2}}}
-		& 92.47 & 3.12 & 15.79 & 1.72 & 9.00 & 9.50 & 3.97 \\ % vA01_01
+		& 92.47 & 3.12 & 15.79 & 17.21 & 0.90 & 0.95 & 3.97 \\ % vA01_01
 		\thead[l]{67. Zooms on joints x3.5 \textsuperscript{Fig.\ref{fig:exp:basic-zooms-2}}}
-		& 77.54 & 3.24 & 13.03 & 1.73 & 8.90 & 9.50 & 3.91 \\ % vA01_05
+		& 77.54 & 3.24 & 13.03 & 17.33 & 0.89 & 0.95 & 3.91 \\ % vA01_05
 		\thead[l]{68. Dropout $p=0.01$ in decoder layers \textsuperscript{Fig.\ref{fig:exp:dropout-e-d}}}
-		& 84.76 & 3.16 & 15.55 & 1.71 & 9.00 & 9.49 & 4.03 \\ % A03_04_01d
+		& 84.76 & 3.16 & 15.55 & 17.08 & 0.90 & 0.95 & 4.03 \\ % A03_04_01d
 		\thead[l]{69. No zoom stats BN for 20\% of frames \textsuperscript{Fig.\ref{fig:exp:bnf-disable-track}}}
-		& 116.43 & 3.23 & 16.73 & 1.70 & 8.99 & 9.48 & 4.08 \\ % vA01_06_notrack2
+		& 116.43 & 3.23 & 16.73 & 17.04 & 0.90 & 0.95 & 4.08 \\ % vA01_06_notrack2
 		\thead[l]{70. Renderer BN w/o learned affine parameters,\\\-\quad\quad discriminator with Instance norms \textsuperscript{Fig.\ref{fig:exp:renderer-noaffinenorm}}}
-		& 87.44 & 3.29 & 15.66 & 1.69 & 8.98 & 9.45 & 4.22 \\ % vA01_43_rdin
+		& 87.44 & 3.29 & 15.66 & 16.90 & 0.90 & 0.95 & 4.22 \\ % vA01_43_rdin
 		\thead[l]{71. Neural texture 8 channels, no zoom stats BN \textsuperscript{Fig.\ref{fig:exp:nza-bnfix-ntex8}}}
-		& 74.27 & 3.28 & 16.69 & 1.69 & 8.99 & 9.46 & 4.32 \\ % vA01_25
+		& 74.27 & 3.28 & 16.69 & 16.94 & 0.90 & 0.95 & 4.32 \\ % vA01_25
 		\thead[l]{72. Group Normalization layers instead of BN \textsuperscript{Fig.\ref{fig:exp:different-norms}}}
-		& \textbf{\underline{39.71}} & 3.29 & 15.74 & 1.67 & 8.97 & 9.45 & 4.18 \\ % vA01_09
+		& \textbf{\underline{39.71}} & 3.29 & 15.74 & 16.74 & 0.90 & 0.95 & 4.18 \\ % vA01_09
 		\thead[l]{73. Texture optimizer's state does not update\\\-\quad\quad if $\nabla=0$, no normalizations in renderer \textsuperscript{Fig.\ref{fig:exp:nonorm:r:rd:r+dinstancenorm}}}
-		& 107.71 & 3.29 & 16.00 & 1.70 & 8.99 & 9.47 & 4.08 \\ % A01_37_dis_bn
+		& 107.71 & 3.29 & 16.00 & 16.97 & 0.90 & 0.95 & 4.08 \\ % A01_37_dis_bn
 		\thead[l]{74. Disable GAN losses, no zoom stats BN \textsuperscript{Fig.\ref{fig:exp:bn-momentum-high}}}
-		& --   & 3.32 & 15.01 & 1.68 & 9.00 & 9.45 & 4.74 \\ % vA01_49
+		& --   & 3.32 & 15.01 & 16.83 & 0.90 & 0.94 & 4.74 \\ % vA01_49
 		\thead[l]{75. Zoom to joints x8.0 \textsuperscript{Fig.\ref{fig:exp:basic-zooms}}}
-		& 100.78 & 3.26 & 15.95 & 1.69 & 8.98 & 9.47 & 4.10 \\ % vA01_02
+		& 100.78 & 3.26 & 15.95 & 16.91 & 0.90 & 0.95 & 4.10 \\ % vA01_02
 		\thead[l]{76. Dropout $p=0.01$ in renderer layers \textsuperscript{Fig.\ref{fig:exp:dropout-ed-ed}}}
-		& 86.73 & 3.22 & 16.58 & 1.71 & 8.98 & 9.48 & 4.19 \\ % A03_04_01ed
+		& 86.73 & 3.22 & 16.58 & 17.06 & 0.90 & 0.95 & 4.19 \\ % A03_04_01ed
 		\thead[l]{77. Dropout $p=0.1$ in renderer after convolutions \textsuperscript{Fig.\ref{fig:exp:dropout-all-conv-ed-ed}}}
-		& 85.79 & 3.22 & 16.38 & 1.70 & 8.98 & 9.47 & 4.21 \\ % A03_04_c01ed
+		& 85.79 & 3.22 & 16.38 & 17.01 & 0.90 & 0.95 & 4.21 \\ % A03_04_c01ed
 		\thead[l]{78. Resolution $640\times640$, No texture MIP maps \textsuperscript{Fig.\ref{fig:exp:ntex-mip-maps}}}
-		& 91.89 & 3.31 & 16.66 & 1.67 & 9.02 & 9.41 & 4.64 \\ % vA01_41_nomips
+		& 91.89 & 3.31 & 16.66 & 16.66 & 0.90 & 0.94 & 4.64 \\ % vA01_41_nomips
 		\thead[l]{79. Resolution $640\times640$, Learned texture MIP maps \textsuperscript{Fig.\ref{fig:exp:ntex-mip-maps}}}
-		& 91.77 & 3.32 & 16.23 & 1.66 & 9.02 & 9.41 & 4.69 \\ % vA01_41_learnmips
+		& 91.77 & 3.32 & 16.23 & 16.55 & 0.90 & 0.94 & 4.69 \\ % vA01_41_learnmips
 		\thead[l]{80. Texture optimizer's state does not update\\\-\quad\quad if $\nabla=0$, only Instance norms in discriminator \textsuperscript{Fig.\ref{fig:exp:nonorm:r:rd:r+dinstancenorm}}}
-		& 103.26 & 3.30 & 16.72 & 1.68 & 8.98 & 9.47 & 4.02 \\ % A01_37_dis_in
+		& 103.26 & 3.30 & 16.72 & 16.83 & 0.90 & 0.95 & 4.02 \\ % A01_37_dis_in
 		\thead[l]{81. Resolution $640\times640$ \textsuperscript{Fig.\ref{fig:exp:ntex-mip-maps}}}
-		& 93.05 & 3.31 & 16.37 & 1.66 & 9.02 & 9.40 & 4.62 \\ % vA01_41
+		& 93.05 & 3.31 & 16.37 & 16.61 & 0.90 & 0.94 & 4.62 \\ % vA01_41
 		\thead[l]{82. Noise augmentation $\sigma=0.05$ on ground truth \textsuperscript{Fig.\ref{fig:exp:add-noise-rgb}}}
-		& 86.54 & 3.36 & 14.80 & 1.72 & 8.87 & 9.49 & 4.53 \\ % A03_06_rgb005
+		& 86.54 & 3.36 & 14.80 & 17.25 & 0.89 & 0.95 & 4.53 \\ % A03_06_rgb005
 		\thead[l]{83. Only 27 training frames \textsuperscript{Fig.\ref{fig:exp:27-frames}}}
-		& 93.41 & 3.37 & 18.86 & 1.67 & 8.94 & 9.44 & 4.54 \\ % A03_01_27
+		& 93.41 & 3.37 & 18.86 & 16.67 & 0.89 & 0.94 & 4.54 \\ % A03_01_27
 		\thead[l]{84. BN collect running statistics with momentum 0.2 \textsuperscript{Fig.\ref{fig:exp:bn-momentum-high}}}
-		& 80.66 & 3.45 & 16.89 & 1.64 & 8.97 & 9.42 & 4.60 \\ % A01_47_m2
+		& 80.66 & 3.45 & 16.89 & 16.41 & 0.90 & 0.94 & 4.60 \\ % A01_47_m2
 		\thead[l]{85. Texture Adam optimizer has first momentum 0 \textsuperscript{Fig.\ref{fig:exp:optimizer-momentum}}}
-		& 90.79 & 3.46 & 16.88 & 1.65 & 8.97 & 9.42 & 4.63 \\ % vA01_21
+		& 90.79 & 3.46 & 16.88 & 16.50 & 0.90 & 0.94 & 4.63 \\ % vA01_21
 		\thead[l]{86. Optimization step of discriminator every 4 batches \textsuperscript{Fig.\ref{fig:exp:optimizer-step-n}}}
-		& 92.81 & 3.47 & 16.73 & 1.65 & 8.98 & 9.42 & 4.77 \\ % vA01_06_step2d
+		& 92.81 & 3.47 & 16.73 & 16.54 & 0.90 & 0.94 & 4.77 \\ % vA01_06_step2d
 		\thead[l]{87. BN collect running statistics with momentum 0.3 \textsuperscript{Fig.\ref{fig:exp:bn-momentum-high}}}
-		& 79.90 & 3.42 & 16.86 & 1.64 & 8.98 & 9.42 & 4.75 \\ % A01_47_m3
+		& 79.90 & 3.42 & 16.86 & 16.43 & 0.90 & 0.94 & 4.75 \\ % A01_47_m3
 		\thead[l]{88. Texture+discriminator Adam optimizers\\\-\quad\quad have first momentum 0 \textsuperscript{Fig.\ref{fig:exp:optimizer-momentum}}}
-		& 85.33 & 3.46 & 16.54 & 1.64 & 8.98 & 9.42 & 4.71 \\ % vA01_19
+		& 85.33 & 3.46 & 16.54 & 16.45 & 0.90 & 0.94 & 4.71 \\ % vA01_19
 		\thead[l]{89. Additive noise $\sigma=0.25$ to texture initializaiton \textsuperscript{Fig.\ref{fig:exp:add-noise-ntex-init}}}
-		& 88.37 & 3.48 & 16.24 & 1.65 & 8.97 & 9.41 & 4.67 \\ % vA01_51_025
+		& 88.37 & 3.48 & 16.24 & 16.46 & 0.90 & 0.94 & 4.67 \\ % vA01_51_025
 		\thead[l]{90. Texture optimizer's state does not update\\\-\quad\quad if $\nabla=0$, no zoom stats BN \textsuperscript{Fig.\ref{fig:exp:nza-bnfix-zoomvertices}}}
-		& 82.11 & 3.50 & 17.67 & 1.65 & 8.98 & 9.42 & 4.92 \\ % vA01_22
+		& 82.11 & 3.50 & 17.67 & 16.48 & 0.90 & 0.94 & 4.92 \\ % vA01_22
 	\end{tabularx}
 \end{table}\clearpage\newpage
 \begin{table}
 	\renewcommand{\arraystretch}{0.25}
 	\linespread{0.25}\selectfont\centering\small
 	\setlength\tabcolsep{1.5pt}
+	\rowcolors{2}{gray!15}{white}
 	\begin{tabularx}{\textwidth}{>{\centering\arraybackslash}X|c|c|c|c|c|c|c}\hline
+		\rowcolor{white}
 		\textbf{Experiment} & {\footnotesize\textbf{\thead{FM↓\\$\cdot10^2$}}} & {\footnotesize\textbf{\thead{L1↓\\$\cdot10^2$}}} & {\footnotesize\textbf{\thead{Dice↓\\$\cdot10^3$}}} & {\footnotesize\textbf{\thead{PSNR↑}}} & {\footnotesize\textbf{\thead{SSIM↑}}} & {\footnotesize\textbf{\thead{MS\\SSIM↑}}} & {\footnotesize\textbf{\thead{LPIPS↓\\$\cdot10^2$}}}\\\hline
 		\thead[l]{91. Zoom to joints, mostly full-body input \textsuperscript{Fig.\ref{fig:exp:a03-uniform}}}
-		& 88.24 & 3.46 & 16.69 & 1.65 & 8.97 & 9.42 & 4.68 \\ % A03_01_ai
+		& 88.24 & 3.46 & 16.69 & 16.49 & 0.90 & 0.94 & 4.68 \\ % A03_01_ai
 		\thead[l]{92. Discriminator Instance Normalizations without\\\-\quad\quad learned affine parameters \textsuperscript{Fig.\ref{fig:exp:bnf-disc-noaffinenorms}}}
-		& 114.29 & 3.47 & 16.54 & 1.64 & 8.97 & 9.42 & 4.39 \\ % A01_43_din
+		& 114.29 & 3.47 & 16.54 & 16.36 & 0.90 & 0.94 & 4.39 \\ % A01_43_din
 		\thead[l]{93. Pass input tensor to inner layers of encoder,\\\-\quad\quad no zoom stats BN \textsuperscript{Fig.\ref{fig:exp:pass-input-in-encoder}}}
-		& 92.24 & 3.46 & 16.97 & 1.64 & 8.98 & 9.42 & 4.63 \\ % A01_38_cat_bnfix
+		& 92.24 & 3.46 & 16.97 & 16.37 & 0.90 & 0.94 & 4.63 \\ % A01_38_cat_bnfix
 		\thead[l]{94. No zoom stats BN, 80\% of full-body input \textsuperscript{Fig.\ref{fig:exp:nza-or-bnfix}}}
-		& 88.73 & 3.47 & 16.52 & 1.64 & 8.98 & 9.42 & 4.84 \\ % A01_32_80
+		& 88.73 & 3.47 & 16.52 & 16.41 & 0.90 & 0.94 & 4.84 \\ % A01_32_80
 		\thead[l]{95. No multiscale neural texture \textsuperscript{Fig.\ref{fig:exp:bnf-samescalebatch-nomultiscaletex-highdice}}}
-		& 87.03 & 3.61 & 16.47 & 1.63 & 8.97 & 9.41 & 4.58 \\ % A01_44_bnf
+		& 87.03 & 3.61 & 16.47 & 16.30 & 0.90 & 0.94 & 4.58 \\ % A01_44_bnf
 		\thead[l]{96. Additive noise $\sigma=0.1$ to texture initializaiton \textsuperscript{Fig.\ref{fig:exp:add-noise-ntex-init}}}
-		& 85.68 & 3.46 & 17.51 & 1.64 & 8.98 & 9.41 & 4.73 \\ % vA01_51_01
+		& 85.68 & 3.46 & 17.51 & 16.40 & 0.90 & 0.94 & 4.73 \\ % vA01_51_01
 		\thead[l]{97. BN layers don't collect statistics on FB frames,\\\-\quad\quad mostly full-body input shown \textsuperscript{Fig.\ref{fig:exp:scale-distr-enable-disable-stat-or-gan}}}
-		& 76.99 & 3.49 & 16.80 & 1.63 & 8.97 & 9.41 & 4.59 \\ % vA03_02_zstat
+		& 76.99 & 3.49 & 16.80 & 16.32 & 0.90 & 0.94 & 4.59 \\ % vA03_02_zstat
 		\thead[l]{98. Renderer intialized from experiment\\\-\quad\quad with multi-person dataset \textsuperscript{Fig.\ref{fig:exp:multiperson-init}}}
-		& 89.76 & 3.52 & 17.06 & 1.65 & 8.96 & 9.41 & 4.69 \\ % vA01_54_r
+		& 89.76 & 3.52 & 17.06 & 16.46 & 0.90 & 0.94 & 4.69 \\ % vA01_54_r
 		\thead[l]{99. Renderer last layers have twice as fewer channels \textsuperscript{Fig.\ref{fig:exp:nza-bnfix-ntex8}}}
-		& 87.61 & 3.51 & 17.18 & 1.63 & 8.97 & 9.42 & 4.77 \\ % vA01_26
+		& 87.61 & 3.51 & 17.18 & 16.32 & 0.90 & 0.94 & 4.77 \\ % vA01_26
 		\thead[l]{100. Renderer has instance normalizations instead of BN,\\\-\quad\quad that collect running instance statistics \textsuperscript{Fig.\ref{fig:exp:instancenorm-and-switch-track-stat}}}
-		& 88.65 & 3.51 & 16.82 & 1.64 & 8.96 & 9.41 & 4.61 \\ % A01_48_ai
+		& 88.65 & 3.51 & 16.82 & 16.41 & 0.90 & 0.94 & 4.61 \\ % A01_48_ai
 		\thead[l]{101. No zoom stats BN, 35\% FB frames \textsuperscript{Fig.\ref{fig:exp:bnf-statfb-statzooms}}}
-		& 91.86 & 3.48 & 16.60 & 1.65 & 8.97 & 9.41 & 4.76 \\ % vA01_06
+		& 91.86 & 3.48 & 16.60 & 16.48 & 0.90 & 0.94 & 4.76 \\ % vA01_06
 		\thead[l]{102. Renderer BN without learned affine parameters \textsuperscript{Fig.\ref{fig:exp:renderer-noaffinenorm}}}
-		& 89.75 & 3.51 & 17.25 & 1.63 & 8.96 & 9.41 & 4.69 \\ % vA01_43_r
+		& 89.75 & 3.51 & 17.25 & 16.34 & 0.90 & 0.94 & 4.69 \\ % vA01_43_r
 		\thead[l]{103. Renderer+Discriminator BN without\\\-\quad\quad learned affine parameters \textsuperscript{Fig.\ref{fig:exp:renderer-noaffinenorm}}}
-		& 88.12 & 3.52 & 16.53 & 1.63 & 8.97 & 9.42 & 4.72 \\ % A01_43_rd
+		& 88.12 & 3.52 & 16.53 & 16.29 & 0.90 & 0.94 & 4.72 \\ % A01_43_rd
 		\thead[l]{104. Dropout $p=0.15$ in renderer after convolutions \textsuperscript{Fig.\ref{fig:exp:dropout-all-conv-ed-ed}}}
-		& 90.97 & 3.50 & 16.51 & 1.64 & 8.96 & 9.41 & 4.60 \\ % A03_04_c015ed
+		& 90.97 & 3.50 & 16.51 & 16.38 & 0.90 & 0.94 & 4.60 \\ % A03_04_c015ed
 		\thead[l]{105. Discriminator BN w/o learned affine parameters \textsuperscript{Fig.\ref{fig:exp:bnf-disc-noaffinenorms}}}
-		& 88.12 & 3.52 & 16.99 & 1.62 & 8.96 & 9.40 & 4.64 \\ % A01_43_d
+		& 88.12 & 3.52 & 16.99 & 16.21 & 0.90 & 0.94 & 4.64 \\ % A01_43_d
 		\thead[l]{106. Initialize texture with noise \textsuperscript{Fig.\ref{fig:exp:add-noise-ntex-init}}}
-		& 87.78 & 3.57 & 16.75 & 1.63 & 8.95 & 9.41 & 4.94 \\ % vA01_50
+		& 87.78 & 3.57 & 16.75 & 16.33 & 0.90 & 0.94 & 4.94 \\ % vA01_50
 		\thead[l]{107. No zoom stats BN, 35\% of full-body input \textsuperscript{Fig.\ref{fig:exp:nza-or-bnfix}}}
-		& 77.19 & 3.54 & 18.50 & 1.64 & 8.96 & 9.40 & 5.49 \\ % A01_32_ai
+		& 77.19 & 3.54 & 18.50 & 16.40 & 0.90 & 0.94 & 5.49 \\ % A01_32_ai
 		\thead[l]{108. Dice loss has $\times2$ weight, no zoom stats BN \textsuperscript{Fig.\ref{fig:exp:bnf-samescalebatch-nomultiscaletex-highdice}}}
-		& 88.05 & 3.51 & 17.65 & 1.63 & 8.97 & 9.40 & 5.03 \\ % A01_46_d2
+		& 88.05 & 3.51 & 17.65 & 16.29 & 0.90 & 0.94 & 5.03 \\ % A01_46_d2
 		\thead[l]{109. Same affine augmentations inside batch \textsuperscript{Fig.\ref{fig:exp:bnf-samescalebatch-nomultiscaletex-highdice}}}
-		& 83.19 & 3.65 & 19.41 & 1.62 & 8.94 & 9.38 & 6.73 \\ % A01_45_ai
+		& 83.19 & 3.65 & 19.41 & 16.21 & 0.89 & 0.94 & 6.73 \\ % A01_45_ai
 		\thead[l]{110. Batch size 1, texture optimizer's state\\\-\quad\quad does not update if $\nabla=0$ \textsuperscript{Fig.\ref{fig:exp:batch-size-1}}}
-		& 111.58 & 3.80 & 21.87 & 1.58 & 8.89 & 9.36 & 5.67 \\ % A01_34_ai
+		& 111.58 & 3.80 & 21.87 & 15.85 & 0.89 & 0.94 & 5.67 \\ % A01_34_ai
 		\thead[l]{111. BN collect statistics only on zoomed images \textsuperscript{Fig.\ref{fig:exp:bnf-statfb-statzooms}}}
-		& 79.35 & 3.59 & 18.68 & 1.62 & 8.95 & 9.39 & 5.20 \\ % vA01_06_stat_zooms
+		& 79.35 & 3.59 & 18.68 & 16.20 & 0.89 & 0.94 & 5.20 \\ % vA01_06_stat_zooms
 		\thead[l]{112. Batch size 1, no zoom stats BN \textsuperscript{Fig.\ref{fig:exp:batch-size-1}}}
-		& 114.03 & 3.82 & 23.68 & 1.57 & 8.89 & 9.33 & 5.70 \\ % A01_34_defaultopt
+		& 114.03 & 3.82 & 23.68 & 15.67 & 0.89 & 0.93 & 5.70 \\ % A01_34_defaultopt
 		\thead[l]{113. Optimization step is every 2 batches \textsuperscript{Fig.\ref{fig:exp:optimizer-step-n}}}
-		& 94.94 & 3.61 & 18.88 & 1.63 & 8.95 & 9.38 & 5.82 \\ % vA01_06_step2
+		& 94.94 & 3.61 & 18.88 & 16.31 & 0.89 & 0.94 & 5.82 \\ % vA01_06_step2
 		\thead[l]{114. Optimization step is every 4 batches \textsuperscript{Fig.\ref{fig:exp:optimizer-step-n}}}
-		& 105.76 & 3.60 & 19.27 & 1.62 & 8.95 & 9.39 & 6.06 \\ % vA01_06_step4
+		& 105.76 & 3.60 & 19.27 & 16.21 & 0.90 & 0.94 & 6.06 \\ % vA01_06_step4
 		\thead[l]{115. Dropout $p=0.2$ in renderer after convolutions \textsuperscript{Fig.\ref{fig:exp:dropout-all-conv-ed-ed}}}
-		& 90.97 & 3.58 & 16.73 & 1.62 & 8.95 & 9.40 & 4.80 \\ % A03_04_c02ed
+		& 90.97 & 3.58 & 16.73 & 16.23 & 0.90 & 0.94 & 4.80 \\ % A03_04_c02ed
 		\thead[l]{116. Noise augmentation $\sigma=0.1$ on ground truth \textsuperscript{Fig.\ref{fig:exp:add-noise-rgb}}}
-		& 93.96 & 4.17 & 15.27 & 1.62 & 8.85 & 9.39 & 6.55 \\ % A03_06_rgb01
+		& 93.96 & 4.17 & 15.27 & 16.15 & 0.89 & 0.94 & 6.55 \\ % A03_06_rgb01
 	\end{tabularx}
-\end{table}
+\end{table}\clearpage\newpage
 \newcounter{experiments-counter}
 \setcounter{experiments-counter}{1}
 
