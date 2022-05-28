@@ -153,10 +153,14 @@ In this appendix we present: Section \ref{appb:fig} -- pictures, that additional
 	\label{fig:multiavatar}%
 	\setlength\belowdisplayskip{0pt}%
 \end{figure}
-
-\clearpage
-\newpage
-
+%\setkeys{Gin}{draft=false}
+\begin{figure}
+	\centering
+	\includegraphics[width=\textwidth]{\imgfp/other/warp_affine}
+	\caption{An example of image-space affine augmentations that can be applied to an image. They perform 2D rotation, scale and translation. Since after the rotation the image may not align with the pixel grid, the specific pixel values are calculated as a bilinear interpolation between old transformed pixels. The image from \href{https://kornia.readthedocs.io/en/latest/geometry.transform.html}{https://kornia.readthedocs.io/en/latest/geometry.transform.html}.}
+	\label{fig:image-space-aug-kornia}
+\end{figure}
+%\setkeys{Gin}{draft}
 \section{Mobile application}
 \label{appb:mobile-screenshots}
 
@@ -227,6 +231,7 @@ In this appendix we present: Section \ref{appb:fig} -- pictures, that additional
 		\label{fig:mobile_tf_effent_fail}
 	\end{subfigure}
 	\caption{(\protect\subref{fig:mobile_example_jump}-\protect\subref{fig:mobile_example_renat}) Examples of avatar images in the mobile application. We have predefined animations that can be played with any avatar. (\protect\subref{fig:mobile_tf_effent_fail}) A case of using another backbone for the renderer (EfficientNet \cite{dnn:efficientnetv1-19}), it has worse quality after training, moreover on mobile DSP it fails to synthesize correct segmentation. }
+	\label{fig:mobile_example}
 \end{figure}
 \begin{figure}
 	%\fboxrule=2pt
@@ -884,225 +889,352 @@ To keep this section compact, we omit from the table experiments, that were trai
 
 %\setkeys{Gin}{draft=false}
 
-\appendixexperiment[experiments-counter]{\imgfp/exps}{05_54_r1@va41@va41_learnmips@va41_nomips.jpg}{
-	Comparing effect of algorithmic (see Figures \ref{fig:mipmap} and \ref{fig:anisotropic_result}), jointly learned or absent MIP-maps of the neural texture.
-}<fig:exp:ntex-mip-maps>
-
-\appendixexperiment[experiments-counter]{\imgfp/exps}{a03_ai_retrain_val@a29_ai@a30_ai.jpg}{
-	Comparing effect of selecting body joints or body vertices as centers of camera-space augmentations (see Figure \ref{fig:smplx-vert2joint}). Every vertex can be chosen with equal probability.
-}<fig:exp:zoom-vertices>
-
-\appendixexperiment[experiments-counter]{\imgfp/exps}{a03_ai_retrain_val@a31_ai@a32_ai@a32_80.jpg}{
-	Comparing effect of collecting Batch Normalization running statistics only from FB images; or preventing update of neural texture Adam optimizer's state for pixels with 0 gradient.
-}<fig:exp:nza-or-bnfix>
-
-\appendixexperiment[experiments-counter]{\imgfp/exps}{a03_ai_retrain_val@a31_ai@a33_ai.jpg}{
-	Comparing effect of preventing update of neural texture Adam optimizer's state for pixels with 0 gradient; or using fewer neural texture channels.
-}<fig:exp:nza-or-ntex8>
-
-\appendixexperiment[experiments-counter]{\imgfp/exps}{a03_ai_retrain_val@a35_2_01@a35_5_01@a35_dis_d1_01.jpg}{
-	Comparing effect of gradient clipping for Adam optimizer of neural renderer's parameters. The clipping value is either an arbitrary constant, or average magnitude of all tensors.
-}<fig:exp:gradclip-constant-or-mean>
-
-\appendixexperiment[experiments-counter]{\imgfp/exps}{a03_ai_retrain_val@a35_d1_01@a35_d2_01@a35_d5_01.jpg}{
-	Comparing effect of gradient clipping for Adam optimizer of neural renderer's parameters. The clipping value is a fraction of average magnitude of all tensors.
-}<fig:exp:gradclip-mean-fraction>
-
-\appendixexperiment[experiments-counter]{\imgfp/exps}{a03_ai_retrain_val@a37_ai@a37_dis_in@a37_dis_bn.jpg}{
-	Comparing effect of removing normalization layers from parts of the architecture.
-}<fig:exp:nonorm:r:rd:r+dinstancenorm>
-
-\appendixexperiment[experiments-counter]{\imgfp/exps}{a03_ai_retrain_val@a37_ai@a37_nodisnorm@a37_noheadnorm.jpg}{
-	Comparing effect of removing normalization layers from parts of the architecture.
-}<fig:exp:nonorm:d:rd:rhead>
-
-\appendixexperiment[experiments-counter]{\imgfp/exps}{a03_ai_retrain_val@a38_ai@a38_cat@a38_cat_bnfix.jpg}{
-	Comparing effect of having input tensor down-scaled and additionally passed to layers of the neural renderer's encoder, to address effect of visual artifacts accumulation (e.g. Figure \ref{fig:interm06_decoder}).
-}<fig:exp:pass-input-in-encoder>
-
-\appendixexperiment[experiments-counter]{\imgfp/exps}{a03_ai_retrain_val@a39_ntex5@a39_ntex10.jpg}{
-	Comparing effect of adjusting neural texture learning rate.
-}<fig:exp:ntex-lr-higher>
-
-\appendixexperiment[experiments-counter]{\imgfp/exps}{a03_ai_retrain_val@a42_lr2m6@a42_lr2m6_gc10@a42_lr2m6_gc20.jpg}{
-	Comparing effect of combining gradient clipping with learning rate scheduling, that would "warmup" with fairly high learning rate (and possibly exploding gradients that will be clipped).
-}<fig:exp:gradclip-scheduler>
-
-\appendixexperiment[experiments-counter]{\imgfp/exps}{a03_ai_retrain_val@a43_03v_r@a43_03v_rd.jpg}{
-	Comparing effect of using Batch Normalization layers without learned affine parameters ($\gamma=1$, $\beta=0$ as in Formula \ref{lit:eq:bn}).
-}<fig:exp:norm-noaffine>
-
-\appendixexperiment[experiments-counter]{\imgfp/exps}{a03_ai_retrain_val@a53_1@a53_ntexlr.jpg}{
-	Comparing effect of adjusting weights of training losses used. By default Adversarial and Feature-Matching losses have 1/25 weight compared to Dice, Perceptual and L1 losses.
-}<fig:exp:loss-weights>
-
-\appendixexperiment[experiments-counter]{\imgfp/exps}{a03_ai_retrain_val@va03_vtr@va03_vt.jpg}{
-	Comparing effect of strong translation and rotation affine augmentations. By default, person is sligtly translated off the image center and rotated in $(-45^{\circ},45^{\circ})$ range.
-}<fig:exp:strong-affine-aug>
-
-\appendixexperiment[experiments-counter]{\imgfp/exps}{a03_ai_retrain_val@va10@va11@va12@va13.jpg}{
-	Comparing effect of training a model with zoomed images, and fine-tuning it on full-body (FB) images, hopefully reaching baseline FB quality, without forgetting zoomed quality.
-}<fig:exp:fine-tune-wo-zooms>
-
-\appendixexperiment[experiments-counter]{\imgfp/exps}{a03_ai_retrain_val@va14@va15@va16.jpg}{
-	Comparing effect of training a model with zoomed images, and fine-tuning it on full-body (FB) images, hopefully reaching baseline FB quality, without forgetting zoomed quality.
-}<fig:exp:fine-tune-wo-zooms-texlowerlr>
-
-\appendixexperiment[experiments-counter]{\imgfp/exps}{a07_ai@a07_ai@a07_minsoo@a07_renat@a07_egor.jpg}{
-	Comparing usage of Instance Normalization layers, when trained with other training sequences. Plots of losses and metrics cannot be validly compared.
-}<fig:exp:instancenorm-other-seq>
-
-\appendixexperiment[experiments-counter]{\imgfp/exps}{a31_ai@a34_ai@a34_defaultopt.jpg}{
-	Comparing effect of batch size on emergence of visual artifacts. We speculate about correlation of the "bubble" artifact around feet, and running batch statistics used in Batch Normalization layers. 
-}<fig:exp:batch-size-1>
-
-\appendixexperiment[experiments-counter]{\imgfp/exps}{a32_ai@a40_ai@a40_low_ntexlr.jpg}{
-	Comparing effect of both collecting Batch Normalization running statistics only from full-body images and preventing update of neural texture Adam optimizer's state for pixels with 0 gradient; then fine-tuning only on full-body images.
-}<fig:exp:nza-bnfix-finetune>
-
-\appendixexperiment[experiments-counter]{\imgfp/exps}{b01_bl@b07_nr2@b07_nr1@b07_nrp0.jpg}{
-	Comparing effect of high value of weight decay for parameters of the neural renderer. Decay value 1 is the highest limit until the quality significantly drops.
-}<fig:exp:wdecay-nr2:nronly>
-
-\appendixexperiment[experiments-counter]{\imgfp/exps}{b01_bl@b07_nr2@b07_nr2_d1_ntex1@b07_nr2_d2_ntex1.jpg}{
-	Comparing effect of weight decay for parameters of the neural renderer, neural texture and discriminator. Hardly any difference is observed. 
-}<fig:exp:wdecay-nr2:ntex1+disc>
-
-\appendixexperiment[experiments-counter]{\imgfp/exps}{b01_bl@b07_nr2@b07_nr2_d2_ntex2@b07_nr2_d1_ntex2.jpg}{
-	Comparing effect of weight decay for parameters of the neural renderer, neural texture and discriminator. Hardly any difference is observed. 
-}<fig:exp:wdecay-nr2:ntex2+disc>
-
-\appendixexperiment[experiments-counter]{\imgfp/exps}{b01_bl@b07_nr3@b07_nr3_d3@b07_nr3_d3_ntex3.jpg}{
-	Comparing effect of weight decay for parameters of the neural renderer, neural texture and discriminator separately. Hardly any difference is observed. 
-}<fig:exp:wdecay-nr3:ntex+disc>
-
-\appendixexperiment[experiments-counter]{\imgfp/exps}{b01_bl@b07_nr4@b07_nr3@b07_nr2.jpg}{
-	Comparing effect of weight decay for parameters of the neural renderer. Hardly any difference is observed. 
-}<fig:exp:wdecay-nr432>
-
-\appendixexperiment[experiments-counter]{\imgfp/exps}{b01_bl@b07_nr6@b07_nr5@b07_nr4.jpg}{
-	Comparing effect of low value of weight decay for parameters of the neural renderer. Hardly any difference is observed. 
-}<fig:exp:wdecay-nr654>
-
-\appendixexperiment[experiments-counter]{\imgfp/exps}{b01_bl@vb02_zstat@vb03_znod@vb03_fbnod.jpg}{
-	Comparing effect of collecting Batch Normalization running statistics only from FB images (or only zoomed images); or effect of disabling GAN losses on either FB or zoomed images.
-}<fig:exp:scale-distr-enable-disable-stat-or-gan>
-
-\appendixexperiment[experiments-counter]{\imgfp/exps}{v05_50@vae05_50@vae05_50_flips.jpg}{
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{v05_50@vae05_50@vae05_50_flips.jpg}{
 	Comparing baseline architecture with added camera-space augmentations, trained on full-body images. Even FB images have better sharpness, improving the quality (see Figure \ref{fig:cam_aug}).
-}<fig:exp:baselines>
+}
+<fig:exp:baselines>
 
-\appendixexperiment[experiments-counter]{\imgfp/exps}{va02@a07_ai@a48_ai.jpg}{
-	Comparing usage of Batch Normalization (BN) or Instance Normalization layers in neural renderer; and effect of collecting running instance statistics (as in BN by default).
-}<fig:exp:instancenorm-and-switch-track-stat>
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{vae05_50_flips@va01@va02@a03_ai_retrain_val.jpg}{
+	Comparing effect of training on zoomed images via camera-space augmentations, compared to just full-body baseline training.
+}
+<fig:exp:basic-zooms>
 
-\appendixexperiment[experiments-counter]{\imgfp/exps}{va02@b01_27.jpg}{
-	Comparing effect of using fewer training samples than a whole video sequence. We expected smaller overfitting to unusual training samples, e.g. with abnormal change in lighting.
-}<fig:exp:27-frames>
+\appendixexperiment[experiments-counter]{\imgfp/exps}
+{vae05_50_flips@va01@va04@va05.jpg}{
+	Comparing effect of training on zoomed images via camera-space augmentations, compared to just full-body baseline training.
+}
+<fig:exp:basic-zooms-2>
 
-\appendixexperiment[experiments-counter]{\imgfp/exps}{va02@va06@va06_stat_zooms.jpg}{
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{a03_ai_retrain_val@a29_ai@a30_ai.jpg}{
+	Comparing effect of selecting body joints or body vertices as centers of camera-space augmentations (see Figure \ref{fig:smplx-vert2joint}). Every vertex can be chosen with equal probability.
+}
+<fig:exp:zoom-vertices>
+
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{a03_ai_retrain_val@a39_ntex5@a39_ntex10.jpg}{
+	Comparing effect of adjusting neural texture learning rate.
+}
+<fig:exp:ntex-lr-higher>
+
+% ===== ======== ======= 
+% BN statistics
+% ===== ======== =======
+
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{va02@va06@va06_stat_zooms.jpg}{
 	Comparing effect of collecting Batch Normalization running statistics only from FB images, or only from zoomed images (same proportion of FB and zoomed images during training).
-}<fig:exp:bnf-statfb-statzooms>
+}
+<fig:exp:bnf-statfb-statzooms>
 
-\appendixexperiment[experiments-counter]{\imgfp/exps}{va02@va06@va07@va08@va09.jpg}{
+
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{va02@va06@va07@va08@va09.jpg}{
 	Comparing effect of using different normalization layers in the whole architecture. Although Instance and Group normalizations look promising, they lack support on mobile hardware.
-}<fig:exp:different-norms>
+}
+<fig:exp:different-norms>
 
-\appendixexperiment[experiments-counter]{\imgfp/exps}{va02@vb01_nobnf@vb01_nobnf_ut@b01_bl.jpg}{
-	Comparing effect of differences in augmentation scales or neural texture capacity. 
-}<fig:exp:a03-bl>
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{a07_ai@a07_ai@a07_minsoo@a07_renat@a07_egor.jpg}{
+	Comparing usage of Instance Normalization layers, when trained with other training sequences. Plots of losses and metrics cannot be validly compared.
+}
+<fig:exp:instancenorm-other-seq>
 
-\appendixexperiment[experiments-counter]{\imgfp/exps}{va06@a27_ai@a27_dec50pct@a27_enc2221.jpg}{
-	Comparing effect of reducing capacity of neural renderer parts (encoder or decoder); or manually removing hard training samples from the dataset.
-}<fig:exp:neural-renderer-capacity>
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{a03_ai_retrain_val@a37_ai@a37_dis_in@a37_dis_bn.jpg}{
+	Comparing effect of removing normalization layers from parts of the architecture.
+}
+<fig:exp:nonorm:r:rd:r+dinstancenorm>
 
-\appendixexperiment[experiments-counter]{\imgfp/exps}{va06@a43_d@a43_din.jpg}{
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{a03_ai_retrain_val@a37_ai@a37_nodisnorm@a37_noheadnorm.jpg}{
+	Comparing effect of removing normalization layers from parts of the architecture.
+}
+<fig:exp:nonorm:d:rd:rhead>
+
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{a03_ai_retrain_val@a43_03v_r@a43_03v_rd.jpg}{
+	Comparing effect of using Batch Normalization layers without learned affine parameters ($\gamma=1$, $\beta=0$ as in Formula \ref{lit:eq:bn}).
+}
+<fig:exp:norm-noaffine>
+
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{va06@a43_d@a43_din.jpg}{
 	Comparing effect of collecting Batch Normalization running statistics only from FB images; and using normalization layers without learned affine parameters ($\gamma=1$, $\beta=0$ in Formula \ref{lit:eq:bn})
-}<fig:exp:bnf-disc-noaffinenorms>
+}
+<fig:exp:bnf-disc-noaffinenorms>
 
-\appendixexperiment[experiments-counter]{\imgfp/exps}{va06@a44_bnf@a45_ai@a46_d2.jpg}{
-	Comparing: changing neural texture from multi-scale (layers of which are upscaled and averaged before input rasterization) to single scale; or using same zoom scale within a single batch of optimization; or using higher Dice loss weight to improve segmentation.
-}<fig:exp:bnf-samescalebatch-nomultiscaletex-highdice>
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{a03_ai_retrain_val@va10@va11@va12@va13.jpg}{
+	Comparing effect of training a model with zoomed images, and fine-tuning it on full-body (FB) images, hopefully reaching baseline FB quality, without forgetting zoomed quality.
+}
+<fig:exp:fine-tune-wo-zooms>
 
-\appendixexperiment[experiments-counter]{\imgfp/exps}{va06@a47_m2@a47_m3@va49.jpg}{
-	Comparing effect of collecting Batch Normalization running statistics only from FB images, with higher momentum, i.e. older statistics are forgotten faster.
-}<fig:exp:bn-momentum-high>
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{a03_ai_retrain_val@va14@va15@va16.jpg}{
+	Comparing effect of training a model with zoomed images, and fine-tuning it on full-body (FB) images, hopefully reaching baseline FB quality, without forgetting zoomed quality.
+}
+<fig:exp:fine-tune-wo-zooms-texlowerlr>
 
-\appendixexperiment[experiments-counter]{\imgfp/exps}{va06@b01_ai@vb01_uniform.jpg}{
-	Comparing effect of collecting Batch Normalization running statistics only from FB images, and selecting body vertices as centers of camera-space augmentations.
-}<fig:exp:a03-uniform>
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{a31_ai@a34_ai@a34_defaultopt.jpg}{
+	Comparing effect of batch size on emergence of visual artifacts. We speculate about correlation of the "bubble" artifact around feet, and running batch statistics used in Batch Normalization layers. 
+}
+<fig:exp:batch-size-1>
 
-\appendixexperiment[experiments-counter]{\imgfp/exps}{va06@va06_notrack2@va06_notrack5.jpg}{
-	Comparing effect of collecting Batch Normalization running statistics only from FB images; and still normalizing zoomed frames with batch statistics, rather than running ones.
-}<fig:exp:bnf-disable-track>
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{a03_ai_retrain_val@a31_ai@a32_ai@a32_80.jpg}{
+	Comparing effect of collecting Batch Normalization running statistics only from FB images; or preventing update of neural texture Adam optimizer's state for pixels with 0 gradient.
+}
+<fig:exp:nza-or-bnfix>
 
-\appendixexperiment[experiments-counter]{\imgfp/exps}{va06@va06_step2@va06_step4@va06_step2d.jpg}{
-	Comparing effect of making optimization step of neural renderer or discriminator every $N$ batches, rather than every batch (to possibly accumulate more averaged gradients).
-}<fig:exp:optimizer-step-n>
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{a32_ai@a40_ai@a40_low_ntexlr.jpg}{
+	Comparing effect of both collecting Batch Normalization running statistics only from full-body images and preventing update of neural texture Adam optimizer's state for pixels with 0 gradient; then fine-tuning only on full-body images.
+}
+<fig:exp:nza-bnfix-finetune>
 
-\appendixexperiment[experiments-counter]{\imgfp/exps}{va06@va17@va18@va18.jpg}{
-	Comparing effect of collecting Batch Normalization running statistics only from FB images, and afterwards fine-tuning the renderer only on FB images.
-}<fig:exp:bnf-fine-tune>
-
-\appendixexperiment[experiments-counter]{\imgfp/exps}{va06@va19@va21@va20.jpg}{
-	Comparing effect of disabling of Adam optimizer's first momentum for the neural texture or discriminator.
-}<fig:exp:optimizer-momentum>
-
-\appendixexperiment[experiments-counter]{\imgfp/exps}{va06@va20@a27_ai@a36_ai.jpg}{
-	Comparing effect of manually removing hard training samples from the dataset, and training with collecting Batch Normalization running statistics only from FB images.
-}<fig:exp:filter-shade-fine-tune>
-
-\appendixexperiment[experiments-counter]{\imgfp/exps}{va06@va22@va23@va24.jpg}{
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{va06@va22@va23@va24.jpg}{
 	Comparing effect of collecting Batch Normalization running statistics only from FB images; and preventing update of neural texture Adam optimizer's state for pixels with 0 gradient; and selecting body vertices as centers of camera-space augmentations.
-}<fig:exp:nza-bnfix-zoomvertices>
+}
+<fig:exp:nza-bnfix-zoomvertices>
 
-\appendixexperiment[experiments-counter]{\imgfp/exps}{va06@va24@va25@va26@va28.jpg}{
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{va06@va24@va25@va26@va28.jpg}{
 	Comparing effect of lower neural texture capacity; or preventing update of neural texture Adam optimizer's state for pixels with 0 gradient; or selecting body vertices as centers of camera-space augmentations.
-}<fig:exp:nza-bnfix-ntex8>
+}
+<fig:exp:nza-bnfix-ntex8>
 
-\appendixexperiment[experiments-counter]{\imgfp/exps}{va06@va43_r@a43_rd@va43_rdin.jpg}{
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{b01_bl@vb02_zstat@vb03_znod@vb03_fbnod.jpg}{
+	Comparing effect of collecting Batch Normalization running statistics only from FB images (or only zoomed images); or effect of disabling GAN losses on either FB or zoomed images.
+}
+<fig:exp:scale-distr-enable-disable-stat-or-gan>
+
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{va02@a07_ai@a48_ai.jpg}{
+	Comparing usage of Batch Normalization (BN) or Instance Normalization layers in neural renderer; and effect of collecting running instance statistics (as in BN by default).
+}
+<fig:exp:instancenorm-and-switch-track-stat>
+
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{va06@a47_m2@a47_m3@va49.jpg}{
+	Comparing effect of collecting Batch Normalization running statistics only from FB images, with higher momentum, i.e. older statistics are forgotten faster.
+}
+<fig:exp:bn-momentum-high>
+
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{va06@b01_ai@vb01_uniform.jpg}{
+	Comparing effect of collecting Batch Normalization running statistics only from FB images, and selecting body vertices as centers of camera-space augmentations.
+}
+<fig:exp:a03-uniform>
+
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{va06@va06_notrack2@va06_notrack5.jpg}{
+	Comparing effect of collecting Batch Normalization running statistics only from FB images; and still normalizing zoomed frames with batch statistics, rather than running ones.
+}
+<fig:exp:bnf-disable-track>
+
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{va06@va06_step2@va06_step4@va06_step2d.jpg}{
+	Comparing effect of making optimization step of neural renderer or discriminator every $N$ batches, rather than every batch (to possibly accumulate more averaged gradients).
+}
+<fig:exp:optimizer-step-n>
+
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{va06@va17@va18@va18.jpg}{
+	Comparing effect of collecting Batch Normalization running statistics only from FB images, and afterwards fine-tuning the renderer only on FB images.
+}
+<fig:exp:bnf-fine-tune>
+
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{va06@va20@a27_ai@a36_ai.jpg}{
+	Comparing effect of manually removing hard training samples from the dataset, and training with collecting Batch Normalization running statistics only from FB images.
+}
+<fig:exp:filter-shade-fine-tune>
+
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{va06@va43_r@a43_rd@va43_rdin.jpg}{
 	Comparing effect of collecting Batch Normalization running statistics only from FB images; and using normalization layers without learned affine parameters ($\gamma=1$, $\beta=0$ in Formula \ref{lit:eq:bn}).
-}<fig:exp:renderer-noaffinenorm>
+}
+<fig:exp:renderer-noaffinenorm>
 
-\appendixexperiment[experiments-counter]{\imgfp/exps}{va06@va50@va51_01@va51_025.jpg}{
-	Comparing effect of adding a white Gaussian noise to spectral initialization of the neural texture (see Figure \ref{fig:spectral_ntex}).
-}<fig:exp:add-noise-ntex-init>
+% =================
+% Culprits hunting
+% =================
 
-\appendixexperiment[experiments-counter]{\imgfp/exps}{va06@va54_r@va54_rtex@va54_tex.jpg}{
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{va02@vb01_nobnf@vb01_nobnf_ut@b01_bl.jpg}{
+	Comparing effect of differences in augmentation scales or neural texture capacity. 
+}
+<fig:exp:a03-bl>
+
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{va06@a44_bnf@a45_ai@a46_d2.jpg}{
+	Comparing: changing neural texture from multi-scale (layers of which are upscaled and averaged before input rasterization) to single scale; or using same zoom scale within a single batch of optimization; or using higher Dice loss weight to improve segmentation.
+}
+<fig:exp:bnf-samescalebatch-nomultiscaletex-highdice>
+
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{va06@va19@va21@va20.jpg}{
+	Comparing effect of disabling of Adam optimizer's first momentum for the neural texture or discriminator.
+}
+<fig:exp:optimizer-momentum>
+
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{va06@va54_r@va54_rtex@va54_tex.jpg}{
 	Comparing effect of starting optimization of neural renderer or neural texture from a state that was optimized on a dataset of multiple people.
-}<fig:exp:multiperson-init>
+}
+<fig:exp:multiperson-init>
 
-\appendixexperiment[experiments-counter]{\imgfp/exps}{vae05_50_flips@va01@va02@a03_ai_retrain_val.jpg}{
-	Comparing effect of training on zoomed images via camera-space augmentations, compared to just full-body baseline training.
-}<fig:exp:basic-zooms>
+% =================
+% Regularization
+% =================
 
-\appendixexperiment[experiments-counter]{\imgfp/exps}{vae05_50_flips@va01@va04@va05.jpg}{
-	Comparing effect of training on zoomed images via camera-space augmentations, compared to just full-body baseline training.
-}<fig:exp:basic-zooms-2>
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{a03_ai_retrain_val@va03_vtr@va03_vt.jpg}{
+	Comparing effect of strong translation and rotation affine augmentations. By default, person is sligtly translated off the image center and rotated in $(-45^{\circ},45^{\circ})$ range.
+}
+<fig:exp:strong-affine-aug>
 
-\appendixexperiment[experiments-counter]{\imgfp/exps}{vb01_nobnf_ut@b04_01d@b04_01e.jpg}{
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{a03_ai_retrain_val@a35_2_01@a35_5_01@a35_dis_d1_01.jpg}{
+	Comparing effect of gradient clipping for Adam optimizer of neural renderer's parameters. The clipping value is either an arbitrary constant, or average magnitude of all tensors.
+}
+<fig:exp:gradclip-constant-or-mean>
+
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{a03_ai_retrain_val@a35_d1_01@a35_d2_01@a35_d5_01.jpg}{
+	Comparing effect of gradient clipping for Adam optimizer of neural renderer's parameters. The clipping value is a fraction of average magnitude of all tensors.
+}
+<fig:exp:gradclip-mean-fraction>
+
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{a03_ai_retrain_val@a42_lr2m6@a42_lr2m6_gc10@a42_lr2m6_gc20.jpg}{
+	Comparing effect of combining gradient clipping with learning rate scheduling, that would "warmup" with fairly high learning rate (and possibly exploding gradients that will be clipped).
+}
+<fig:exp:gradclip-scheduler>
+
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{b01_bl@b07_nr2@b07_nr1@b07_nrp0.jpg}{
+	Comparing effect of high value of weight decay for parameters of the neural renderer. Decay value 1 is the highest limit until the quality significantly drops.
+}
+<fig:exp:wdecay-nr2:nronly>
+
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{b01_bl@b07_nr2@b07_nr2_d1_ntex1@b07_nr2_d2_ntex1.jpg}{
+	Comparing effect of weight decay for parameters of the neural renderer, neural texture and discriminator. Hardly any difference is observed. 
+}
+<fig:exp:wdecay-nr2:ntex1+disc>
+
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{b01_bl@b07_nr2@b07_nr2_d2_ntex2@b07_nr2_d1_ntex2.jpg}{
+	Comparing effect of weight decay for parameters of the neural renderer, neural texture and discriminator. Hardly any difference is observed. 
+}
+<fig:exp:wdecay-nr2:ntex2+disc>
+
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{b01_bl@b07_nr3@b07_nr3_d3@b07_nr3_d3_ntex3.jpg}{
+	Comparing effect of weight decay for parameters of the neural renderer, neural texture and discriminator separately. Hardly any difference is observed. 
+}
+<fig:exp:wdecay-nr3:ntex+disc>
+
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{b01_bl@b07_nr4@b07_nr3@b07_nr2.jpg}{
+	Comparing effect of weight decay for parameters of the neural renderer. Hardly any difference is observed. 
+}
+<fig:exp:wdecay-nr432>
+
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{b01_bl@b07_nr6@b07_nr5@b07_nr4.jpg}{
+	Comparing effect of low value of weight decay for parameters of the neural renderer. Hardly any difference is observed. 
+}
+<fig:exp:wdecay-nr654>
+
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{va06@a27_ai@a27_dec50pct@a27_enc2221.jpg}{
+	Comparing effect of reducing capacity of neural renderer parts (encoder or decoder); or manually removing hard training samples from the dataset.
+}
+<fig:exp:neural-renderer-capacity>
+
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{vb01_nobnf_ut@b04_01d@b04_01e.jpg}{
 	Comparing effect of adding 2D dropout layer \cite{aux:dropout2d-15} after layers of neural renderer's encoder/decoder.
-}<fig:exp:dropout-e-d>
+}
+<fig:exp:dropout-e-d>
 
-\appendixexperiment[experiments-counter]{\imgfp/exps}{vb01_nobnf_ut@b04_01ed@b04_005ed.jpg}{
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{vb01_nobnf_ut@b04_01ed@b04_005ed.jpg}{
 	Comparing effect of adding 2D dropout layer \cite{aux:dropout2d-15} after layers of neural renderer's encoder/decoder.
-}<fig:exp:dropout-ed-ed>
+}
+<fig:exp:dropout-ed-ed>
 
-\appendixexperiment[experiments-counter]{\imgfp/exps}{vb01_nobnf_ut@b04_c01e@b04_c01ed@b04_c015ed@b04_c02ed.jpg}{
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{vb01_nobnf_ut@b04_c01e@b04_c01ed@b04_c015ed@b04_c02ed.jpg}{
 	Comparing effect of adding 2D dropout layer \cite{aux:dropout2d-15} after all convolutions of neural renderer's encoder/decoder.
-}<fig:exp:dropout-all-conv-ed-ed>
+}
+<fig:exp:dropout-all-conv-ed-ed>
 
-\appendixexperiment[experiments-counter]{\imgfp/exps}{vb01_nobnf_ut@b06_inp001@b06_inp002@b06_inp01.jpg}{
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{va06@va50@va51_01@va51_025.jpg}{
+	Comparing effect of adding a white Gaussian noise to spectral initialization of the neural texture (see Figure \ref{fig:spectral_ntex}).
+}
+<fig:exp:add-noise-ntex-init>
+
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{vb01_nobnf_ut@b06_inp001@b06_inp002@b06_inp01.jpg}{
 	Comparing effect of additive Gaussian noise augmentation for every input of the neural renderer.
-}<fig:exp:add-noise-input>
+}
+<fig:exp:add-noise-input>
 
-\appendixexperiment[experiments-counter]{\imgfp/exps}{vb01_nobnf_ut@b06_ntex001@b06_ntex002@b06_ntex01.jpg}{
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{vb01_nobnf_ut@b06_ntex001@b06_ntex002@b06_ntex01.jpg}{
 	Comparing effect of additive Gaussian noise augmentation for neural texture before rasterization of every input frame for the neural renderer.
-}<fig:exp:add-noise-ntex>
+}
+<fig:exp:add-noise-ntex>
 
-\appendixexperiment[experiments-counter]{\imgfp/exps}{vb01_nobnf_ut@b06_rgb01@b06_rgb005.jpg}{
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{vb01_nobnf_ut@b06_rgb01@b06_rgb005.jpg}{
 	Comparing effect of additive Gaussian noise augmentation for every ground truth image.
-}<fig:exp:add-noise-rgb>
+}
+<fig:exp:add-noise-rgb>
+
+% =================
+% Other ideas
+% =================
+
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{a03_ai_retrain_val@a31_ai@a33_ai.jpg}{
+	Comparing effect of preventing update of neural texture Adam optimizer's state for pixels with 0 gradient; or using fewer neural texture channels.
+}
+<fig:exp:nza-or-ntex8>
+
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{a03_ai_retrain_val@a38_ai@a38_cat@a38_cat_bnfix.jpg}{
+	Comparing effect of having input tensor down-scaled and additionally passed to layers of the neural renderer's encoder, to address effect of visual artifacts accumulation (e.g. Figure \ref{fig:interm06_decoder}).
+}
+<fig:exp:pass-input-in-encoder>
+
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{a03_ai_retrain_val@a53_1@a53_ntexlr.jpg}{
+	Comparing effect of adjusting weights of training losses used. By default Adversarial and Feature-Matching losses have 1/25 weight compared to Dice, Perceptual and L1 losses.
+}
+<fig:exp:loss-weights>
+
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{va02@b01_27.jpg}{
+	Comparing effect of using fewer training samples than a whole video sequence. We expected smaller overfitting to unusual training samples, e.g. with abnormal change in lighting.
+}
+<fig:exp:27-frames>
+
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{05_54_r1@va41@va41_learnmips@va41_nomips.jpg}{
+	Comparing effect of algorithmic (see Figures \ref{fig:mipmap} and \ref{fig:anisotropic_result}), jointly learned or absent MIP-maps of the neural texture.
+}
+<fig:exp:ntex-mip-maps>
 
 
 \setkeys{Gin}{draft=false}

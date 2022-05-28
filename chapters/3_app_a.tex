@@ -1,9 +1,8 @@
 \chapter{Relevant mobile application code}
-
+\label{appendix-code}
 %\setkeys{Gin}{draft}
 
 In this appendix we present snippets of code that are the most relevant to realtime input generation of neural rendering DNN on a mobile device. We omit about 85\% of the code related to setup of the Android user interface, main loop, logging, loading of assets and configuration, interaction with the user, initialization of OpenGL components, selection of features, animations, rendering of the camera frame, tracked planes, etc. We also do not find it necessary to publish the full Python code for DNN training, since the adjustments presented in the Section \ref{methods:zooms} are reproducible from the description.
-
 
 \myfilelisting[language=Java]{\codefp/Generator.java}
 <The Generator class uses SNPE neural network API to map certain pre-allocated data buffers as locations of DNN input and output. Thus, on each inference no additional memory allocation is invoked. You can notice, that the network is created with multiple "tries", in order to try different combinations of security parameters for SNPE initialization. Without it, the network might fail to load required third party libraries.>
