@@ -312,6 +312,10 @@ on \@thesisdate
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage[dvipsnames,table]{xcolor}
+\usepackage{listings} % программный код
+\usepackage{amsmath}  % for \hookrightarrow
+\usepackage{amsfonts}
+
 \newcommand{\cfbox}[2]{%
 	\colorlet{currentcolor}{.}%
 	{\color{#1}%
@@ -337,9 +341,6 @@ on \@thesisdate
 \setlist[itemize]{noitemsep, topsep=0pt, leftmargin=10mm}
 \setlist[enumerate]{noitemsep, topsep=0pt, leftmargin=10mm}
 
-\usepackage{listings} % программный код
-\usepackage{amsmath}  % for \hookrightarrow
-\usepackage{amsfonts}
 
 %\makeatletter
 \DeclareRobustCommand{\getlstname}{%

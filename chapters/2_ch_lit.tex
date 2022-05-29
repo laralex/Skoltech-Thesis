@@ -138,6 +138,7 @@ Body mesh can be posed using learned orthonormal components $\mathcal{P}=[P_1, .
 \noindent
 \begin{equation}
 	\setlength\abovedisplayskip{0pt} T_p(\beta, \theta, \psi) = \bar{T} + B_S(\beta; \mathcal{S}) + B_E(\psi; \mathcal{E}) + B_P(\theta; \mathcal{P})
+	\label{lit:eq:smplx-combined}
 \end{equation}
 \begin{equation}
 	B_S(\beta; \mathcal{S}) = \sum_{n=1}^{\lvert \beta \rvert}\beta_n S_n, 
@@ -145,6 +146,7 @@ Body mesh can be posed using learned orthonormal components $\mathcal{P}=[P_1, .
 	B_E(\psi; \mathcal{E}) = \sum_{n=1}^{\lvert \psi \rvert}\psi_n \mathcal{E}_n
 	\quad
 	B_P(\theta; \mathcal{P}) = \sum_{n=1}^{9K} \left( R(\theta)_n - R(\theta^{*})_n \right) P_n
+	\label{lit:eq:smplx-components}
 \end{equation}
 \setlength\belowdisplayskip{0pt} 
 
@@ -260,6 +262,7 @@ On a computer hardware level, DNNs are usually trained and inferred with weights
 	\setlength\abovedisplayskip{0pt}
 	\bm{x_{\mathtt{int}}} = \text{round}(\bm{x}/s_{\bm{x}}) + z_{\bm{x}}
 	\setlength\belowdisplayskip{0pt}
+	\label{lit:eq:float-to-quantized}
 \end{equation}
 
 Since many operations in neural networks can be computed using dot products of vectors, this allows to represent them in a quantized form. For example, a basic operation of matrix-vector multiplication with a floating-point weights matrix $\bm{W}_{n \times m}$ and a bias vector $\bm{b}_n$. The output activation vector $\bm{A}_n$  could be computed from an input activation vector $\bm{x}_m$ as:
