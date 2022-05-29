@@ -257,6 +257,7 @@ In this appendix we present: Section \ref{appb:fig} -- pictures, that additional
 		\label{fig:far_dynamic_crop_debug}
 	\end{subfigure}
 	\caption{Comparison of projection modes. (\protect\subref{fig:far_screen_crop}) A projection matrix that spans the whole screen (default mode). Since the input image is square in our pipeline, the input image is effectively much wider than the screen, most of the generated image is wasted. Moreover, the input contains a very tiny rasterization of the mesh, and unless neural network was trained to see such small inputs, it may produce visual artifacts, as shown. (\protect\subref{fig:far_dynamic_crop}) A dynamic crop approach used in this work maximizes the avatar in the input rasterization, thus the network produces an image of sufficient quality. (\protect\subref{fig:far_dynamic_crop_debug}) Shows the output image without segmentation mask applied, allowing to see the borders of the dynamic crop. It covers all the joints and expands or shrinks on every frame.}
+	\label{fig:far_examples}
 \end{figure}
 \begin{figure}
 	%\fboxrule=2pt
@@ -281,7 +282,8 @@ In this appendix we present: Section \ref{appb:fig} -- pictures, that additional
 		\caption{}
 		\label{fig:zoom_smallest_crop}
 	\end{subfigure}
-	\caption{Comparison of projection modes in close view. (\protect\subref{mobile:zoom_inefficient_crop}) A projection matrix that spans the whole screen (default mode). Even if the avatar spans almost all the screen, parts of the frame are still being wasted, decreasing possible resolution of the avatar. (\protect\subref{mobile:zoom_screen_crop}) A dynamic crop around all the joints. A bit higher quality in this scenario, but the crop is similar to full-screen projection. (\protect\subref{fig:zoom_smallest_crop}) A dynamic crop around only seen body parts. Yields the highest quality, since it minimizes the area of wasted space.}
+	\caption{Comparison of projection modes in close view. (\protect\subref{fig:zoom_inefficient_crop}) A projection matrix that spans the whole screen (default mode). Even if the avatar spans almost all the screen, parts of the frame are still being wasted, decreasing possible resolution of the avatar. (\protect\subref{fig:zoom_screen_crop}) A dynamic crop around all the joints. A bit higher quality in this scenario, but the crop is similar to full-screen projection. (\protect\subref{fig:zoom_smallest_crop}) A dynamic crop around only seen body parts. Yields the highest quality, since it minimizes the area of wasted space.}
+	\label{fig:zoom_examples}
 \end{figure}
 
 %\setkeys{Gin}{draft=false}

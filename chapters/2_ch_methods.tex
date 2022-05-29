@@ -116,7 +116,7 @@ Then, we extract tracking information from the ARCore session, namely camera int
 	\label{methods:eq:ndc-projection}
 \end{equation}
 
-There is one change required to this projection matrix. Since we use it to rasterize an input frame to the DNN, we have to supply square images ($512 \times 512$ pixels resolution). However the default projection matrix has aspect ratio of the device's screen. The frustum can be squeezed, e.g. along vertical $y$ axis, by multiplying the second row of $\bmr{K_{NDC}}$ by the screen dimensions ratio $W / H$.
+There are a few changes required for this projection matrix. Since we use it to rasterize an input frame to the DNN, we have to supply square images ($512 \times 512$ pixels resolution). However the default projection matrix has aspect ratio of the device's screen. The frustum can be squeezed, e.g. along vertical $y$ axis, by multiplying the second row of $\bmr{K_{NDC}}$ by the screen dimensions ratio $W / H$. Additionally OpenGL stores images from a bottom row to top, meaning that it appears vertically flipped when we use it outside OpenGL. To solve it, the element at second row and second column can be negated.
 
 Now that we have posed joints, in order to pose all the mesh vertices we send the transformation matrices $\bmr{H}_i$, as well as the merged matrix of extrinsics and intrinsics on GPU, as uniform\footnote{The term \textit{uniform} is specific to OpenGL, it means that a single variable value is shared across all the primitives (vertices/pixels) processed by a shader.} variables of the vertex shader program (see Listing \ref{appendix-code:vertexshader}). Here, for each body mesh vertex we combine the most significant joints weights with corresponding matrices, taken by index offset specified in the vertex attributes. Notice, that when we compute \verb|uniqueVertexTransform| matrix, we don't add up the matrices plainly like $a + b + ... + g + h$, instead we use a scheme $((a + b) + (c + d)) + ((e + f) + (g + h))$. Due to the order of operations execution, the former variant requires to compute $a + b$, and only after that compute $(a+b) + c$ and further, even if hardware has multiple Multiply-Accumulate circuits (MAC) available. With the latter variant, we force computation of 4 inner sums independently, and then add them into the final matrix. This little reordering can optimize the performance, since its effect scales with the number of vertices. The vertex shader terminates by transforming the vertex with the affine transform, and projecting it into the screen coordinates. 
 
@@ -126,42 +126,31 @@ After generating the input frame, it has to be queried on CPU side from the Open
 
 Finally, we issue the command to infer the DNN from the given input data, and draw all the AR content on the screen - the camera frame, the tracked surfaces planes, and the synthesized avatar image, which we have to pass to OpenGL as a texture. Besides rendering the content in AR, we also support infering the DNN on predefined camera and SMPL-X poses. We dump the resulting images onto the hard disk of the device, and later compare the visual quality of inference on desktop hardware, on mobile GPU or DSP.
 
+This concludes the minimal necessary actions for the real-time neural rendering of avatar images in AR. We then notice, that the visual quality of avatars can drastically suffer when observing the avatar from far away. The neural network is unlikely to be trained to see all the miniature scales of the inputs, thus it may output unpredictable results, possibly failing in segmentation (see Figure \ref{fig:far_screen_crop}). Moreover, the default stretched projection appears very blurry, primarily because the resolution of output images ($512 \times 512$) is a lot smaller than of the screen (on our devices $1920 \times 1080$). Thus, when we render the output avatar image, it gets noticeably low-quality, ever further amplified when looking at the avatar from close up (see Figure \ref{fig:zoom_inefficient_crop}). Besides being low resolution, a big part of the frame will be never seen on the screen due to the extra stretching (Figure \ref{fig:explain_crop_fullscreen}), however computation time is spent on it every frame. 
 
-%\begin{figure}[ht]
-%	\centering
-%	%\includegraphics[width=\textwidth]{\imgfp/dynamic_crop/dynamic_crop}
-%	%\setkeys{Gin}{draft}
-%	\centering{\includegraphics[width=\textwidth]{\imgfp/dynamic_crop/dynamic_crop_vect}}
-%	%\setkeys{Gin}{draft=false}
-%	%\includepdf[width=\textwidth]{\imgfp/dynamic_crop/dynamic_crop}
-%	\caption{A 3D space with origin at the camera, and axes aligned with camera directions ($x$ - right, $y$ - top, $z$ - front). The figure shows a slice of this space with $x=0$, illustrating the dynamic projection crop. \textit{(Left)} The near plane of the old screen frustum is defined by a $z$ distance (arbitrary), and $x$/$y$ coordinates of the frustum borders (top/bottom coordinates on illustration). \textit{(Right)} To make the projection cropped around the avatar body, we compute an axis-aligned bounding box of the body, then project its spans onto the near plane, obtaining top/bottom borders, defined by intersection coordinates of the projection lines and the old near plane. The new frustum will have the same near and far planes as the old one, to ensure preservation of perspective.}
-%	\label{fig:dynamic_crop_math}
-%\end{figure}
-%
-%%TODO
-%\alert{TODO: Explain in details}
-%\begin{itemize}
-%	\item SMPL-X inference on mobile
-%	\begin{itemize}
-%		\item  "ON CPU" -- Pre-inference of shape blendshapes into a default posed mesh, load as a GPU buffer into OpenGL
-%		\item "ON CPU" -- Pre-compute indices of 12 the most influential joints for every mesh vertex, pre-load them on GPU as well.
-%		\item "ON CPU" -- On each frame compute posed joints (i.e. 55 rotation matrices): unwrap 3 axis angles into matrices following Rodrigues formula for rotations, multiply matrices in topological order to combine rotations of multiple joints. Load the matrices on GPU as shader uniforms (shared by all vertices)
-%		\item "ON GPU Vertex Shader" -- find a weighted sum of rotation matrices for each vertex (only 12 matrices to add up, using the most influential joints indices, without it 55 matrices would need to be added per each vertex). Project each vertex onto image, using a combination of extrinsic and intrinsic matrices of the camera.
-%	\end{itemize}
-%	\item Rasterization with a neural texture and quantization overcoming OpenGL limitations
-%	\begin{itemize}
-%		\item OpenGL can only render images with 4 channels RGBA. If rendering 16 channels naively, it requires to render 4 images with 4 channels, then send them to the DNN, and permute channels from 4xHxWx4 to 1xHxWx16, which is long to do on each frame (takes up to 20 ms)
-%		\item Using quantization, we can let network accept each channels as an 8-bit integer number. Then in OpenGL we can quantize in parallel rasterized pixels from 4-byte floats to 1-byte integers, pack them together with 4 neural channels per OpenGL channel, and then we do not need to permute channels, the input goes straight into the DNN and the first convolution starts immediately. The visual quality loss is not drastic
-%		\item Using quantized numbers, it also opens an opportunity to run on Digital Signal Processor (DSP), which is designed to do fast quantized computations (mainly because of bit-fiddling shortcuts possible with integers, and not with IEEE floating point numbers). Overall the performance is more than real-time with up to 640 px resolution
+The solution that we propose helps to render a single avatar with higher quality. We can take posed joint positions $\bmr{t}$ as in Formula \ref{methods:eq:smplx-rodrigures-4by4}, project them into image coordinates using multiplication by the extrinsic matrix and the modified projection matrix. Then an image-space bounding box can be found, that would encase all the extents of the person (Figure \ref{fig:explain_crop_joints}). For simplicity, we compute the bounding box aligned with $x$-$y$ axes on the image, although a rotated bounding box with complex implementation can be more yield better results. If we were to rasterize the input image only within this bounding box, then it would appear to the DNN in the full-body scale, which it was primarily learned to operate with highest quality. However still a smaller part of the frame can be computed in vain, if the avatar is not observed in full-body (see Figure \ref{fig:explain_crop_joints}). Going further, we can reduce the wasted frame parts to the minimum, by clipping the bounding box to the screen boundaries, thus supplying the DNN with a slightly zoomed image of the avatar (it has to be trained on such zoomed scales to yield good images). Overall, this allows to extract maximum resolution from just $512 \times 512$ generated frames, they can actually appear quite sharp and detailed from both far-away and close-up views.
+
+Now we'll describe how the cropping of the projection frustum to the bounding box works mathematically. 
+...
+The final cropped projection can be passed to the previously described GPU shader programs, to render the images. However, after inferring the avatar image, it has to be rendered not all over the device screen, but at a specific location, that corresponds to the initial cropping bounding box in the image space.
+
+\begin{figure}[ht]
+	\centering
+	%\includegraphics[width=\textwidth]{\imgfp/dynamic_crop/dynamic_crop}
+	%\setkeys{Gin}{draft}
+	\centering{\includegraphics[width=\textwidth]{\imgfp/dynamic_crop/dynamic_crop_vect}}
+	%\setkeys{Gin}{draft=false}
+	%\includepdf[width=\textwidth]{\imgfp/dynamic_crop/dynamic_crop}
+	\caption{A 3D space with origin at the camera, and axes aligned with camera directions ($x$ - right, $y$ - top, $z$ - front). The figure shows a slice of this space with $x=0$, illustrating the dynamic projection crop. \textit{(Left)} The near plane of the old screen frustum is defined by a $z$ distance (arbitrary), and $x$/$y$ coordinates of the frustum borders (top/bottom coordinates on illustration). \textit{(Right)} To make the projection cropped around the avatar body, we compute an axis-aligned bounding box of the body, then project its spans onto the near plane, obtaining top/bottom borders, defined by intersection coordinates of the projection lines and the old near plane. The new frustum will have the same near and far planes as the old one, to ensure preservation of perspective.}
+	\label{fig:dynamic_crop_math}
+\end{figure}
+
+
 %	\end{itemize}
 %	\item Dynamic camera frustum cropping
 %		\begin{itemize}
 %			\item Around view span -- On every frame compute coordinates of joints in camera space, find a XY-bounding box for them. Project bounds of this box onto the image, and find adjustments of top-bottom-left-right-near-far parameters of the camera frustum. Calculate a new projection matrix to fit only the bounding box of the avatar. Rasterize an input frame with this matrix. Infer the network and place the output using offset computed from the updated projection matrix
 %			\item Auto-zoom to reducing frame waste -- detect if bounding box of joints is cut off by the mobile screen. Zoom in the projection matrix to the avatar to compensate cut off parts. This will allow to see the avatar parts rendered in bigger resolution (thus DNN has to be trained on zoom scale too)
-%		\end{itemize}
-%	
-%	\item \alert{TODO: parallelization}
-%\end{itemize}
 
 \section{Improving quality of synthesized images}\label{methods:zooms}
 \begin{figure}[ht]
