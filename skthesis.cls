@@ -315,6 +315,7 @@ on \@thesisdate
 \usepackage{listings} % программный код
 \usepackage{amsmath}  % for \hookrightarrow
 \usepackage{amsfonts}
+\usepackage{soul}
 
 \newcommand{\cfbox}[2]{%
 	\colorlet{currentcolor}{.}%
