@@ -1,4 +1,3 @@
-\setkeys{Gin}{draft}
 \chapter{Images of the experiments}
 In this appendix we present: Section \ref{appb:fig} -- pictures, that additionally illustrate the discussion from chapters on the methods, results and future work; Section \ref{appb:mobile-screenshots} -- screenshots with use of the developed mobile application, and avatars images synthesized on the mobile hardware; Section \ref{appb:exps} -- training and test images; loss and metrics plots; and a table of the best loss and metrics values for all the performed experiments.
 
@@ -11,6 +10,9 @@ In this appendix we present: Section \ref{appb:fig} -- pictures, that additional
 	\caption{Baseline initialization of a neural texture with $C$ channels, containing $C$ dimensional spectral coordinates of a graph composed from mesh vertices. Notice that in different channels it distinguishes body parts, there is a channel where two legs are colored is an opposite way, similarly for arms, hands, head, upper body, etc. Compared to random initialization, it helps to convey information to the neural renderer about which body part it renders.}
 	\label{fig:spectral_ntex}
 \end{figure}
+
+\setkeys{Gin}{draft}
+
 \begin{figure}
 	\centering
 	\includegraphics[width=\textwidth]{\imgfp/interm_features/03_e0}%
@@ -53,6 +55,9 @@ In this appendix we present: Section \ref{appb:fig} -- pictures, that additional
 	\caption{Intermediate activations of the neural renderer's \textit{decoder}, trained on zoomed images, but Batch Normalization layers collect running statistics only on full-body images. Notice that the outer space starts to form a structure that retains one value near image border, and a sharply different number around the body. We speculate, that leads to failure in segmentation, and thus the "bubble" effect around feet and the head. The visual artifacts seem to accumulate as data passes further from encoder to decoder. }
 	\label{fig:interm06_decoder}
 \end{figure}
+
+\setkeys{Gin}{draft=false}
+
 \begin{figure}
 	%\fboxrule=2pt
 	\centering
@@ -316,13 +321,10 @@ In this appendix we present: Section \ref{appb:fig} -- pictures, that additional
 	\label{fig:profiler_16_in_res}
 \end{figure}
 
-%\setkeys{Gin}{draft}
-
 \clearpage
 \newpage
 
-%\setkeys{Gin}{draft=false}
-
+\setkeys{Gin}{draft}
 \section{Experiments on DNN training}
 \label{appb:exps}
 

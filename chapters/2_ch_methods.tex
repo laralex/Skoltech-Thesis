@@ -77,7 +77,7 @@ Next, we will describe the interactive stage of the application, which is an inf
 		r_z & 0 & -r_x \\
 		-r_y & r_x & 0
 	\end{bmatrix}
-	\label{methods:eq:ndc-projection}
+	\label{methods:eq:rodrigues}
 \end{equation}
 
 The joints apply their rotations and translations recursively, e.g. a position of a finger can be found from sequentially applying transforms of the arm, forearm, palm, and every knuckle. We could compute each joint's final transformation independently, by multiplying all chains of the matrices. However, we can exploit the fact, that the joints form a tree structure, i.e. every joint depends on only one parent joint without loops. Thus, we use a topologically ordered array of 55 joints, meaning that no joint in the array precedes its parent joint. This allows faster CPU computation for $4\times4$ transformation matrices of joints, because by the time we process a joint $i$, all its dependent transformations are already computed in a form of a single matrix of its direct parent. We take 3D locations of joints $\bmr{t}$ (regressed during the initialization stage), and get relative joint translations $\Delta\bmr{t}$ by subtracting joints positions from their parents'. The final recursive transform \bmr{H} for a joint $i$ is found as:
@@ -126,15 +126,25 @@ After generating the input frame, it has to be queried on CPU side from the Open
 
 Finally, we issue the command to infer the DNN from the given input data, and draw all the AR content on the screen - the camera frame, the tracked surfaces planes, and the synthesized avatar image, which we have to pass to OpenGL as a texture. Besides rendering the content in AR, we also support infering the DNN on predefined camera and SMPL-X poses. We dump the resulting images onto the hard disk of the device, and later compare the visual quality of inference on desktop hardware, on mobile GPU or DSP.
 
-This concludes the minimal necessary actions for the real-time neural rendering of avatar images in AR. We then notice, that the visual quality of avatars can drastically suffer when observing the avatar from far away. The neural network is unlikely to be trained to see all the miniature scales of the inputs, thus it may output unpredictable results, possibly failing in segmentation (see Figure \ref{fig:far_screen_crop}). Moreover, the default stretched projection appears very blurry, primarily because the resolution of output images ($512 \times 512$) is a lot smaller than of the screen (on our devices $1920 \times 1080$). Thus, when we render the output avatar image, it gets noticeably low-quality, ever further amplified when looking at the avatar from close up (see Figure \ref{fig:zoom_inefficient_crop}). Besides being low resolution, a big part of the frame will be never seen on the screen due to the extra stretching (Figure \ref{fig:explain_crop_fullscreen}), however computation time is spent on it every frame. 
+This concludes the minimal necessary actions for the real-time neural rendering of avatar images in AR. We then notice, that the visual quality of avatars can drastically suffer when observing the avatar from far away. The neural network is unlikely to be trained to see all the miniature scales of the inputs, thus it may output unpredictable results, possibly failing in segmentation (Figure \ref{fig:far_screen_crop}). Moreover, the default stretched projection appears pixelated, primarily because the resolution of output images ($512 \times 512$) is a lot smaller than of the screen (on our devices $1920 \times 1080$). Thus, when we render the output avatar image, it gets noticeably blurry. This effect is amplified, when looking at the avatar from close up (Figure \ref{fig:zoom_inefficient_crop}). Besides being low resolution, a big part of the frame will be never seen on the screen due to the extra projection stretching we performed to rasterize images as squares (Figure \ref{fig:explain_crop_fullscreen}), however computation time is spent on it every frame. 
 
-The solution that we propose helps to render a single avatar with higher quality. We can take posed joint positions $\bmr{t}$ as in Formula \ref{methods:eq:smplx-rodrigures-4by4}, project them into image coordinates using multiplication by the extrinsic matrix and the modified projection matrix. Then an image-space bounding box can be found, that would encase all the extents of the person (Figure \ref{fig:explain_crop_joints}). For simplicity, we compute the bounding box aligned with $x$-$y$ axes on the image, although a rotated bounding box with complex implementation can be more yield better results. If we were to rasterize the input image only within this bounding box, then it would appear to the DNN in the full-body scale, which it was primarily learned to operate with highest quality. However still a smaller part of the frame can be computed in vain, if the avatar is not observed in full-body (see Figure \ref{fig:explain_crop_joints}). Going further, we can reduce the wasted frame parts to the minimum, by clipping the bounding box to the screen boundaries, thus supplying the DNN with a slightly zoomed image of the avatar (it has to be trained on such zoomed scales to yield good images). Overall, this allows to extract maximum resolution from just $512 \times 512$ generated frames, they can actually appear quite sharp and detailed from both far-away and close-up views.
+The solution that we refer to as \textit{dynamic cropping}, helps to render a single avatar with higher quality. For each frame of avatar rendering, we can take posed joint positions $\bmr{t}$ as in Formula \ref{methods:eq:smplx-rodrigures-4by4}, project them into image coordinates using multiplication by the extrinsic matrix and the modified projection matrix. Then by finding the minimum and maximum $x$ and $y$ image coordinates we obtain an image-space bounding box, that would encase all the extents of the person (Figure \ref{fig:explain_crop_joints}). For simplicity, we compute the bounding box aligned with $x$-$y$ axes on the image, although a rotated bounding box can yield better results, with more complicated implementation as well. If we were to rasterize the input image only within this bounding box, then the input avatar would always appear in a full-body (FB) scale, for which the DNN is trained to output the highest quality. Still, a smaller part of the frame can be computed in vain, in instance when the avatar is not observed in full-body (Figure \ref{fig:explain_crop_joints}). Going further, we can reduce the wasted frame parts to the minimum, by clipping the bounding box to the screen boundaries, thus supplying the DNN with a slightly zoomed image of the avatar (Figure \ref{fig:explain_crop_best}). Overall, this allows to extract maximum resolution from just $512 \times 512$ generated frames, they can actually appear quite sharp and detailed from both far-away and close-up views.
 
-Now we'll describe how the cropping of the projection frustum to the bounding box works mathematically. 
-...
-The final cropped projection can be passed to the previously described GPU shader programs, to render the images. However, after inferring the avatar image, it has to be rendered not all over the device screen, but at a specific location, that corresponds to the initial cropping bounding box in the image space.
+Now we will describe how cropping of the projection frustum to the bounding box works mathematically. We have a default projection matrix queried from ARCore library, that spans the whole screen of the device (see Formula \ref{methods:eq:ndc-projection}). Among the frustum parameters we can arbitrarily select near and far plane distances (traditionally taken $n=0.01$ and $f=100.0$). We are not given the frustum parameters top $t$, bottom $b$, left $l$, right $r$, however by taking an arbitrary point in homogeneous camera coordinate space $\langle x, y, z, 1 \rangle$, and projecting it using the multiplication by projection matrix, we can get image-space projected coordinates:
+\begin{alignat}{4}
+	x_{img} &= \bmr{K_{NDC}}^{1,1}\cdot x &&+ \bmr{K_{NDC}}^{1,3}\cdot z &&= \dfrac{2n}{r-l}x &&+ \dfrac{r + l}{r - l}z \label{methods:eq:project-coords-x}\\
+	y_{img} &= \bmr{K_{NDC}}^{2,2}\cdot x &&+ \bmr{K_{NDC}}^{2,3}\cdot z &&= \dfrac{2n}{t-b}x &&+ \dfrac{t + b}{t - b}z  \label{methods:eq:project-coords-y}\\
+	z_{img} &= \bmr{K_{NDC}}^{3,3}z &&+ \bmr{K_{NDC}}^{3,4} &&= -\dfrac{f + n}{f - n}z &&+ \dfrac{-2fn}{f - n} \label{methods:eq:project-coords-z}	
+\end{alignat}
 
-\begin{figure}[ht]
+However, the projected Z-coordinate of the point $z_{img}$ is known - it is the distance from the pin-hole to the image, i.e. the near plane distance $n$. Also see Figure \ref{fig:dynamic_crop_math}, where $y$ (or $z$) would be a distance between $y=0$ level ($z=0$ level) and the orange dot on the person's head. Then $y_{img}$ ($z_{img}$) would be a distance between $y=0$ level ($z = 0$ level) and the orange dot on the near plane. Using similar triangles, we can get relations $\tfrac{y_{img}}{n} = \tfrac{y}{z}$ and $\tfrac{x_{img}}{n} = \tfrac{x}{z}$. We cannot solve the Equations \ref{methods:eq:project-coords-x}-\ref{methods:eq:project-coords-z} for parameters $t$, $b$, $l$, $r$, $n$ and $f$. However, we can represent them in terms of elements of $\bmr{K_{NDC}}$ matrix, thus obtaining a bijective mapping between the projection matrix and the frustum parameters:
+\begin{align}
+	n &= \dfrac{\bmr{K_{NDC}}^{3,4}}{\bmr{K_{NDC}}^{3,3} - 1} & f &= \dfrac{\bmr{K_{NDC}}^{3, 4}}{\bmr{K_{NDC}}^{3, 3} + 1} \\
+	l &= n\cdot \dfrac{\bmr{K_{NDC}}^{1,3} - 1}{\bmr{K_{NDC}}^{1,1}} & r &= n\cdot \dfrac{\bmr{K_{NDC}}^{1,3} + 1}{\bmr{K_{NDC}}^{1,1}} \\
+	b &= n\cdot \dfrac{\bmr{K_{NDC}}^{2,3} - 1}{\bmr{K_{NDC}}^{2,2}} & t &= n\cdot \dfrac{\bmr{K_{NDC}}^{2,3} + 1}{\bmr{K_{NDC}}^{2,2}} \label{methods:eq:frustum-from-matrix}
+\end{align}
+
+\begin{figure}[htb]
 	\centering
 	%\includegraphics[width=\textwidth]{\imgfp/dynamic_crop/dynamic_crop}
 	%\setkeys{Gin}{draft}
@@ -144,6 +154,38 @@ The final cropped projection can be passed to the previously described GPU shade
 	\caption{A 3D space with origin at the camera, and axes aligned with camera directions ($x$ - right, $y$ - top, $z$ - front). The figure shows a slice of this space with $x=0$, illustrating the dynamic projection crop. \textit{(Left)} The near plane of the old screen frustum is defined by a $z$ distance (arbitrary), and $x$/$y$ coordinates of the frustum borders (top/bottom coordinates on illustration). \textit{(Right)} To make the projection cropped around the avatar body, we compute an axis-aligned bounding box of the body, then project its spans onto the near plane, obtaining top/bottom borders, defined by intersection coordinates of the projection lines and the old near plane. The new frustum will have the same near and far planes as the old one, to ensure preservation of perspective.}
 	\label{fig:dynamic_crop_math}
 \end{figure}
+% Since we know This allows us solve Equation \ref{methods:eq:project-zcoord} for 
+%\begin{bmatrix} 
+%	\tfrac{2n}{r - l} & 0              & \tfrac{r + l}{r - l} & 0 \\
+%	0               & \tfrac{2n}{t - b}  & \tfrac{t + b}{t - b} & 0 \\
+%	0               & 0                & -\tfrac{f + n}{f - n} & \tfrac{-2fn}{f - n} \\
+%	0               & 0                & -1                   & 0
+%\end{bmatrix}
+
+Now we need to compute the new cropped frustum parameters: top $t_{new}$, bottom $b_{new}$, right $r_{new}$ and left $l_{new}$ (see Listing \ref{appendix-code:projectioncropper}). We can take $n_{new} = n$ and $f_{new} = f$, since they are unaffected by the cropping operation. We take 3D locations of avatar joints for the given frame, and from minimum and maximum joint coordinates we compute the crop's center $\langle x, y, z\rangle$ and crop extents $\langle H, W \rangle$ in the camera coordinate space. Then, values $\tfrac{H}{z}$ and $\tfrac{W}{z}$ tell how many times the crop area is smaller relative to the original frustum. We can multiply $t$ and $b$ by $\tfrac{H}{z}$; and $l$ and $r$ by $\tfrac{W}{z}$ respectively to shrink the frustum area to the desired size. Now the frustum center needs to be shifted to match the crop in the camera space coordinates. For this we multiply the crop center's coordinates $\langle x, y \rangle$  by $\tfrac{n}{z}$ thus getting projected coordinates of the crop center, and by these coordinates we offset previously scaled $t$, $b$, $l$ and $r$. Again, see how the old and new frustums correspond to each other on Figure \ref{fig:dynamic_crop_math}. Overall, the computation of the cropped frustum looks like:
+\begin{align}
+	n_{new} &= n & f_{new} &= f \\
+	l_{new} &= l\cdot\dfrac{W}{z} - x\cdot \dfrac{n}{z} & r_{new} &= r\cdot\dfrac{W}{z} + x\cdot \dfrac{n}{z} \\
+	b_{new} &= b\cdot\dfrac{W}{z} - y\cdot \dfrac{n}{z} & t_{new} &= t\cdot\dfrac{W}{z} + y\cdot \dfrac{n}{z} \label{methods:eq:frustum-new-parameters}
+\end{align}
+
+Using Formula \ref{methods:eq:ndc-projection}, we make a new projection matrix from the updated frustum parameters. The matrix can be passed to the previously described GPU shader programs, to render the images. However due to cropping, the inferred avatar image has to be rendered at a specific image location, that corresponds to the initial cropping bounding box in the image space. Since we use a separate rectangle mesh for rendering the inferred images on top, before using the dynamic crop the coordinates of the rectangle corners were:
+%\begin{equation}
+	\begin{align}
+		%\begin{split}
+		\text{top{\_}left} &= \langle -1, 1 \rangle & \text{top{\_}right} &= \langle 1, 1 \rangle \\
+		\text{bottom{\_}left} &= \langle -1, -1 \rangle & \text{bottom{\_}right} &= \langle 1, -1 \rangle
+		%\end{split}
+	\end{align}
+%\end{equation}
+
+We need to map these coordinates to the cropped frustum's parameters. Since the old frustum's parameters do not necessarily form ranges between -1 and 1, we need to take a corresponding parameter of the cropped frustum and find how it relatively adjusts the old one. For example, a value of relative update by the $r_{new}$ parameter would be $\tfrac{r_{new}}{l - r}$. Thus, the updated image coordinates to render the dynamically cropped image would be:
+\begin{align}
+	%\begin{split}
+	\text{top{\_}left} &= \langle \dfrac{l_{new}}{l - r}, \dfrac{t_{new}}{t - b} \rangle & \text{top{\_}right} &= \langle \dfrac{r_{new}}{l - r}, \dfrac{t_{new}}{t - b} \rangle \\
+	\text{bottom{\_}left} &= \langle \dfrac{l_{new}}{l - r}, \dfrac{b_{new}}{t - b} \rangle & \text{bottom{\_}right} &= \langle \dfrac{r_{new}}{l - r}, \dfrac{b_{new}}{t - b} \rangle
+	%\end{split}
+\end{align}
 
 
 %	\end{itemize}
