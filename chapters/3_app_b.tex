@@ -149,6 +149,7 @@ In this appendix we present: Section \ref{appb:fig} -- pictures, that additional
 		\label{fig:explain_crop_best}
 	\end{subfigure}
 	\caption{Comparison of projection modes. (\protect\subref{fig:explain_crop_joints}) A projection that spans the whole screen (the default mode). It is additionally widened to make square images (as required for the DNN), and a big part of the generated image is wasted -- time was spent on its computing, but these parts are never shown on the screen. Moreover, the input contains a very tiny rasterization of the avatar's body, and unless the neural network was trained to process such small inputs, it may produce visual artifacts (as can be seen on Figure \ref{fig:far_screen_crop}). (\protect\subref{fig:explain_crop_joints}) A dynamic projection crop, that modifies rasterization to always contain the full body in it, regardless of the viewing position. It automatically solves the issues with far-out viewpoints, but still frame parts may be wasted. (\protect\subref{fig:explain_crop_best}) The absolute best dynamic crop that would fit only the part of the body that will be shown on the screen. A fraction of the frame may be wasted to center the body inside the crop. }
+	\label{fig:explain_crop}
 \end{figure}
 \begin{figure}
 	\centering%
@@ -193,6 +194,7 @@ In this appendix we present: Section \ref{appb:fig} -- pictures, that additional
 		\label{fig:infer_desktop}
 	\end{subfigure}
 	\caption{Comparison of quality loss when synthesizing images on a mobile phone or desktop computer. (\protect\subref{fig:infer_gpu}) was generated on mobile GPU from INT8 quantized input and FP32 weights. (\protect\subref{fig:infer_dsp}) was synthesized on mobile DSP with both input and weights quantized to INT8. It has noticeable discretization noise. (\protect\subref{fig:infer_desktop}) was generated on a desktop GPU using PyTorch with initial FP32 inputs and network weights. The quality is identical to the mobile GPU.}
+	\label{fig:infer_different_devices}
 \end{figure}
 \begin{figure}[hb]
 	%\fboxrule=2pt
@@ -893,7 +895,7 @@ To keep this section compact, we omit from the table experiments, that were trai
 \newcounter{experiments-counter}
 \setcounter{experiments-counter}{1}
 
-%\setkeys{Gin}{draft=false}
+\setkeys{Gin}{draft}
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{v05_50@vae05_50@vae05_50_flips}{

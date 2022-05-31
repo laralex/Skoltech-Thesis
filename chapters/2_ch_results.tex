@@ -1,15 +1,15 @@
 \chapter{Results and Discussion}\label{chapter:res}
-In this chapter we discuss quantitative and qualitative results from the mobile application and experiments with the baseline DNN, and pointing out their strengths and weaknesses for the future research. Section \ref{res:performance} provides metrics of real-time neural rendering performance in the mobile application, and compares images  generated on desktop and mobile. Section \ref{res:training} compares DNN experiments and the impact of the performed adjustments discusses effects. Section \ref{res:future} outlooks future research directions to improve the project.
+In this chapter we discuss quantitative and qualitative results from the mobile application and experiments with the baseline DNN; and we make conclusions about the researched approaches. Section \ref{res:performance} covers performance and visual quality of neural rendering in the mobile application. Section \ref{res:training} compares DNN experiments and the impact of the attempted adjustments. Section \ref{res:future} outlooks future research directions to improve the project.
 
 \section{Mobile application results}\label{res:performance}
 
-We compare performance of inferring the baseline DNN at different stages of progress during completion of this thesis project. In the next paragraphs we will analyze Table \ref{tab:mobile-performance}. As was mentioned, we can measure frame time of the AR application, which includes time of SMPL-X inference, input rasterization, passing it to the DNN, inferring the DNN and rendering: a camera frame, tracked surfaces, and the output avatar image. Alternatively, in our "benchmarking" application mode, we infer the DNN on constant input data for 5 minutes to gather fair statistics on the inference time, and maximum increase in the device temperature. However we noticed, that since we initialize SNPE with "Sustained High Performance" profile, the maximum temperature is controlled by the device and it never exceeds $55^\circ$C, thus we do not report it. As per the project task, we consider performance as real-time, if application frame time is below 33 ms, which corresponds to above 30 FPS.
+We compare performance of inferring the baseline DNN at different stages of progress during completion of this thesis project. In the next paragraphs we will analyze Table \ref{tab:mobile-performance}. As was mentioned in Section \ref{methods:dev-setup}, we can measure frame time of the AR application, which includes time of SMPL-X inference, input rasterization, passing it to the DNN, inferring the DNN and rendering the AR content. Alternatively, in our "benchmarking" application mode, we infer the DNN for 5 minutes on the same input data to gather fair statistics on the inference time and maximum increase of the device temperature. However we noticed, that since we initialize SNPE with "Sustained High Performance" profile, the maximum temperature is controlled by the device and it never exceeds $55^\circ$C, thus we do not report it. As per the project task, we consider performance as real-time, if application frame time is below 33 ms, which corresponds to above 30 FPS.
 
-In our initial implementation, when we encountered the limitation of OpenGL for rasterizing images of at most 4 channels, we generated the DNN's input tensors using multiple OpenGL rasterizations of size $H \times W \times 4$. Then the DNN was extended from the PyTorch side to accept these multiple rasterizations, and permute the data in memory to get the necessary $H \times W \times C$ before starting the inference. Although the permutation would take place on the GPU or DSP computing unit, the performance was not as high even for resolution $256 \times 256$ pixels with 8 neural texture channels (row 1 in Table \ref{tab:mobile-performance}). Trying to run this layout for the desired resolution $512 \times 512$ and 16 channels, the performance would drop below 25 FPS (row 4). However, by implementing the quantization and packing of all neural channels with a single OpenGL rasterization and getting the input tensor in the exact memory layout as required, the performance immediately improves for all such resolutions (rows 2,3,5) and becomes real-time. We could further increase the resolution of rendering, still having real-time performance with $640 \times 640$ pixels (row 6). To test the limits of the hardware, we try $1024 \times 1024$ resolution (row 7), which is obviously beyond real-time, as computations scale quadratically with resolution. On the bright side, the architecture was successfully converted for execution on DSP, while some neural layers may exceed channel or spatial limit of tensors on DSP. Thus in theory, such high resolutions are possible on mobile, yet performance is the bottleneck. 
+In our initial implementation, when we encountered the limitation of OpenGL for rasterizing images of at most 4 channels, we generated the DNN's input tensors using multiple OpenGL rasterizations of size $H \times W \times 4$. Then the DNN was extended from the PyTorch side to accept these multiple rasterizations, and permute the data in memory to get the necessary $H \times W \times C$ before starting the inference. Although the permutation would take place on the GPU or DSP, the performance was fairly low even for resolution $256 \times 256$ pixels with 8 neural texture channels (row 1 in Table \ref{tab:mobile-performance}). Trying to run this layout for the desired resolution $512 \times 512$ and 16 channels, the performance would drop below 25 FPS (row 2). However, by implementing the quantization and packing of all neural channels with a single OpenGL rasterization and getting the input tensor in the exact memory layout as required, the performance immediately improves for all such resolutions (rows 3,4,5) and becomes real-time on DSP. We could further increase the resolution of rendering, still having real-time performance with $640 \times 640$ pixels (row 6). To test the limits of the hardware, we try $1024 \times 1024$ resolution (row 7), which is obviously beyond real-time, as computations scale quadratically with resolution. On the bright side, the architecture was successfully converted for execution on DSP. In our experience, some neural layers may not work on DSP for high resolutions due to a hardware limit on tensor spatial dimensions or number of channels. Thus practically, such high resolutions are possible on mobile with the architecture we use, yet the performance is the bottleneck. 
 
-Next, following the experiments on the DNN's training procedure, we try to run a modified architecture, with all Batch Normalization (BN) layers replaced with either Instance Normalization or Group Normalization layer. BN layers are typically trained with accumulation of running exponential average of batch statistics from the training data, thus allowing to use the pre-computed mean and standard deviation for each tensor, and normalize value with little to no overread during inference. Instance and Group Normalization layers, however, by default require computing the statistics on each inference. Thus it is expected of them to have lower performance. As we measure, compared to BN, an architecture with Instance Normalizations is about 30-50\% slower (compare rows 8 and 5; rows 9 and 10), yet still borderline real-time. Group Normalization layers are computed very inefficiently (row 13). In fact, SNPE does not mention about supporting it, thus it may be computed without much of hardware acceleration.
+Next, following the experiments on the DNN's training procedure, we try to run a modified architecture, with all Batch Normalization (BN) layers replaced with either Instance Normalization or Group Normalization layers. BN layers typically store running exponential average of batch statistics from the training data, thus allowing to use the pre-computed mean and standard deviation for each tensor, and normalize tensors with little to no overhead during inference. Instance and Group Normalization layers, however, by default require computing the statistics on each inference. Thus it is expected of them to have lower performance. As we measure, compared to BN layers, an architecture with Instance Normalization layers is about 30-50\% slower (compare rows 5 and 6; rows 9 and 10), but still borderline real-time. Group Normalization layers are computed very inefficiently (row 13). In fact, documentation of SNPE does not mention support of it, thus it may be computed with hardly any hardware acceleration.
 
-Finally, we examine how different encoder types of the neural renderer affect the performance. While the baseline DNN uses ResNet18, it might be expected for light-weight architectures like MobileNet or EfficientNet to drastically outperform. However, from out attempts MobileNetV2 does not compute faster on mobile hardware (rows 9,10,11), even though it has twice as fewer parameters. We speculate, that there is no efficient implementation by SNPE of depth-wise convolutional layers, which are used in MobileNet. Replacing BN layers with Instance normalizations show the similar percent of degraded performance (row 9). MobileNetV3 appears to be a bit faster for resolution $256 \times 256$ (row 14), however we could not convert a model with any higher resolution into SNPE format (it exceeds hardware limits on channel size of tensors). We tested out EfficientNet-Lite0 model, and it performs the best for resolution $512 \times 512$, while having a comparable number of parameters to MobileNetV2. However, the visual quality on DSP yields in a failed segmentation prediction (see Figure \ref{fig:mobile_tf_effent_fail}). This artifact does not appear with GPU execution, thus it should be from high value range of tensors, which leads to strong inaccuracies due to quantized computations on DSP. Even so, the visual quality of the avatars with this encoder is anyway below acceptable.
+Finally, we examine how different encoder types of the neural renderer affect the performance. While the baseline DNN uses ResNet18 \cite{dnn:resnet16}, it might be expected for light-weight architectures like MobileNet \cite{dnn:mnv2-18,dnn:mnv3-19} or EfficientNet \cite{dnn:efficientnetv1-19} to drastically outperform. However, from out attempts MobileNetV2 is not inferred faster for the same resolutions (rows 9,10,11), even though it has twice as fewer parameters. We speculate, that the depth-wise convolutional layers used in MobileNetV2 have no efficient implementation on the hardware. After replacing BN layers with Instance normalization layers, we observe the similar percent of performance degradation (row 10). MobileNetV3 \cite{dnn:mnv3-19} appears to be a bit faster for resolution $256 \times 256$ (row 14), however we could not convert models with any higher resolution into the SNPE format. We tested out EfficientNet-Lite0  model, and it performs the best for resolution $512 \times 512$, while having a comparable number of parameters to MobileNetV2. However, inference on DSP results in a failed segmentation prediction (see Figure \ref{fig:mobile_tf_effent_fail}). This artifact does not appear with GPU execution, thus it should be from high value range of tensors, which leads to strong inaccuracies due to quantized computations on DSP. Even so, the visual quality of the avatars with this encoder is below acceptable, thus we did not experiment with it any further.
  
 \begin{table}[!htbp]
 	\setlength\tabcolsep{2.5pt}
@@ -41,7 +41,16 @@ Finally, we examine how different encoder types of the neural renderer affect th
 		& 49.6
 		& 19.3 \\
 		\hline
-		2 & ResNet18
+		2 & ResNet18 %4
+		& Batch
+		& 14.5M
+		& 4-512-512-4
+		& 273--281
+		& 41--48
+		& 270.5
+		& 37.9 \\
+		\hline
+		3 & ResNet18 %2
 		& Batch
 		& 14.3M
 		& 1-256-256-8 
@@ -50,7 +59,7 @@ Finally, we examine how different encoder types of the neural renderer affect th
 		& 39.1
 		& 3.2 \\
 		\hline
-		3 & ResNet18
+		4 & ResNet18 %3
 		& Batch
 		& 14.5M
 		& 1-512-512-8
@@ -58,15 +67,6 @@ Finally, we examine how different encoder types of the neural renderer affect th
 		& 21--22
 		& 115.7
 		& 14.1 \\
-		\hline
-		4 & ResNet18
-		& Batch
-		& 14.5M
-		& 4-512-512-4
-		& 273--281
-		& 41--48
-		& 270.5
-		& 37.9 \\
 		\hline
 		5 & ResNet18
 		& Batch
@@ -77,25 +77,7 @@ Finally, we examine how different encoder types of the neural renderer affect th
 		& 173.7
 		& 16.4 \\
 		\hline
-		6 & ResNet18
-		& Batch
-		& 14.6M
-		& 1-640-640-16
-		& 374--389
-		& 30--32
-		& 364.5
-		& 21.4 \\
-		\hline
-		7 & ResNet18
-		& Batch
-		& 14.8M
-		& 1-1024-1024-16
-		& 875--920
-		& 71--73
-		& 863.9
-		& 57.6 \\
-		\hline
-		8 & ResNet18
+		6 & ResNet18 %8
 		& Instance
 		& 14.5M
 		& 1-512-512-16
@@ -104,16 +86,25 @@ Finally, we examine how different encoder types of the neural renderer affect th
 		& 248.3
 		& 23.2 \\
 		\hline
-		9 & MobileNetV2
-		& Instance
-		& 6.6M
-		& 1-512-512-16
-		& 220--244
-		& 44--47
-		& 221.4
-		& 37.1 \\
+		7 & ResNet18 %6
+		& Batch
+		& 14.6M
+		& 1-640-640-16
+		& 374--389
+		& 30--32
+		& 364.5
+		& 21.4 \\
 		\hline
-		10 & MobileNetV2
+		8 & ResNet18 %7
+		& Batch
+		& 14.8M
+		& 1-1024-1024-16
+		& 875--920
+		& 71--73
+		& 863.9
+		& 57.6 \\
+		\hline
+		9 & MobileNetV2 %10
 		& Batch
 		& 6.6M
 		& 1-512-512-16
@@ -121,6 +112,15 @@ Finally, we examine how different encoder types of the neural renderer affect th
 		& 27--35
 		& 206.5
 		& 15.5 \\
+		\hline
+		10 & MobileNetV2 %9
+		& Instance
+		& 6.6M
+		& 1-512-512-16
+		& 220--244
+		& 44--47
+		& 221.4
+		& 37.1 \\
 		\hline
 		11 & MobileNetV2
 		& Batch
@@ -199,13 +199,18 @@ Finally, we examine how different encoder types of the neural renderer affect th
 	\label{tab:mobile-performance}		
 \end{table} 
 
-Besides measuring frame-time of different inference configurations, we also look at output of Qualcomm Snapdragon Profiler software, which can show a graph of hardware metrics, such as utilization of computing devices, memory caches and threads, as well as a number of cache misses and stalls by the threads of execution. On Figure \ref{fig:profiler_4x4_bn_res} we can see execution of a model with inefficient layout of inputs for the neural rendering DNN, with a necessary permutation of data before inference (row 4 of Table \ref{tab:mobile-performance}). The first orange row the from top with title "CDSP \% Utilization" shows times when DNN inference takes place on DSP. As we can see, there are gaps that indicate times when the input frames are being generated. Notably, the gaps do not correspond to activity of GPU (red, yellow, green and purple plots), instead they operate in parallel, i.e. GPU and DSP do not need to synchronize between each other. However, due to inefficient layout, the is a high rate of data cache misses in the DSP (orange row titled "L2 DU Read miss"), related to necessity to permute data that is very far apart in memory, leading to increased permutation cost, and thus up to twice as increased inference time.
+Additionally to measuring the frame-time of different inference configurations, we also look at output of Qualcomm Snapdragon Profiler software, which can show a graph of hardware metrics, such as utilization of computing devices, memory caches and threads, as well as a number of cache misses and stalls by the threads of execution. On Figure \ref{fig:profiler_4x4_bn_res} we can see execution of a model with inefficient layout of inputs for the neural rendering DNN, with a necessary permutation of the data before inference (the configuration from row 4 of Table \ref{tab:mobile-performance}). On the figure, the plot titled "CDSP \% Utilization" (the first orange from the top) shows moments of intensive DSP computations, corresponding to the DNN's inference. There are gaps with 0\% utilization that indicate latency of preparing the next input frame. Notably, during the gaps we do not observe the intensive computations on GPU (red, yellow, green and purple plots), instead they operate in parallel, i.e. GPU and DSP do not need to synchronize between each other. However, due to the inefficient layout, there is a high rate of data cache misses in the DSP (the third plot from the bottom titled "L2 DU Read miss"), related to necessity to permute segments of the data that are far apart in the memory. Thus, the cache lines that could be used in further computations may instead be overwritten by some of the permuted data, requiring to load the same memory again. From the timings we discussed, such inefficiency may lead to twice as increased inference time.
 
-On Figure \ref{fig:profiler_16_bn_res}, the generated layout of DNN's input is optimal and does not require additional permutations. As we can see, the rate of data cache misses reported in the third from the end orange row "L2 DU Read miss" is also considerably lower and about 0 most of the times. This means, that when a block of data enters the cache, nothing overwrites it, allowing to repeatedly access data directly from the cache (a cache "hit"), by far reducing latency of memory access. We speculate, that this improvement on the rate of cache misses made the DNN inference up to twice as faster in the mobile application. On Figure \ref{fig:profiler_16_bn_mv2}, we use the same efficient input generation, but the neural rendering DNN has a MobileNetV2 encoder. Comparing the profiler output for it and ResNet18 based models, we can notice a much smaller rate of data writing misses in the cache, reported in the second from top orange row "DCache Store miss". This indicates, and MobileNetV2 disentangles and parallelizes computations in such a way, that a single thread of execution exclusively writes to a single area of memory. Thus, almost no inter-cache synchronization has to occur when multiple threads dump written data to the main memory. Even with this difference, we do not observe performance improvement from MobileNetV2 encoder, again hinting on possibly inefficient implementation of depth-wise convolution layers by the target DSP hardware, compared to standard convolutions. Lastly, we compare a ResNet18 based neural renderer with Instance Normalization layers used instead of BN layers (see Figure \ref{fig:profiler_16_in_res}). Again, due to necessity for Instance Normalization to compute mean and standard deviation statistics for each tensor during inference, this means excessive memory access, which can be seen in increased rate of cache misses reported in "L2 DU Read miss". Also notice a much more intensive rate of processing reflected in row "Packets executed", meaning that sheer number of additional computations causes the 30-50\% slower performance of Instance Normalization layers.
+On Figure \ref{fig:profiler_16_bn_res}, the layout of DNN's inputs is optimal and does not require additional permutations. As we can see, the rate of data cache misses (plot "L2 DU Read miss") is also considerably lower and about 0 most of the times. This means, that when a block of data enters the cache, nothing overwrites it. This by far reduces the latency of memory access, as repeated access to the data can be done directly from the cache (a cache "hit"). We hypothesize, that this improvement on the rate of cache misses made the DNN inference up to twice as faster in the mobile application. On Figure \ref{fig:profiler_16_bn_mv2}, we use the same efficient input generation, but the neural rendering DNN has a MobileNetV2 encoder. Comparing the profiler output for it and the ResNet18 based models, we can notice a much smaller rate of cache misses when writing the data in memory (the second from the top orange plot "DCache Store miss"). This indicates, that MobileNetV2 disentangles and parallelizes computations in such a way, that a single thread of execution exclusively writes to a single area of memory. Thus, almost no inter-cache synchronization has to occur when multiple threads dump data to the main memory. Even with this difference, we do not observe much of performance improvement from the MobileNetV2 encoder. This again hints on possibly inefficient implementation of depth-wise convolution layers by the target DSP hardware. Lastly, we compare a ResNet18 based neural renderer with Instance Normalization layers used instead of BN layers (see Figure \ref{fig:profiler_16_in_res}). Again, these layers exhibit an excessive memory access in order to compute statistics of tensors. Thus, the increased rate of cache misses can be observed on the plot "L2 DU Read miss". Furthermore, notice a much bigger intensity of DSP processing reflected on the "Packets executed" plot, meaning that the sheer number of additional computations may cause the 30-50\% slower performance of Instance Normalization layers.
 
-Summarizing the performance analysis of different configurations Table \ref{tab:mobile-performance}, the speed of inference on DSP surpasses GPU by far. In fact, for any resolution, the application frame time with GPU inference is not real-time, while DSP is real-time up to resolution $640 \times 640$, which is higher than we originally aimed for. Using different encoders or normalization layers for the neural renderer proven to generally hurt the performance on mobile. It is thus advisable to stick to resolution $512 \times 512$ pixels with a ResNet18 based encoder and Batch Normalization layers, as it provides comfortable and smooth AR experience. However in the future, if MobileNet would receive more of hardware support (perhaps an application-specific integrated circuit for depth-wise convolutions), then it would probably outperform ResNet18 a lot.
+Summarizing the performance analysis of different configurations, the speed of inference on DSP surpasses GPU by far. In fact, for any resolution, the application frame time with GPU inference is not real-time, while DSP is real-time up to resolution $640 \times 640$, which is higher than we originally aimed for. Using different encoders or normalization layers for the neural renderer proven to generally hurt the performance on mobile. It is thus advisable to stick to resolution $512 \times 512$ pixels with a ResNet18 based encoder and Batch Normalization layers, as it provides comfortable and smooth AR experience. However in the future, if MobileNet would receive more of hardware support (perhaps an application-specific integrated circuit for depth-wise convolutions), then it would probably outperform ResNet18 a lot.
 
-Examples of the mobile application in use can be found on Figure.
+Examples of the mobile application in use can be found on Figure \ref{fig:mobile_example}. In the application, a user can choose a specific DNN, animation and settings of inference. We also compare how different projection modes affect the AR experience: with the default screen-wide projection, dynamically cropped projection around joints and the dynamically cropped projection with clipping to screen boundaries (as on Figure \ref{fig:explain_crop} in the respective order). When observing the avatar from afar, the default projection results in inferring the neural renderer with a very small rasterization of the body mesh and DNN might not generalize well for such small scales (Figure \ref{fig:far_screen_crop}). By cropping around joints (clipping yields the same projection), we can generate input images with a full-body scaled avatar always, thus DNN produces meaningful and stable images regardless of the distance. On Figure \ref{fig:far_dynamic_crop} we can see the generated image, and Figure on \ref{fig:far_dynamic_crop_debug} the extents of the crop. In the scenario of zooming in, the screen projection results in an image that is rendered partially, thus wasting some spent computations (Figure \ref{fig:zoom_inefficient_crop}). The dynamic cropping around joints surrounds the avatar a bit tighter, thus appearing sharper (Figure \ref{fig:zoom_screen_crop}). By clipping this projection to screen boundaries, we get the absolute minimal projection, which also allows to feed the DNN with a zoomed image, and given  that the network is trained to produce such images, the quality improves a bit more (Figure \ref{fig:zoom_smallest_crop}).
+
+We also compare images, that were generated from the same input on either mobile GPU, mobile DSP, or desktop GPU computing devices (in the respective order on Figure \ref{fig:infer_different_devices}). You can notice, that the mobile GPU and desktop GPU quality doesn't differ much, even though the former was inferred from an input rasterization with quantized INT8 values, and the latter with FP32. On the other hand, when inferring on DSP with all intermediate computations quantized, the output image has discrete transition of colors (especially seen on the red area of the T-shirt), and overall the image appears noisy. On the other hand, no major artifacts appear that would dramatically hurt the visual quality. Given that DSP allows real-time inference, the achieved quality-performance tradeoff seems advantageous.
+
+Lastly, we compare rasterization of the input tensors on mobile, with the plain full-resolution neural texture (Figure \ref{fig:no_mipmap_inference}), or when MIP-maps and anisotropic filtering is applied (Figure \ref{fig:anisotropic_inference}). Both avatar images are inferred on mobile GPU. The difference should only be visible for triangles at steep angles to the camera, such as on the body contour, where triangles are more and more perpendicular to the camera view. However, we observe virtually no difference. We speculate, that the improvement is much less pronounced than on the example Figure \ref{fig:anisotropic_result}, because of a relatively small number of steep-angled triangles. Additionally, the input frames are processed with the neural rendering  DNN, thus it is possible that any difference is further hidden behind the noise of internal computations inside the DNN.
+
 \section{Training experiments results}\label{res:training}
 
 %\begin{figure}[htb]
