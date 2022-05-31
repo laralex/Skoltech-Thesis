@@ -458,15 +458,15 @@ on \@thesisdate
 		\caption{#4} % description}
 		\IfValueT{#5}{\label{#5}}
 		\begin{minipage}[b]{.72\textwidth}
-		\IfFileExists{#2/legend/#3}{\includegraphics[height=2cm,width=\textwidth,keepaspectratio]{#2/legend/#3}}{}
-		\IfFileExists{#2/train/#3}{\includegraphics[height=10cm,width=\textwidth,keepaspectratio]{#2/train/#3}}{}
+		\IfFileExists{#2/legend/#3.eps}{\includegraphics[height=2cm,width=\textwidth,keepaspectratio]{#2/legend/#3.eps}}{}
+		\IfFileExists{#2/train/#3.jpg}{\includegraphics[height=10cm,width=\textwidth,keepaspectratio]{#2/train/#3}}{}
 		\end{minipage}
 		\hfill
-		\IfFileExists{#2/plot_train/#3}{\includegraphics[height=12cm,width=0.25\textwidth,keepaspectratio]{#2/plot_train/#3}}{}
+		\IfFileExists{#2/plot_train/#3.eps}{\includegraphics[height=12cm,width=0.25\textwidth,keepaspectratio]{#2/plot_train/#3.eps}}{}
 		\\
-		\IfFileExists{#2/test/#3}{\includegraphics[height=12cm,width=0.72\textwidth,keepaspectratio]{#2/test/#3}}{}
+		\IfFileExists{#2/test/#3.jpg}{\includegraphics[height=12cm,width=0.72\textwidth,keepaspectratio]{#2/test/#3}}{}
 		\hfill
-		\IfFileExists{#2/plot_val/#3}{\includegraphics[height=12cm,width=0.25\textwidth,keepaspectratio]{#2/plot_val/#3}}{}
+		\IfFileExists{#2/plot_val/#3.eps}{\includegraphics[height=12cm,width=0.25\textwidth,keepaspectratio]{#2/plot_val/#3.eps}}{}
 	\end{figure}
 %		}}
 %		\makebox[\textwidth]{\makebox[1.1\textwidth]{
