@@ -11,7 +11,7 @@ In this appendix we present: Section \ref{appb:fig} -- pictures, that additional
 	\label{fig:spectral_ntex}
 \end{figure}
 
-\setkeys{Gin}{draft}
+%\setkeys{Gin}{draft}
 
 \begin{figure}
 	\centering
@@ -124,6 +124,7 @@ In this appendix we present: Section \ref{appb:fig} -- pictures, that additional
 		\label{fig:ntex-fixed}
 	\end{subfigure}
 	\caption{(\protect\subref{fig:ntex-grad}) A mask of non-zero gradients for a neural texture after seeing the whole training sequence. It is common that some body parts are never seen during training, e.g. bottom of shoes, top of the head, armpits. (\protect\subref{fig:ntex-artifact}) Example of rendering instability due to that. (\protect\subref{fig:ntex-fixed}) A crude solution is to replace the unseen parts with a texture part that was actually optimized (e.g. a part of legs or skin). Although it solves the particular artifact on feet, it may not be applicable to the head or armpits.}
+	\label{fig:ntex-grad-artifact-fixed}
 \end{figure}
 \begin{figure}
 	%\fboxrule=2pt
@@ -166,6 +167,29 @@ In this appendix we present: Section \ref{appb:fig} -- pictures, that additional
 	\caption{An example of image-space affine augmentations that can be applied to an image. They perform 2D rotation, scale and translation. Since after the rotation the image may not align with the pixel grid, the specific pixel values are calculated as a bilinear interpolation between old transformed pixels. The image from \href{https://kornia.readthedocs.io/en/latest/geometry.transform.html}{https://kornia.readthedocs.io/en/latest/geometry.transform.html}.}
 	\label{fig:image-space-aug-kornia}
 \end{figure}
+
+\begin{figure}
+	\centering
+	\includegraphics[height=9cm]{\imgfp/spurious/zoom-spurious}
+	\caption{Example of a visual artifact, which we refer to as \textit{spurious correlations}. Frames with the same poses may be rendered with occasional drastic changes. It may appear as change of folds on the clothes, warping of clothes, change of lighting all over the avatar.}
+	\label{fig:spurous_zoom}
+\end{figure}
+
+\begin{figure}
+	\centering
+	\includegraphics[height=9cm]{\imgfp/spurious/rotation-spurious}
+	\caption{Example of an overfitting artifact, when slight camera rotation makes DNN output dramatically different results. See Figure \ref{fig:overfitting_gt} with problematic ground truth images that trigger this effect of a "shade" on the avatar.}
+	\label{fig:overfitting_rotation}
+\end{figure}
+
+
+\begin{figure}
+	\centering
+	\includegraphics[height=9cm]{\imgfp/spurious/gt-min}
+	\caption{Two not so distant frames from the ground truth video sequence, however they have great difference in color on the T-shirt due to different light conditions.}
+	\label{fig:overfitting_gt}
+\end{figure}
+
 %\setkeys{Gin}{draft}
 \section{Mobile application}
 \label{appb:mobile-screenshots}
@@ -895,7 +919,7 @@ To keep this section compact, we omit from the table experiments, that were trai
 \newcounter{experiments-counter}
 \setcounter{experiments-counter}{1}
 
-\setkeys{Gin}{draft}
+%\setkeys{Gin}{draft}
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{v05_50@vae05_50@vae05_50_flips}{
@@ -927,6 +951,18 @@ To keep this section compact, we omit from the table experiments, that were trai
 }
 <fig:exp:ntex-lr-higher>
 
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{a03_ai_retrain_val@va10@va11@va12@va13}{
+	Comparing effect of training a model with zoomed images, and fine-tuning it on full-body (FB) images, hopefully reaching baseline FB quality, without forgetting zoomed quality.
+}
+<fig:exp:fine-tune-wo-zooms>
+
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{a03_ai_retrain_val@va14@va15@va16}{
+	Comparing effect of training a model with zoomed images, and fine-tuning it on full-body (FB) images, hopefully reaching baseline FB quality, without forgetting zoomed quality.
+}
+<fig:exp:fine-tune-wo-zooms-texlowerlr>
+
 % ===== ======== ======= 
 % BN statistics
 % ===== ======== =======
@@ -937,6 +973,11 @@ To keep this section compact, we omit from the table experiments, that were trai
 }
 <fig:exp:bnf-statfb-statzooms>
 
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{va06@b01_ai@vb01_uniform}{
+	Comparing effect of collecting Batch Normalization running statistics only from FB images, and selecting body vertices as centers of camera-space augmentations.
+}
+<fig:exp:a03-uniform>
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{va02@va06@va07@va08@va09}{
@@ -949,6 +990,12 @@ To keep this section compact, we omit from the table experiments, that were trai
 	Comparing usage of Instance Normalization layers, when trained with other training sequences. Plots of losses and metrics cannot be validly compared.
 }
 <fig:exp:instancenorm-other-seq>
+
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{va02@a07_ai@a48_ai}{
+	Comparing usage of Batch Normalization (BN) or Instance Normalization layers in neural renderer; and effect of collecting running instance statistics (as in BN by default).
+}
+<fig:exp:instancenorm-and-switch-track-stat>
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{a03_ai_retrain_val@a37_ai@a37_dis_in@a37_dis_bn}{
@@ -975,22 +1022,10 @@ To keep this section compact, we omit from the table experiments, that were trai
 <fig:exp:bnf-disc-noaffinenorms>
 
 \appendixexperiment[experiments-counter]
-{\imgfp/exps}{a03_ai_retrain_val@va10@va11@va12@va13}{
-	Comparing effect of training a model with zoomed images, and fine-tuning it on full-body (FB) images, hopefully reaching baseline FB quality, without forgetting zoomed quality.
+{\imgfp/exps}{va06@va43_r@a43_rd@va43_rdin}{
+	Comparing effect of collecting Batch Normalization running statistics only from FB images; and using normalization layers without learned affine parameters ($\gamma=1$, $\beta=0$ in Formula \ref{lit:eq:bn}).
 }
-<fig:exp:fine-tune-wo-zooms>
-
-\appendixexperiment[experiments-counter]
-{\imgfp/exps}{a03_ai_retrain_val@va14@va15@va16}{
-	Comparing effect of training a model with zoomed images, and fine-tuning it on full-body (FB) images, hopefully reaching baseline FB quality, without forgetting zoomed quality.
-}
-<fig:exp:fine-tune-wo-zooms-texlowerlr>
-
-\appendixexperiment[experiments-counter]
-{\imgfp/exps}{a31_ai@a34_ai@a34_defaultopt}{
-	Comparing effect of batch size on emergence of visual artifacts. We speculate about correlation of the "bubble" artifact around feet, and running batch statistics used in Batch Normalization layers. 
-}
-<fig:exp:batch-size-1>
+<fig:exp:renderer-noaffinenorm>
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{a03_ai_retrain_val@a31_ai@a32_ai@a32_80}{
@@ -999,16 +1034,16 @@ To keep this section compact, we omit from the table experiments, that were trai
 <fig:exp:nza-or-bnfix>
 
 \appendixexperiment[experiments-counter]
-{\imgfp/exps}{a32_ai@a40_ai@a40_low_ntexlr}{
-	Comparing effect of both collecting Batch Normalization running statistics only from full-body images and preventing update of neural texture Adam optimizer's state for pixels with 0 gradient; then fine-tuning only on full-body images.
-}
-<fig:exp:nza-bnfix-finetune>
-
-\appendixexperiment[experiments-counter]
 {\imgfp/exps}{va06@va22@va23@va24}{
 	Comparing effect of collecting Batch Normalization running statistics only from FB images; and preventing update of neural texture Adam optimizer's state for pixels with 0 gradient; and selecting body vertices as centers of camera-space augmentations.
 }
 <fig:exp:nza-bnfix-zoomvertices>
+
+\appendixexperiment[experiments-counter]
+{\imgfp/exps}{a32_ai@a40_ai@a40_low_ntexlr}{
+	Comparing effect of both collecting Batch Normalization running statistics only from full-body images and preventing update of neural texture Adam optimizer's state for pixels with 0 gradient; then fine-tuning only on full-body images.
+}
+<fig:exp:nza-bnfix-finetune>
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{va06@va24@va25@va26@va28}{
@@ -1017,28 +1052,22 @@ To keep this section compact, we omit from the table experiments, that were trai
 <fig:exp:nza-bnfix-ntex8>
 
 \appendixexperiment[experiments-counter]
+{\imgfp/exps}{a31_ai@a34_ai@a34_defaultopt}{
+	Comparing effect of batch size on emergence of visual artifacts. We speculate about correlation of the "bubble" artifact around feet, and running batch statistics used in Batch Normalization layers. 
+}
+<fig:exp:batch-size-1>
+
+\appendixexperiment[experiments-counter]
 {\imgfp/exps}{b01_bl@vb02_zstat@vb03_znod@vb03_fbnod}{
 	Comparing effect of collecting Batch Normalization running statistics only from FB images (or only zoomed images); or effect of disabling GAN losses on either FB or zoomed images.
 }
 <fig:exp:scale-distr-enable-disable-stat-or-gan>
 
 \appendixexperiment[experiments-counter]
-{\imgfp/exps}{va02@a07_ai@a48_ai}{
-	Comparing usage of Batch Normalization (BN) or Instance Normalization layers in neural renderer; and effect of collecting running instance statistics (as in BN by default).
-}
-<fig:exp:instancenorm-and-switch-track-stat>
-
-\appendixexperiment[experiments-counter]
 {\imgfp/exps}{va06@a47_m2@a47_m3@va49}{
 	Comparing effect of collecting Batch Normalization running statistics only from FB images, with higher momentum, i.e. older statistics are forgotten faster.
 }
 <fig:exp:bn-momentum-high>
-
-\appendixexperiment[experiments-counter]
-{\imgfp/exps}{va06@b01_ai@vb01_uniform}{
-	Comparing effect of collecting Batch Normalization running statistics only from FB images, and selecting body vertices as centers of camera-space augmentations.
-}
-<fig:exp:a03-uniform>
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{va06@va06_notrack2@va06_notrack5}{
@@ -1064,11 +1093,7 @@ To keep this section compact, we omit from the table experiments, that were trai
 }
 <fig:exp:filter-shade-fine-tune>
 
-\appendixexperiment[experiments-counter]
-{\imgfp/exps}{va06@va43_r@a43_rd@va43_rdin}{
-	Comparing effect of collecting Batch Normalization running statistics only from FB images; and using normalization layers without learned affine parameters ($\gamma=1$, $\beta=0$ in Formula \ref{lit:eq:bn}).
-}
-<fig:exp:renderer-noaffinenorm>
+% @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 % =================
 % Culprits hunting

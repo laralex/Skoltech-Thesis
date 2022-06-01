@@ -316,6 +316,8 @@ on \@thesisdate
 \usepackage{amsmath}  % for \hookrightarrow
 \usepackage{amsfonts}
 \usepackage{soul}
+\usepackage{enumitem}
+\usepackage{lipsum}  
 
 \newcommand{\cfbox}[2]{%
 	\colorlet{currentcolor}{.}%
