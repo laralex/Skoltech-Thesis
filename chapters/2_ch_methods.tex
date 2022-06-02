@@ -98,7 +98,7 @@ The joints apply their rotations and translations recursively, e.g. a position o
 \end{equation}
 where $p$ is a parent index, the transformation matrix $\bmr{H}_p$ of which is already found by the time we compute $H_i$. The first matrix multiplication computes a relative recursive transform for the joint, and the second multiplication subtracts the true posed location of the joint. From the programming point of view, to save on computations, we implement the matrix multiplication operations not naively, but by expanding and merging the operations together, e.g. computing each element of $\bmr{R}$ matrices in place. We try to iterate the data in memory in a cache-friendly way, to write the data consecutively. We expect that it helps to retain exclusive usage of cache lines, without overhead of cache synchronization. For the full SMPL-X inference implementation, head to Listing \ref{appendix-code:smplx}.
 
-Then, we extract tracking information from the ARCore session, namely camera intrinsic and extrinsic matrices, as well as transformation matrices of the tracked anchors. We pre-multiply the anchor's matrix by camera extrinsic matrix, and then by the intrinsic matrix, obtaining a single transformation from local body mesh coordinates to projected image coordinates. Unlike the classic representation of intrinsics, as in Formula \ref{lit:eq:intrinsic}, OpenGL uses an equivalent representation, but with another notation, called Native Device Coordinates. Formerly, the projection frustum was defined with a $3 \times 4$ matrix, parameterized with image width and height $W/H$, focal lengths $f_x/f_y$ from the pin-hole to the image, and image center offset $c_x/c_y$ in pixel coordinates. In OpenGL, the frustum is set by a $4 \times 4$ matrix via 6 distances that bound the frustum: top $t$, bottom $b$, left $l$ and right $r$ planes; a near plane $n$, analogous to focal distance; and a far plane $f$, which defines the maximum depth that is mapped by the virtual camera. The matrix has $4 \times 4$ size in order to additionally compute depth of each pixel, allowing to store it in a Z-buffer, and querying if some rasterized pixels are being occluded. We can represent the same projection with either notation:
+Then, we extract tracking information from the ARCore session, namely camera intrinsic and extrinsic matrices, as well as transformation matrices of the tracked anchors. We pre-multiply the anchor's matrix by camera extrinsic matrix, and then by the intrinsic matrix, obtaining a single transformation from local body mesh coordinates to projected image coordinates. Unlike the classic representation of intrinsics, as in Formula \ref{lit:eq:intrinsic}, OpenGL uses an equivalent representation, but with another notation, called Native Device Coordinates. Formerly, the projection frustum was defined with a $3 \times 4$ matrix, parameterized with image width and height $W/H$, focal lengths $f_x/f_y$ from the pin-hole to the image, and image center offset $c_x/c_y$ in pixel coordinates. In OpenGL, the frustum is set by a $4 \times 4$ matrix via 6 distances that bound the frustum: top $t$, bottom $b$, left $l$ and right $r$ planes; a near plane $n$, analogous to focal distance; and a far plane $f$, which defines the maximum depth that is mapped by the virtual camera. See Figure \ref{fig:frustum} illustrating the meaning of the frustum parameters. The matrix has $4 \times 4$ size in order to additionally compute depth of each pixel, allowing to store it in a Z-buffer, and querying if some rasterized pixels are being occluded.  We can represent the same projection with either notation:
 \begin{equation}
 	\bmr{K_{NDC}} \overset{\begin{subarray}{l}\text{previous} \\ \text{notation}\end{subarray}}{=} 
 	\begin{bmatrix} 
@@ -115,6 +115,14 @@ Then, we extract tracking information from the ARCore session, namely camera int
 	\end{bmatrix}
 	\label{methods:eq:ndc-projection}
 \end{equation}
+
+\begin{figure}
+	\centering
+	\includegraphics[height=6cm]{\imgfp/other/get-min}
+	\caption{A frustum of the pin-hole virtual camera model. It is a pyramid, where apex is both the camera position and the origin of coordinates. $x$ and $y$ axes align with the camera's right and top directions respectively, $z$ axis faces straight in the front (in some notation straight behind). An image is virtually placed at a $z = n$ coordinate (referred to as near plane, or focal distance), parallel to the $xy$ plane. The frustum's extents along $x$ ($y$) axis are specified with left $l$ and right $r$ (bottom $b$ and top $t$) parameters. An image is formed by projecting the frustum's content on the near image plane. It is common to limit the frustum with a far plane $f$, so that a finite-bit representation can be used in a computer to store depth information used for occlusion testing. Image from \href{https://kor.faithcov.org/749684-gl-modelview-and-gl-projection-WBGZIU}{kor.faithcov.org/749684-gl-modelview-and-gl-projection-WBGZIU}}
+	\label{fig:frustum}
+\end{figure}
+
 
 There are a few changes required for this projection matrix. Since we use it to rasterize an input frame to the DNN, we have to supply square images ($512 \times 512$ pixels resolution). However the default projection matrix has aspect ratio of the device's screen. The frustum can be squeezed, e.g. along vertical $y$ axis, by multiplying the second row of $\bmr{K_{NDC}}$ by the screen dimensions ratio $W / H$. Additionally OpenGL stores images from a bottom row to top, meaning that it appears vertically flipped when we use it outside OpenGL. To solve it, the element at second row and second column can be negated.
 
@@ -137,7 +145,7 @@ Now we will describe how cropping of the projection frustum to the bounding box 
 	z_{img} &= \bmr{K_{NDC}}^{3,3}z &&+ \bmr{K_{NDC}}^{3,4} &&= -\dfrac{f + n}{f - n}z &&+ \dfrac{-2fn}{f - n} \label{methods:eq:project-coords-z}	
 \end{alignat}
 
-However, the projected Z-coordinate of the point $z_{img}$ is known - it is the distance from the pin-hole to the image, i.e. the near plane distance $n$. Also see Figure \ref{fig:dynamic_crop_math}, where $y$ (or $z$) would be a distance between $y=0$ level ($z=0$ level) and the orange dot on the person's head. Then $y_{img}$ ($z_{img}$) would be a distance between $y=0$ level ($z = 0$ level) and the orange dot on the near plane. Using similar triangles, we can get relations $\tfrac{y_{img}}{n} = \tfrac{y}{z}$ and $\tfrac{x_{img}}{n} = \tfrac{x}{z}$. We cannot solve the Equations \ref{methods:eq:project-coords-x}-\ref{methods:eq:project-coords-z} for parameters $t$, $b$, $l$, $r$, $n$ and $f$. However, we can represent them in terms of elements of $\bmr{K_{NDC}}$ matrix, thus obtaining a bijective mapping between the projection matrix and the frustum parameters:
+However, the projected Z-coordinate of the point $z_{img}$ is known - it is the distance from the pin-hole to the image, i.e. the near plane distance $n$. Also see Figure \ref{fig:dynamic_crop_math}, where $y$ (or $z$) would be a distance between $y=0$ level ($z=0$ level) and the green dot on the person's head. Then $y_{img}$ ($z_{img}$) would be a distance between $y=0$ level ($z = 0$ level) and the corresponding green dot on the near plane. Using similar triangles, we can get relations $\tfrac{y_{img}}{n} = \tfrac{y}{z}$ and $\tfrac{x_{img}}{n} = \tfrac{x}{z}$. We cannot solve the Equations \ref{methods:eq:project-coords-x}-\ref{methods:eq:project-coords-z} for parameters $t$, $b$, $l$, $r$, $n$ and $f$. However, we can represent them in terms of elements of $\bmr{K_{NDC}}$ matrix, thus obtaining a bijective mapping between the projection matrix and the frustum parameters:
 \begin{align}
 	n &= \dfrac{\bmr{K_{NDC}}^{3,4}}{\bmr{K_{NDC}}^{3,3} - 1} & f &= \dfrac{\bmr{K_{NDC}}^{3, 4}}{\bmr{K_{NDC}}^{3, 3} + 1} \\
 	l &= n\cdot \dfrac{\bmr{K_{NDC}}^{1,3} - 1}{\bmr{K_{NDC}}^{1,1}} & r &= n\cdot \dfrac{\bmr{K_{NDC}}^{1,3} + 1}{\bmr{K_{NDC}}^{1,1}} \\
@@ -148,7 +156,7 @@ However, the projected Z-coordinate of the point $z_{img}$ is known - it is the 
 	\centering
 	%\includegraphics[width=\textwidth]{\imgfp/dynamic_crop/dynamic_crop}
 	%\setkeys{Gin}{draft}
-	\centering{\includegraphics[width=\textwidth]{\imgfp/dynamic_crop/dynamic_crop_vect}}
+	\centering{\includegraphics[width=\textwidth]{\imgfp/dynamic_crop/dynamic_crop.eps}}
 	%\setkeys{Gin}{draft=false}
 	%\includepdf[width=\textwidth]{\imgfp/dynamic_crop/dynamic_crop}
 	\caption{A 3D space with origin at the camera, and axes aligned with camera directions ($x$ - right, $y$ - top, $z$ - front). The figure shows a slice of this space with $x=0$, illustrating the dynamic projection crop. \textit{(Left)} The near plane of the old screen frustum is defined by a $z$ distance (arbitrary), and $x$/$y$ coordinates of the frustum borders (top/bottom coordinates on illustration). \textit{(Right)} To make the projection cropped around the avatar body, we compute an axis-aligned bounding box of the body, then project its spans onto the near plane, obtaining top/bottom borders, defined by intersection coordinates of the projection lines and the old near plane. The new frustum will have the same near and far planes as the old one, to ensure preservation of perspective.}
@@ -203,10 +211,17 @@ We need to map these coordinates to the cropped frustum's parameters. Since the 
 %listparindent=1.5em, labelsep=2em, itemindent=1.5em, 
 % \subsubsection{Hello}
 
-TODO: camera space augmentations explanation
-%The baseline DNN architecture \cite{dnn:stylepeople21}, although being state-of-the-art for learning from a few images (or a video sequence) to synthesize full-body (FB) avatars images, may not perfectly suit AR scenario of the mobile application. Previously we proposed to use dynamic projection cropping, to infer the neural renderer and use as much of image resolution as possible. At the very least, this would mean that the computations are spent on useful work, not just background which ought to be segmented out anyway. But also it is to produce more sharp images  to generate avatar's images, since the resolution of the generated images (at least $512 \times 512$ pixels) is already much lower than of the mobile device's screen ($1920 \times 1080$). On the other hand, such dynamic cropping could pass input images of larger scale than FB, for example upper-body or even close-up on a body part such as face. If the neural renderer is not trained to see such zoomed scales, then the produced images will likely be bad. It can be explained by the convolutional nature of this architecture. If convolutional filters are optimized to activate on certain patterns, within their receptive field, then there is no guarantee that the same patterns could be detected from either far-away or a zoomed input image (see Figure \ref{fig:exp:baselines}, where the baseline is trained only on FB inputs, and it cannot generate as good images for the upper-body or close-up face).
-%
-%Thus, the DNN has to be 
+%TODO: camera space augmentations explanation
+
+The baseline DNN architecture \cite{dnn:stylepeople21} at the moment of publication was state-of-the-art in synthesizing full-body (FB) human avatar images, after learning from a few images (or a video sequence). However, it may not be enough for the AR scenario in a mobile application. In instance, in AR it is possible to observe the avatar from far-away, close-up from top and bottom, etc. The baseline DNN is not trained to generate realistic images for arbitrary views on the avatar. The architecture definitely cannot extrapolate its knowledge to synthesize at least meaningful images on those out-of-training scales. The reason lies in the convolutional nature of this architecture. Convolutional filters are optimized to produce the biggest activation values when encountering certain patterns on an image. The zoomed in (or out) images have the same patterns globally, but not locally within the receptive field of convolutions. See Figure \ref{fig:exp:baselines}, where the baseline is trained only on FB inputs, and it cannot generate as good images for the upper-body or close-up face.
+
+Also, the DNN is trained on images with a single person and only slight variation of their appearance. The target for the neural renderer is to fit those training images to reproduce the similar level of realism, as the original photos. On the other hand, this fitting may be uncontrollable, resulting in a perfect reproduction of the training samples, but failing to generalize the synthesis of novel camera views or body poses. Consequently, since the architecture relies a lot on fits of the SMPL-X body model, the DNN tends to overfit for any slight misalignment of the mesh with ground truth images. As a result, even slight adjustment to a view angle or pose may lead to drastically different synthesized images. We refer to the visual artifacts that appear from such overfitting as \textit{spurious correlations}. When DNN processes a body part posed in a way, which is similar to some training sample, the rendering of the whole avatar may change, even for totally unrelated body parts or very different poses (see Figure \ref{fig:spurious}).
+
+The issue of rendering far-away images of the avatar can be solved in the AR application, using the dynamic projection cropping as we already described in Section \ref{methods:app}. However, there is no other way to generate close-up images but to train the network to do so. The current experimental setup for the training allows to do affine image-space augmentations, and scaling the images in particular. Multiple image types need to align after augmentation: an input frame, a ground truth image, a segmentation mask. To keep the alignment, it would require to first rasterize the body mesh with a neural texture in a full-body scale, to align the rasterization with the ground truth image, and then to apply the same affine image-space transformation to both. Such transformation is equivalent to multiplying a grid of pixel coordinates by an affine transformation matrix with size $3 \times 3$ (like a 3D extrinsic in Formula \ref{lit:eq:extrinsic}, but 2D). Then, for each pixel of a resulting image, bilinear interpolation is computed between 4 neighboring positions in the transformed coordinate grid. 
+
+Although it would be sufficient to make zoomed-out augmentation for the images, the whole approach has a flaw for making zoomed-in images. The body mesh triangles appear very small on full-body scale images, frequently as a single pixel. However, in the neural texture the triangles may be encoded with many pixels. After rasterizing and applying a strong image-space zooming, the fine-grained details from the neural texture will not be added. Instead, the low-resolution values will be interpolated, and thus averaged. Consequently, the parts of the neural texture will be optimized with averaged gradients, instead of pixel-specific ones. This prevents learning of sharp patterns from the ground truth in the neural texture, although intuitively it could improve the neural rendering. Besides, with this approach, the visual quality of the ground truth images will decrease twice from bilinear interpolation, the first time when aligning with the input rasterization, the second time when applying the image-space augmentation.
+
+Since we control the process of the input frame rasterization, instead of applying image-space augmentations, we could modify camera matrices (see Formulas \ref{lit:eq:intrinsic}, \ref{lit:eq:extrinsic}) that are used for rasterization. With that, the rasterization will not need any bilinear interpolation, and can be made arbitrarily sharp by rasterizing in a higher resolution. The ground truth images still require image-space augmentation, but we no longer need the aligning operation, since we do not augment the input frame in the image-space. Thus, at most one bilinear interpolation will be applied, preserving a little bit more of quality and realism. Moreover, we can augment the ground truth in the image space in full original resolution, rather than the input frame's resolution (which is fairly low -- $512 \times 512$ pixels). We implement this approach as a Python module, and call it \textit{camera-space augmentations} (see Figure \ref{fig:cam_aug}).
 
 \begin{figure}[ht]
 	\centering
@@ -218,7 +233,7 @@ TODO: camera space augmentations explanation
 	\end{subfigure}
 	\begin{subfigure}[b]{0.48\textwidth}
 		\centering
-		\includegraphics[width=\textwidth]{\imgfp/cam_augs/cam}%
+		\includegraphics[width=\textwidth]{\imgfp/cam_augs/cam-min}%
 		\caption{}
 		\label{fig:cam_aug:after}
 	\end{subfigure}
@@ -226,7 +241,62 @@ TODO: camera space augmentations explanation
 	\label{fig:cam_aug}
 \end{figure}
 
-%The baseline DNN architecture \cite{dnn:stylepeople21} proved to be sufficient to render FB images of avatars. However, we found out that the rendering network cannot reliably render parts on the body that were never seen during training, most commonly under boots surface, and top of the head. At best, these places can be rendered as random patches of color, e.g. from clothes or skin. Intuitively it is so, because in these areas the neural texture will contain default values during the whole training process. If the renderer learns quickly enough to map such default values to skin or clothes, the chance is that the texture overall will not move much away from the defaults. Although the unseen parts are not rendered correctly from reconstruction point of view, it does not hurt overall accuracy. On the other hand, there is a chance that the neural texture will significantly move away from the default initialization. Thus, after many epochs the default values contained in the unseen parts will be outliers that the renderer does not expect to see. This may trigger it to render abnormal color or fail segmentation prediction. Attempts on dealing with this artifact will be given shortly after.
+The module allows specifying pixel coordinates of a point on the ground truth image, which will be a center of rotation. A default center of rotation is in the middle of the image (with fractional coordinates, if dimensions are odd). By applying a random image-space augmentation using Kornia library, we extract specific values of rotation $\theta$ angle (in radians), scale multipliers $\langle s_x, s_y \rangle$ (negative values mean additional horizontal or vertical flipping) and translation $\langle t_x, t_y \rangle$ (in pixels) that were applied to the ground truth. We then construct $4\times4$ rotation $\bmr{R}$ and scale $\bmr{S}$ matrices (see Formula \ref{methods:eq:cam-aug-scale-rot}), and by combining them as $\bmr{E} = \bmr{R} \cdot \bmr{S}$, we use it as an extrinsic matrix for rasterization of the body mesh. Note, that there is no rotation around $z$ axis, which would be wrong to apply as it changes how the image is perspectively projected during rasterization.
+
+\begin{align}
+	\bmr{R} &= \begin{bmatrix} 
+		cos(\theta) & -sin(\theta) & 0 & 0 \\
+		sin(\theta) & cos(\theta)  & 0 & 0 \\
+		0           & 0            & 1 & 0 \\
+		0           & 0            & 0 & 1 \\
+	\end{bmatrix} = \begin{bmatrix} 
+		\bmr{R}_{xy}         & \bmr{0}_{2 \times 2} \\
+		\bmr{0}_{2 \times 2} & \bmr{I}_{2 \times 2} \\
+	\end{bmatrix}\\%\label{methods:eq:cam-aug-rotation}
+	\bmr{S} &= \begin{bmatrix} 
+		s_x         & 0            & 0 & 0 \\
+		0           & s_y          & 0 & 0 \\
+		0           & 0            & 1 & 0 \\
+		0           & 0            & 0 & 1 \\
+	\end{bmatrix} = \begin{bmatrix} 
+		\bmr{S}_{xy}         & \bmr{0}_{2 \times 2} \\
+		\bmr{0}_{2 \times 2} & \bmr{I}_{2 \times 2} \\
+	\end{bmatrix}\label{methods:eq:cam-aug-scale-rot}
+\end{align}
+
+%\begin{multicols}{2}
+%	\setlength\abovedisplayskip{0pt}
+%	\noindent
+%	
+%	
+%	\setlength\belowdisplayskip{0pt} 
+%\end{multicols} 
+
+The camera translation is harder to apply using the extrinsic matrix, because we need to rasterize the input frame in a resolution ($512\times512$), which is different from the one the image-space augmentation was applied ($1920\times1080$ pixels of the ground truth images). Thus, we apply it by changing the center of projection in the intrinsic matrix, i.e. $c_x$, $c_y$ as per Formula \ref{lit:eq:intrinsic} (updated values are denoted with $\hat{c}_x$, $\hat{c}_y$). The translation augmentation is traditionally applied after rotation and scaling, thus the projection center is also transformed by $\bmr{R}_{xy} \cdot \bmr{S}_{xy}$. We then offset the projection center by the translation values from the ground truth augmentation, and do it relatively to the coordinates of the augmentation center $\langle d_x, d_y \rangle$. We find a ratio $z$ of the ground truth and destination resolutions (for which the DNN is trained). We finally multiply the offset by this ratio to correctly align with the ground truth.
+ 
+\begin{equation}
+	\begin{bmatrix} 
+		\hat{c}_x \\ 
+		\hat{c}_y \\
+	\end{bmatrix} = \begin{bmatrix} 
+		c_x \\ 
+		c_y \\
+	\end{bmatrix} + 
+	z \cdot \left(
+		\bmr{R}_{xy} \bmr{S}_{xy} \cdot \begin{bmatrix} 
+			c_x \\ 
+			c_y \\
+		\end{bmatrix} + \begin{bmatrix} 
+			t_x\\ 
+			t_y\\
+		\end{bmatrix}
+		- \begin{bmatrix} 
+			d_x\\ 
+			d_y\\
+		\end{bmatrix}
+	\right)
+	\label{methods:eq:cam-aug-shift-center}\\
+\end{equation}
 
 Further, we will describe the experiments on DNN training, performed on top of applying camera-space augmentations to train on zoomed images. We will group experiments with similar ideas into paragraphs, which we summarize with a bold emphasis on the font. We also put references to figures that contain such experiments, although the discussion of them is provided in Section \ref{res:training}. We explain the motivation and implementation details where needed. For brevity, we present paragraphs and experiments within them not necessarily in the same order, in which we conducted the research.
 
@@ -379,7 +449,7 @@ We also try to improve the segmentation artifact appearing in the experiments wh
 
 \vspace{-15pt}\paragraph{Use fewer training samples}(Fig. \ref{fig:exp:27-frames}, \ref{fig:exp:filter-shade-fine-tune})\mbox{}\nopagebreak
 
-In the previous experiments we frequently encounter overfitting due to training on zoomed scaled images. We experiment, how the number of training samples affects the training. With too many samples there is a chance that the architecture will generalize well to all of them. On the other hand it may fit well all of them except for a few, that are too complex or invalid (having bad segmentation or SMPL-X fit in the dataset). Thus, these frames will be dominant in the magnitude of the losses, forcing the architecture to overfit to them no matter what, thus the artifacts (see Figure \ref{fig:overfitting_rotation}). We try to reduce the number of training samples from 397 to 27, that were manually selected to show the person from all the sides, and most of the adequately fit poses. We also try use the original training sequence, but manually removing a handful of frames that are fit badly by the neural renderer in most of our experiments (e.g. the ones containing change of lighting such as on Figure \ref{fig:overfitting_gt} to the left).
+In the previous experiments we frequently encounter overfitting due to training on zoomed scaled images. We experiment, how the number of training samples affects the training. With too many samples there is a chance that the architecture will generalize well to all of them. On the other hand it may fit well all of them except for a few, that are too complex or invalid (having bad segmentation or SMPL-X fit in the dataset). Thus, these frames will be dominant in the magnitude of the losses, forcing the architecture to overfit to them no matter what, thus the artifacts (see Figure \ref{fig:spurious_rotation}). We try to reduce the number of training samples from 397 to 27, that were manually selected to show the person from all the sides, and most of the adequately fit poses. We also try use the original training sequence, but manually removing a handful of frames that are fit badly by the neural renderer in most of our experiments (e.g. the ones containing change of lighting such as on Figure \ref{fig:overfitting_gt} to the left).
 
 \vspace{-15pt}\paragraph{Learned MIP-maps of the neural texture}(Fig. \ref{fig:exp:ntex-mip-maps})\mbox{}\nopagebreak
 
