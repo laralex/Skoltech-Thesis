@@ -1,4 +1,5 @@
 \chapter{Images of the experiments}
+\setkeys{Gin}{draft}
 In this appendix we present: Section \ref{appb:fig} -- pictures, that additionally illustrate the discussion from chapters on the methods, results and future work; Section \ref{appb:mobile-screenshots} -- screenshots with use of the developed mobile application, and avatars images synthesized on the mobile hardware; Section \ref{appb:exps} -- training and test images; loss and metrics plots; and a table of the best loss and metrics values for all the performed experiments.
 
 
@@ -11,7 +12,6 @@ In this appendix we present: Section \ref{appb:fig} -- pictures, that additional
 	\label{fig:spectral_ntex}
 \end{figure}
 
-%\setkeys{Gin}{draft}
 
 \begin{figure}
 	\centering
@@ -55,8 +55,6 @@ In this appendix we present: Section \ref{appb:fig} -- pictures, that additional
 	\caption{Intermediate activations of the neural renderer's \textit{decoder}, trained on zoomed images, but Batch Normalization layers collect running statistics only on full-body images. Notice that the outer space starts to form a structure that retains one value near image border, and a sharply different number around the body. We speculate, that leads to failure in segmentation, and thus the "bubble" effect around feet and the head. The visual artifacts seem to accumulate as data passes further from encoder to decoder. }
 	\label{fig:interm06_decoder}
 \end{figure}
-
-\setkeys{Gin}{draft=false}
 
 \begin{figure}
 	%\fboxrule=2pt
@@ -354,7 +352,7 @@ In this appendix we present: Section \ref{appb:fig} -- pictures, that additional
 \clearpage
 \newpage
 
-\setkeys{Gin}{draft=false}
+%\setkeys{Gin}{draft=false}
 \section{Experiments on DNN training}
 \label{appb:exps}
 
@@ -923,7 +921,7 @@ To keep this section compact, we omit from the table experiments, that were trai
 \newcounter{experiments-counter}
 \setcounter{experiments-counter}{1}
 
-\setkeys{Gin}{draft}
+%\setkeys{Gin}{draft}
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{v05_50@vae05_50@vae05_50_flips}{
