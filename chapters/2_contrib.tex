@@ -1,28 +1,28 @@
 \section*{\centering Acknowledgments}
 \addcontentsline{toc}{chapter}{Acknowledgements}
-This thesis project was completed on premises of Samsung AI Center at Moscow, in direct collaboration with its lab of Visual Understanding. I'd like to express my gratitude to all its members, and personally Renat Bashirov, Ilya Zakharkin, Evgenia Ustinova, Artur Grigoriev, David Svitov, Aleksei Ivakhnenko for sharing their knowledge and supporting the research.
+This thesis project was completed on the premises of Samsung AI Center in Moscow, in direct collaboration with its lab of Visual Understanding. I'd like to express my gratitude to all its members, and personally Renat Bashirov, Ilya Zakharkin, Evgenia Ustinova, Artur Grigoriev, David Svitov, Aleksei Ivakhnenko for sharing their knowledge and supporting the research.
 
 I thank my research advisor Victor Lempitsky for directing the project and giving such invaluable networking and research opportunities.
 
-I thank Skolkovo Institute of Science and Technology, for being the best place for education and research in Russia. I've learned thrice as much as I expected here, got to know the brightest people of the country, and jump started my own career before even graduating.
+I thank Skolkovo Institute of Science and Technology, for being the best place for education and research in Russia. I've learned thrice as much as I expected here, got to know the brightest people in the country, and jump-started my own career before even graduating.
 
 %\addcontentsline{toc}{chapter}{fAuthor Contribution}
 \section*{\centering Author Contribution}
 \addcontentsline{toc}{chapter}{Author Contribution}
 
-The developments presented in this thesis, are a part of the bigger project of Samsung AI Center at Moscow on realistic full-body human avatars. The presented advancements are based on the project's state as of June 2021. 
+The developments presented in this thesis, are a part of the bigger project of Samsung AI Center in Moscow on realistic full-body human avatars. The presented advancements are based on the project's state as of June 2021. 
 
-The described mobile application for Android OS has been developed from scratch solely by the author (using the aforementioned software and hardware products). This includes, but not limited to the following:
+The described mobile application for Android OS has been developed from scratch solely by the author (using the aforementioned software and hardware products). This includes, but is not limited to the following:
 \begin{itemize}
 	\item auxiliary code for Android application interaction;
-	\item passing camera frames through 3D tracking library;
+	\item passing camera frames through the 3D tracking library;
 	\item implementing the human body model \cite{dnn:smplx19} inference in Java;
-	\item preparing the DNN models written in Python for execution as SNPE modules (code adaptation, binaries conversion, DNN quantization);
+	\item preparing the DNN models written in Python for execution as SNPE modules (the code adaptation, the binary files conversion, the DNN quantization);
 	\item implementing low-level GPU programs for real-time generation of the DNNs' input data;
 	\item implementing frustum cropping w.r.t. camera angle relative to the rendered avatar position.
 \end{itemize}
 
-The research on avatars quality in both far-out and close-up scales has been carried out in isolation from research directions of the other lab members. All the presented experiments with the neural network training were implemented by the author. Among other things this includes: implementation of the PyTorch module for camera-space affine augmentations, retrieval of demonstrative images for the appendix. Many of the conclusions and further ideas were suggested by the thesis supervisors and the lab members.
+The research on avatar image quality in both the far-out and close-up scales has been carried out in isolation from the research directions of the other lab members. All the presented experiments with the neural network training were implemented by the author. Among other things, this includes the implementation of the PyTorch module for camera-space affine augmentations, and retrieval of the demonstrative images for the appendix. Many of the conclusions and further ideas were suggested by the thesis supervisors and the lab members.
  
 \newpage
 \section*{\centering Abbreviations}
@@ -47,8 +47,8 @@ The research on avatars quality in both far-out and close-up scales has been car
 	DSP & Digital Signal Processor \\
 	FB & Full-body \\
 	FM & Feature matching (loss) \\
-	FP16 & 16 bits floating point number \\
-	FP32 & 32 bits floating point number \\
+	FP16 & 16 bits floating-point number \\
+	FP32 & 32 bits floating-point number \\
 	FPS & Frames per second\\
 	GAN & Generative Adversarial Network \\
 	GLSL & OpenGL Shading Language \\
@@ -79,7 +79,7 @@ The research on avatars quality in both far-out and close-up scales has been car
 	ONNX & Open Neural Network Exchange \\
 	OpenCL & Open Computing Language \\
 	OpenGL & Open Graphics Library \\
-	PQT & Post training quantization \\
+	PQT & Post-training quantization \\
 	PSNR & Peak Signal-to-Noise ratio \\
 	QAT & Quantization-aware training \\
 	RGB & Red-Green-Blue (pixel channels) \\
