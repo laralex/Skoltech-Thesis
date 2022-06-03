@@ -1,6 +1,6 @@
 \chapter{Images of the experiments}
 \setkeys{Gin}{draft}
-In this appendix we present: Section \ref{appb:fig} -- pictures, that additionally illustrate the discussion from chapters on the methods, results and future work; Section \ref{appb:mobile-screenshots} -- screenshots with use of the developed mobile application, and avatars images synthesized on the mobile hardware; Section \ref{appb:exps} -- training and test images; loss and metrics plots; and a table of the best loss and metrics values for all the performed experiments.
+In this appendix, we present: Section \ref{appb:fig} -- pictures, that additionally illustrate the discussion from chapters on the methods, results, and future work; Section \ref{appb:mobile-screenshots} -- screenshots with the use of the developed mobile application, and avatars images synthesized on the mobile hardware; Section \ref{appb:exps} -- training and test images; loss and metrics plots; and a table of the best loss and metrics values for all the performed experiments.
 
 
 \section{Auxiliary illustrations}
@@ -8,7 +8,7 @@ In this appendix we present: Section \ref{appb:fig} -- pictures, that additional
 \begin{figure}[!h]
 	\centering
 	\includegraphics[height=10cm]{\imgfp/other/spectral_ntex}
-	\caption{Baseline initialization of a neural texture with $C$ channels, containing $C$ dimensional spectral coordinates of a graph composed from mesh vertices. Notice that in different channels it distinguishes body parts, there is a channel where two legs are colored is an opposite way, similarly for arms, hands, head, upper body, etc. Compared to random initialization, it helps to convey information to the neural renderer about which body part it renders.}
+	\caption{Baseline initialization of a neural texture with $C$ channels, containing $C$ dimensional spectral coordinates of a graph composed of mesh vertices. Notice that in different channels it distinguishes body parts, there is a channel where two legs are colored oppositely, as well as arms, hands, head, upper body, etc. Compared to random initialization, it helps to convey information to the neural renderer about which body part it renders.}
 	\label{fig:spectral_ntex}
 \end{figure}
 
@@ -20,7 +20,7 @@ In this appendix we present: Section \ref{appb:fig} -- pictures, that additional
 	\hfill\includegraphics[width=\textwidth]{\imgfp/interm_features/03_e2}%
 	\hfill\includegraphics[width=\textwidth]{\imgfp/interm_features/03_e3}%
 	\hfill\includegraphics[width=\textwidth]{\imgfp/interm_features/03_e4}%
-	\caption{One channel of activations by intermediate levels of the neural renderer's \textit{encoder}. The pipeline is plainly trained on zoomed images. Notice that the features seem activated over the whole body.}
+	\caption{One channel of activations by intermediate levels of the neural renderer's \textit{encoder}. The pipeline is trained on zoomed images. Notice that the features seem activated over the whole body.}
 	\label{fig:interm03_encoder}
 \end{figure}
 \begin{figure}
@@ -31,7 +31,7 @@ In this appendix we present: Section \ref{appb:fig} -- pictures, that additional
 	\hfill\includegraphics[width=0.9\textwidth]{\imgfp/interm_features/03_d3}%
 	\hfill\includegraphics[width=0.9\textwidth]{\imgfp/interm_features/03_dout}%
 	\hfill\includegraphics[width=0.9\textwidth]{\imgfp/interm_features/03_rgb}
-	\caption{One channel of activations by intermediate levels of the neural renderer's \textit{decoder}. The pipeline is plainly trained on zoomed images. Notice that the space around the human image has a wavy, non-uniform structure. We speculate, that having it helps to make a more accurate segmentation in the neural renderer's heads. }
+	\caption{One channel of activations by intermediate levels of the neural renderer's \textit{decoder}. The pipeline is trained on zoomed images. Notice that the space around the human image has a wavy, non-uniform structure. We speculate, that having it helps to make a more accurate segmentation in the neural renderer's heads. }
 	\label{fig:interm03_decoder}
 \end{figure}
 \begin{figure}
@@ -52,7 +52,7 @@ In this appendix we present: Section \ref{appb:fig} -- pictures, that additional
 	\hfill\includegraphics[width=0.9\textwidth]{\imgfp/interm_features/bnf_d3}%
 	\hfill\includegraphics[width=0.9\textwidth]{\imgfp/interm_features/bnf_dout}%
 	\hfill\includegraphics[width=0.9\textwidth]{\imgfp/interm_features/bnf_rgb}%
-	\caption{Intermediate activations of the neural renderer's \textit{decoder}, trained on zoomed images, but Batch Normalization layers collect running statistics only on full-body images. Notice that the outer space starts to form a structure that retains one value near image border, and a sharply different number around the body. We speculate, that leads to failure in segmentation, and thus the "bubble" effect around feet and the head. The visual artifacts seem to accumulate as data passes further from encoder to decoder. }
+	\caption{Intermediate activations of the neural renderer's \textit{decoder}, trained on zoomed images, but Batch Normalization layers collect running statistics only on full-body images. Notice that the outer space starts to form a structure that retains one value near the image border, and a sharply different number around the body. We speculate, that this leads to failure in segmentation, and thus the "bubble" effect around the feet and the head. The visual artifacts seem to accumulate as data passes further from the encoder to the decoder. }
 	\label{fig:interm06_decoder}
 \end{figure}
 
@@ -72,7 +72,7 @@ In this appendix we present: Section \ref{appb:fig} -- pictures, that additional
 		\caption{}
 		\label{fig:anisotropic}
 	\end{subfigure}
-	\caption{(\protect\subref{fig:mipmap}) An example collation of MIP-maps for a texture. It is repeatedly downscaled by a factor of 2, and each scale is pre-processed with an offline filtering algorithm. During rasterization, if a triangle spans a small area on the image, a particular MIP-map scale is chosen to interpolate the texture values. This reduces aliasing effect (\protect\subref{fig:anisotropic}) Anisotropic filtering pre-processes additional variants for each level of downscales, that are squashed along axes. Images from \href{https://en.wikipedia.org/wiki/Anisotropic_filtering}{en.wikipedia.org/wiki/Anisotropic\_filtering}} 
+	\caption{(\protect\subref{fig:mipmap}) An example collation of MIP-maps for a texture. It is repeatedly downscaled by a factor of 2, and each scale is pre-processed with an offline filtering algorithm. During rasterization, if a triangle spans a small area on the image, a particular MIP-map scale is chosen to interpolate the texture values. This reduces the aliasing effect (\protect\subref{fig:anisotropic}) Anisotropic filtering pre-processes additional variants for each level of downscales, that are squashed along axes. Images from \href{https://en.wikipedia.org/wiki/Anisotropic_filtering}{en.wikipedia.org/wiki/Anisotropic\_filtering}} 
 \end{figure}
 \begin{figure}
 	\centering
@@ -96,7 +96,7 @@ In this appendix we present: Section \ref{appb:fig} -- pictures, that additional
 		\caption{}
 		\label{fig:anisotropic_inference}
 	\end{subfigure}
-	\caption{Comparison of images synthesized on mobile, when MIP mapping with anisotropic fitering is used (\protect\subref{fig:anisotropic_inference}) or not (\protect\subref{fig:no_mipmap_inference}) for rasterization of the input. Unfortunately, the difference is negligible in our case. It can be barely seen on the edges of the mesh, where the triangles face at the most extreme angle to the camera. The processing by the neural renderer further reduces the difference.}
+	\caption{Comparison of images synthesized on mobile, when MIP mapping with anisotropic filtering is used (\protect\subref{fig:anisotropic_inference}) or not (\protect\subref{fig:no_mipmap_inference}) for rasterization of the input. Unfortunately, the difference is negligible in our case. It can be barely seen on the edges of the mesh, where the triangles face at the most extreme angle to the camera. The processing by the neural renderer further reduces the difference.}
 \end{figure}
 \begin{figure}
 	%\fboxrule=2pt
@@ -121,7 +121,7 @@ In this appendix we present: Section \ref{appb:fig} -- pictures, that additional
 		\caption{}
 		\label{fig:ntex-fixed}
 	\end{subfigure}
-	\caption{(\protect\subref{fig:ntex-grad}) A mask of non-zero gradients for a neural texture after seeing the whole training sequence. It is common that some body parts are never seen during training, e.g. bottom of shoes, top of the head, armpits. (\protect\subref{fig:ntex-artifact}) Example of rendering instability due to that. (\protect\subref{fig:ntex-fixed}) A crude solution is to replace the unseen parts with a texture part that was actually optimized (e.g. a part of legs or skin). Although it solves the particular artifact on feet, it may not be applicable to the head or armpits.}
+	\caption{(\protect\subref{fig:ntex-grad}) A mask of non-zero gradients for a neural texture after seeing the whole training sequence. Commonly, some body parts are never seen during training, e.g. bottom of shoes, top of the head, armpits. (\protect\subref{fig:ntex-artifact}) Example of rendering instability due to that. (\protect\subref{fig:ntex-fixed}) A crude solution is to replace the unseen parts with a texture part that was actually optimized (e.g. a part of legs or skin). Although it solves the particular artifact on feet, it may not apply to the head or armpits.}
 	\label{fig:ntex-grad-artifact-fixed}
 \end{figure}
 \begin{figure}
@@ -147,14 +147,14 @@ In this appendix we present: Section \ref{appb:fig} -- pictures, that additional
 		\caption{}
 		\label{fig:explain_crop_best}
 	\end{subfigure}
-	\caption{Comparison of projection modes. (\protect\subref{fig:explain_crop_joints}) A projection that spans the whole screen (the default mode). It is additionally widened to make square images (as required for the DNN), and a big part of the generated image is wasted -- time was spent on its computing, but these parts are never shown on the screen. Moreover, the input contains a very tiny rasterization of the avatar's body, and unless the neural network was trained to process such small inputs, it may produce visual artifacts (as can be seen on Figure \ref{fig:far_screen_crop}). (\protect\subref{fig:explain_crop_joints}) A dynamic projection crop, that modifies rasterization to always contain the full body in it, regardless of the viewing position. It automatically solves the issues with far-out viewpoints, but still frame parts may be wasted. (\protect\subref{fig:explain_crop_best}) The absolute best dynamic crop that would fit only the part of the body that will be shown on the screen. A fraction of the frame may be wasted to center the body inside the crop. }
+	\caption{Comparison of projection modes. (\protect\subref{fig:explain_crop_joints}) A projection that spans the whole screen (the default mode). It is additionally widened to make square images (as required for the DNN), and a big part of the generated image is wasted -- time was spent on its computing, but these parts are never shown on the screen. Moreover, the input contains a tiny rasterization of the avatar's body, and unless the neural network was trained to process such small inputs, it may produce visual artifacts (as can be seen in Figure \ref{fig:far_screen_crop}). (\protect\subref{fig:explain_crop_joints}) A dynamic projection crop, that modifies rasterization to always contain the full body in it, regardless of the viewing position. It automatically solves the issues with far-out viewpoints, but still frame parts may be wasted. (\protect\subref{fig:explain_crop_best}) The absolute best dynamic crop that would fit only the part of the body that will be shown on the screen. A fraction of the frame may be wasted to center the body inside the crop. }
 	\label{fig:explain_crop}
 \end{figure}
 \begin{figure}
 	\centering%
 	\setlength\abovedisplayskip{0pt}%
 	\includegraphics[width=0.6\linewidth]{\imgfp/other/multiavatar}%
-	\caption{Example of a future work on inferring images of multiple avatars. Inputs can be dynamically cropped, rasterized at resolution proportional to occupied space, and collated into a single input tensor. Knowing the screen location of the avatars, the synthesized images can be rendered at proper locations in AR.}%
+	\caption{Example of a future work on inferring images of multiple avatars. Inputs can be dynamically cropped, rasterized at a resolution proportional to occupied space, and collated into a single input tensor. Knowing the screen location of the avatars, the synthesized images can be rendered at proper locations in AR.}%
 	\label{fig:multiavatar}%
 	\setlength\belowdisplayskip{0pt}%
 \end{figure}
@@ -162,7 +162,7 @@ In this appendix we present: Section \ref{appb:fig} -- pictures, that additional
 \begin{figure}
 	\centering
 	\includegraphics[width=\textwidth]{\imgfp/other/warp_affine}
-	\caption{An example of image-space affine augmentations that can be applied to an image. They perform 2D rotation, scale and translation. Since after the rotation the image may not align with the pixel grid, the specific pixel values are calculated as a bilinear interpolation between old transformed pixels. The image from \href{https://kornia.readthedocs.io/en/latest/geometry.transform.html}{https://kornia.readthedocs.io/en/latest/geometry.transform.html}.}
+	\caption{An example of image-space affine augmentations that can be applied to an image. They perform 2D rotation, scale, and translation. Since after the rotation the image may not align with the pixel grid, the specific pixel values are calculated as a bilinear interpolation between old transformed pixels. The image from \href{https://kornia.readthedocs.io/en/latest/geometry.transform.html}{https://kornia.readthedocs.io/en/latest/geometry.transform.html}.}
 	\label{fig:image-space-aug-kornia}
 \end{figure}
 
@@ -181,14 +181,14 @@ In this appendix we present: Section \ref{appb:fig} -- pictures, that additional
 		\caption{}
 		\label{fig:spurious_rotation}
 	\end{subfigure}
-	\caption{Examples of a visual artifact, connected to DNN overfitting, which we refer to as \textit{spurious correlations}. Frames with similar poses or camera views may be rendered with occasional drastic changes. It may appear as change of folds on the clothes, warping of clothes, change of lighting all over the avatar. (\protect\subref{fig:spurious_zoom}) A tiny change of scale (zooming in) leads to instability. (\protect\subref{fig:spurious_rotation}) A tiny change of rotation towards top-down leads to instability. See Figure \ref{fig:overfitting_gt} with problematic ground truth images that trigger this effect of a "shade" on the avatar.}
+	\caption{Examples of a visual artifact, connected to DNN overfitting, which we refer to as \textit{spurious correlations}. Frames with similar poses or camera views may be rendered with occasional drastic changes. It may appear as a change of creases on the clothes, warping of clothes, or a change of lighting all over the avatar. (\protect\subref{fig:spurious_zoom}) A tiny change of scale (zooming in) leads to instability. (\protect\subref{fig:spurious_rotation}) A tiny change of rotation towards top-down leads to instability. See Figure \ref{fig:overfitting_gt} with problematic ground truth images that trigger this effect of a "shade" on the avatar.}
 	\label{fig:spurious}
 \end{figure}
 
 \begin{figure}
 	\centering
 	\includegraphics[height=9cm]{\imgfp/spurious/gt-min}
-	\caption{Two not so distant frames from the ground truth video sequence, however they have a great difference in color on the T-shirt due to different light conditions. If the rendering DNN overfits to the training data, the synthesized images may be unstable and contain such drastic flickering of color. }
+	\caption{Two not-so-distant frames from the ground truth video sequence, however, they have a great difference in color on the T-shirt due to different light conditions. If the rendering DNN overfits the training data, the synthesized images may be unstable and contain such drastic flickering of color. }
 	\label{fig:overfitting_gt}
 \end{figure}
 
@@ -263,7 +263,7 @@ In this appendix we present: Section \ref{appb:fig} -- pictures, that additional
 		\caption{}
 		\label{fig:mobile_tf_effent_fail}
 	\end{subfigure}
-	\caption{(\protect\subref{fig:mobile_example_jump}-\protect\subref{fig:mobile_example_renat}) Examples of avatar images in the mobile application. We have predefined animations that can be played with any avatar. (\protect\subref{fig:mobile_tf_effent_fail}) A case of using another backbone for the renderer (EfficientNet \cite{dnn:efficientnetv1-19}), it has worse quality after training, moreover on mobile DSP it fails to synthesize correct segmentation. }
+	\caption{(\protect\subref{fig:mobile_example_jump}-\protect\subref{fig:mobile_example_renat}) Examples of avatar images in the mobile application. We have predefined animations that can be played with any avatar. (\protect\subref{fig:mobile_tf_effent_fail}) A case of using another backbone for the renderer (EfficientNet \cite{dnn:efficientnetv1-19}), it has worse quality after training, moreover, on the mobile DSP it fails to synthesize correct segmentation. }
 	\label{fig:mobile_example}
 \end{figure}
 \begin{figure}
@@ -289,7 +289,7 @@ In this appendix we present: Section \ref{appb:fig} -- pictures, that additional
 		\caption{}
 		\label{fig:far_dynamic_crop_debug}
 	\end{subfigure}
-	\caption{Comparison of projection modes. (\protect\subref{fig:far_screen_crop}) A projection matrix that spans the whole screen (default mode). Since the input image is square in our pipeline, the input image is effectively much wider than the screen, most of the generated image is wasted. Moreover, the input contains a very tiny rasterization of the mesh, and unless neural network was trained to see such small inputs, it may produce visual artifacts, as shown. (\protect\subref{fig:far_dynamic_crop}) A dynamic crop approach used in this work maximizes the avatar in the input rasterization, thus the network produces an image of sufficient quality. (\protect\subref{fig:far_dynamic_crop_debug}) Shows the output image without segmentation mask applied, allowing to see the borders of the dynamic crop. It covers all the joints and expands or shrinks on every frame.}
+	\caption{Comparison of projection modes. (\protect\subref{fig:far_screen_crop}) A projection matrix that spans the whole screen (default mode). Since the input image is square in our pipeline, the input image is effectively much wider than the screen, and most of the generated image is wasted. Moreover, the input contains a tiny rasterization of the mesh, and unless the neural network was trained to see such small inputs, it may produce visual artifacts, as shown. (\protect\subref{fig:far_dynamic_crop}) A dynamic crop approach used in this work maximizes the avatar in the input rasterization, thus the network produces an image of sufficient quality. (\protect\subref{fig:far_dynamic_crop_debug}) Shows the output image without a segmentation mask applied, allowing us to see the borders of the dynamic crop. It covers all the joints and expands or shrinks on every frame.}
 	\label{fig:far_examples}
 \end{figure}
 \begin{figure}
@@ -315,7 +315,7 @@ In this appendix we present: Section \ref{appb:fig} -- pictures, that additional
 		\caption{}
 		\label{fig:zoom_smallest_crop}
 	\end{subfigure}
-	\caption{Comparison of projection modes in close view. (\protect\subref{fig:zoom_inefficient_crop}) A projection matrix that spans the whole screen (default mode). Even if the avatar spans almost all the screen, parts of the frame are still being wasted, decreasing possible resolution of the avatar. (\protect\subref{fig:zoom_screen_crop}) A dynamic crop around all the joints. A bit higher quality in this scenario, but the crop is similar to full-screen projection. (\protect\subref{fig:zoom_smallest_crop}) A dynamic crop around only seen body parts. Yields the highest quality, since it minimizes the area of wasted space.}
+	\caption{Comparison of projection modes in close view. (\protect\subref{fig:zoom_inefficient_crop}) A projection matrix that spans the whole screen (default mode). Even if the avatar spans almost the whole screen, parts of the frame are still being wasted, decreasing the possible resolution of the avatar. (\protect\subref{fig:zoom_screen_crop}) A dynamic crop around all the joints. A bit higher quality in this scenario, but the crop is similar to full-screen projection. (\protect\subref{fig:zoom_smallest_crop}) A dynamic crop around only seen body parts. Yields the highest quality, since it minimizes the area of wasted space.}
 	\label{fig:zoom_examples}
 \end{figure}
 
@@ -324,28 +324,28 @@ In this appendix we present: Section \ref{appb:fig} -- pictures, that additional
 \begin{figure}
 	\centering
 	\includegraphics[width=\textwidth]{\imgfp/profiler/512_4x4_bn_res_print}
-	\caption{Qualcomm Snapdragon Profiler output of hardware metrics, for 9 frames of a neural renderer inference on mobile. Configuration: $512\times512$ resolution, ResNet18 encoder, Batch Normalization layers, 16 input channels are generated as 4 OpenGL textures (thus rearranged in memory on each frame). Look at the first orange row "CDSP Utilization" indicating moments when DSP was either inferring or idle. Most of the times, the GPU work (of generating the input frame) takes place at the same time as inference of the previous frame. This implicit parallelization by the device reduces overall idleness. However, out of 9 frames, 2 have twice as higher idleness of the DSP. These moments might correlate with row "L2 DU Read miss" (3rd from the end), indicating that due to inefficient memory layout, it may fit memory caches worse and "choke" on waiting for arrival of the data.}
+	\caption{Qualcomm Snapdragon Profiler output of hardware metrics, for 9 frames of a neural renderer inference on mobile. Configuration: $512\times512$ resolution, ResNet18 encoder, Batch Normalization layers, 16 input channels are generated as 4 OpenGL textures (thus rearranged in memory on each frame). Look at the first orange row "CDSP Utilization" indicating moments when DSP was either inferring or idle. Most of the time, the GPU work (of generating the input frame) takes place at the same time as the inference of the previous frame. This implicit parallelization by the device reduces overall idleness. However, out of 9 frames, 2 have twice as higher idleness on the DSP. These moments might correlate with row "L2 DU Read miss" (3rd from the end), indicating that due to inefficient memory layout, it may fit memory caches worse and "choke" on waiting for the arrival of the data.}
 	\label{fig:profiler_4x4_bn_res}
 \end{figure}
 
 \begin{figure}
 	\centering
 	\includegraphics[width=\textwidth]{\imgfp/profiler/512_16_bn_res_print}
-	\caption{Qualcomm Snapdragon Profiler output of hardware metrics, for 9 frames of a neural renderer inference on mobile. Configuration: $512\times512$ resolution, ResNet18 encoder, Batch Normalization layers, 16 input channels are generated as 1 OpenGL texture packed with quantized values. It is an efficient memory layout for generating input frame of the DNN, that doesn't require additional rearrangement in memory. Unlike the previous figure, now the row "L2 DU Read miss" (3rd from the end) shows a lot fewer misses of memory caches, when inferring the DNN on DSP. This decreases the inference time, as reported in Table \ref{tab:mobile-performance}.}
+	\caption{Qualcomm Snapdragon Profiler output of hardware metrics, for 9 frames of a neural renderer inference on mobile. Configuration: $512\times512$ resolution, ResNet18 encoder, Batch Normalization layers, 16 input channels are generated as 1 OpenGL texture packed with quantized values. It is an efficient memory layout for generating the input frame of the DNN, that doesn't require additional rearrangement in memory. Unlike the previous figure, now the row "L2 DU Read miss" (3rd from the end) shows a lot fewer misses of memory caches, when inferring the DNN on DSP. This decreases the inference time, as reported in Table \ref{tab:mobile-performance}.}
 	\label{fig:profiler_16_bn_res}
 \end{figure}
 
 \begin{figure}
 	\centering
 	\includegraphics[width=\textwidth]{\imgfp/profiler/512_16_bn_mv2_print}
-	\caption{Qualcomm Snapdragon Profiler output of hardware metrics, for 9 frames of a neural renderer inference on mobile. Configuration: $512\times512$ resolution, MobileNetV2 encoder, Batch Normalization layers, 16 input channels are generated as 1 OpenGL texture packed with quantized values. The MobileNetV2 in theory should drastically outperform ResNet18 (which we use in this work by default). However as we observe, the performance is roughly similar (See Table \ref{tab:mobile-performance}). In terms of DSP hardware utilization seen on this figure (orange rows), no apparent difference with ResNet is seen, except for smaller values in "DCache Store miss" row, indicating that intermediate data is written into memory in such a way to use adjacent memory addresses as long as possible, which improves utilization of memory caches and should improve performance. We speculate, that it's just that depth-wise convolution operations used in MobileNetV2 have a fairly inefficient implementation on the target DSP hardware.}
+	\caption{Qualcomm Snapdragon Profiler output of hardware metrics, for 9 frames of a neural renderer inference on mobile. Configuration: $512\times512$ resolution, MobileNetV2 encoder, Batch Normalization layers, 16 input channels are generated as 1 OpenGL texture packed with quantized values. The MobileNetV2 in theory should drastically outperform ResNet18 (which we use in this work by default). However, as we observe, the performance is roughly similar (See Table \ref{tab:mobile-performance}). In terms of DSP hardware utilization seen on this figure (orange rows), no apparent difference with ResNet is seen, except for smaller values in the "DCache Store miss" row, indicating that intermediate data is written into memory in such a way to use adjacent memory addresses as long as possible, which improves utilization of memory caches and should improve performance. We speculate, that it's just that depth-wise convolution operations used in MobileNetV2 have a fairly inefficient implementation on the target DSP hardware.}
 	\label{fig:profiler_16_bn_mv2}
 \end{figure}
 
 \begin{figure}
 	\centering
 	\includegraphics[width=\textwidth]{\imgfp/profiler/512_16_in_res_print}
-	\caption{Qualcomm Snapdragon Profiler output of hardware metrics, for 9 frames of a neural renderer inference on mobile. Configuration: $512\times512$ resolution, ResNet18 encoder, Instance Normalization layers, 16 input channels are generated as 1 OpenGL texture packed with quantized values. The only notable difference in DSP utilization (orange rows), compared to the above figures, is in the "Packets executed" row (fifth from the end). It shows much higher values than on figure \ref{fig:profiler_16_bn_res} with Batch Normalization layers. This correlates with the fact, that Instance Normalization layers simply require more computations than Batch Normalizations (where tensor statistics are pre-computed), leading to worse performance, as reported in Table \ref{tab:mobile-performance}.}
+	\caption{Qualcomm Snapdragon Profiler output of hardware metrics, for 9 frames of a neural renderer inference on mobile. Configuration: $512\times512$ resolution, ResNet18 encoder, Instance Normalization layers, 16 input channels are generated as 1 OpenGL texture packed with quantized values. The only notable difference in DSP utilization (orange rows), compared to the above figures, is in the "Packets executed" row (fifth from the end). It shows much higher values than in figure \ref{fig:profiler_16_bn_res} with Batch Normalization layers. This correlates with the fact, that Instance Normalization layers simply require more computations than Batch Normalizations (where tensor statistics are pre-computed), leading to worse performance, as reported in Table \ref{tab:mobile-performance}.}
 	\label{fig:profiler_16_in_res}
 \end{figure}
 
@@ -356,11 +356,11 @@ In this appendix we present: Section \ref{appb:fig} -- pictures, that additional
 \section{Experiments on DNN training}
 \label{appb:exps}
 
-Firstly, we present a table of training losses and validation metrics for the experiments. The experiments are sorted by validation metrics from best to worst. The Top-5 metric values are emphasized with a bold underlined font, and the best value of all is additionally colored in blue. We notate the table columns: "GAN G" is Adversarial loss of the Generator, "GAN D-R" is Adversarial loss of the Discriminator on real images, "GAN D-F" is Adversarial loss of the Discriminator on synthesized (fake) images. We shorten description of experiments, where Batch normalization layers do not collect running batch statistics on zoomed frames, as "no zoom stats BN". Next, we demonstrate most of the experiments as collations of training and test images, as well as plots of training losses and plots of validation metrics. We show images synthesized on training epochs with the best visual quality (visually assessed). Images encased with a gray border are \textit{synthesized}, the border-less images are ground truth. Each column of the images has a colored mark at the bottom. It represents a corresponding line color on the plots for the given experiment. Each page includes a legend with a short description of the experimental setup and adjustments. To shorten the descriptions, we use a notation like $\Omega=$ to show that any other usage of $\Omega$ on the same plot uses or extends from this experiment. We use notation $\nabla=0$ a few times, which means only those values in analytic gradient tensors that are very close to 0.
+Firstly, we present a table of training losses and validation metrics for the experiments. The experiments are sorted by validation metrics from best to worst. The Top-5 metric values are emphasized with a bold underlined font, and the best value of all is additionally colored in blue. We notate the table columns: the "GAN G" is Adversarial loss of the Generator, the "GAN D-R" is Adversarial loss of the Discriminator on real images, and the "GAN D-F" is Adversarial loss of the Discriminator on synthesized (fake) images. We shorten the description of experiments, where Batch normalization layers do not collect running batch statistics on zoomed frames, as "no zoom stats BN". Next, we demonstrate most of the experiments as collations of training and test images, as well as plots of training losses and plots of validation metrics. We show images synthesized on training epochs with the best visual quality (visually assessed). Images encased with a gray border are \textit{synthesized}, the border-less images are ground truth. Each column of the images has a colored mark at the bottom. It represents a corresponding line color on the plots for the given experiment. Each page includes a legend with a short description of the experimental setup and adjustments. To shorten the descriptions, we use a notation like $\Omega=$ to show that any other usage of $\Omega$ on the same plot uses or extends from this experiment. We use notation $\nabla=0$ a few times, which means only those values in analytic gradient tensors that are very close to 0.
 
-The images were compressed to reduce the file size of this manuscript (from almost a gigabyte, to a few megabytes). This may affect quality of the images. The originally synthesized images are sharper and less noisy. On the other hand, the general visual artifacts are mostly preserved. As a minimal subset of training images, we show full-body and upper body frames with the most difficult poses available, frames from front and back, as well as a close-up shot of a face. The selected test frames consists of views: on bottom of the shoes -- showing artifacts for the body parts that were unseen during training; on a face close-up -- may lose similarity with the person's face due to overfitting; top-down, which may show overfitting to the frames in the training set, where the person bends forward, and a shadow is cast upon their upper body (see training images, first row); on the upper-body, to compare clarity of T-shirt ornaments, which may be lost due to possible misalignment of the ground truth images and the body model \cite{dnn:smplx19}, because of which neural texture pixels may fit different locations on the body.
+The images were compressed to reduce the file size of this manuscript (from almost a gigabyte, to a few megabytes). This may affect the quality of the images. The originally synthesized images are sharper and less noisy. On the other hand, the general visual artifacts are mostly preserved. As a minimal subset of training images, we show full-body and upper body frames with the most difficult poses available, frames from front and back, as well as a close-up shot of a face. The selected test frames consist of views: of the bottom of the shoes -- showing artifacts for the body parts that were unseen during training; of a face close-up -- may lose similarity with the person's face due to overfitting; of top-down, which may show overfitting to the frames in the training set, where the person bends forward, and a shadow is cast upon their upper body (see training images, first row); of the upper-body, to compare the clarity of T-shirt ornaments, which may be lost due to possible misalignment of the ground truth images and the body model \cite{dnn:smplx19}, because of which neural texture pixels may fit different locations on the body.
 
-To keep this section compact, we omit from the table experiments, that were trained on non-default train sequences or resulted in a severe visual quality downgrade (although the images will be presented). We demonstrate only a subset of loss and metric curves, namely LPIPS, L1, MS-SSIM, and adversarial losses. A single plot of the adversarial loss will combine two lines: generator's loss (solid line) is accuracy of the discriminator on the synthesized images, the discriminator's loss (translucent line with colored dots) is accuracy of the discriminator on the real images. The former should decrease, indicating that the generator produces plausible images, and the latter should increase, indicating that the discriminator learns the realism of ground truth images.
+To keep this section compact, we omit from the table experiments, that were trained on non-default train sequences or resulted in a severe visual quality downgrade (although the images will be presented). We demonstrate only a subset of loss and metric curves, namely LPIPS, L1, MS-SSIM, and adversarial losses. A single plot of the adversarial loss will combine two lines: the generator's loss (solid line) is the accuracy of the discriminator on the synthesized images, and the discriminator's loss (translucent line with colored dots) is the accuracy of the discriminator on the real images. The former should decrease, indicating that the generator produces plausible images, and the latter should increase, indicating that the discriminator learns the realism of ground truth images.
 
 %\clearpage
 %\newpage
@@ -931,37 +931,37 @@ To keep this section compact, we omit from the table experiments, that were trai
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{vae05_50_flips@va01@va02@a03_ai_retrain_val}{
-	Comparing effect of training on zoomed images via camera-space augmentations, compared to just full-body baseline training.
+	Training on zoomed images via camera-space augmentations, compared to just full-body baseline training.
 }
 <fig:exp:basic-zooms>
 
 \appendixexperiment[experiments-counter]{\imgfp/exps}
 {vae05_50_flips@va01@va04@va05}{
-	Comparing effect of training on zoomed images via camera-space augmentations, compared to just full-body baseline training.
+	Training on zoomed images via camera-space augmentations, compared to just full-body baseline training.
 }
 <fig:exp:basic-zooms-2>
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{a03_ai_retrain_val@a29_ai@a30_ai}{
-	Comparing effect of selecting body joints or body vertices as centers of camera-space augmentations (see Figure \ref{fig:smplx-vert2joint}). Every vertex can be chosen with equal probability.
+	Selecting body joints or body vertices as centers of camera-space augmentations (see Figure \ref{fig:smplx-vert2joint}). Every vertex can be chosen with equal probability.
 }
 <fig:exp:zoom-vertices>
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{a03_ai_retrain_val@a39_ntex5@a39_ntex10}{
-	Comparing effect of adjusting neural texture learning rate.
+	Adjusting neural texture learning rate.
 }
 <fig:exp:ntex-lr-higher>
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{a03_ai_retrain_val@va10@va11@va12@va13}{
-	Comparing effect of training a model with zoomed images, and fine-tuning it on full-body (FB) images, hopefully reaching baseline FB quality, without forgetting zoomed quality.
+	Training a model with zoomed images, and fine-tuning it on full-body (FB) images, hopefully reaching baseline FB quality, without forgetting zoomed quality.
 }
 <fig:exp:fine-tune-wo-zooms>
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{a03_ai_retrain_val@va14@va15@va16}{
-	Comparing effect of training a model with zoomed images, and fine-tuning it on full-body (FB) images, hopefully reaching baseline FB quality, without forgetting zoomed quality.
+	Training a model with zoomed images, and fine-tuning it on full-body (FB) images, hopefully reaching baseline FB quality, without forgetting zoomed quality.
 }
 <fig:exp:fine-tune-wo-zooms-texlowerlr>
 
@@ -971,25 +971,25 @@ To keep this section compact, we omit from the table experiments, that were trai
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{va02@va06@va06_stat_zooms}{
-	Comparing effect of collecting Batch Normalization running statistics only from FB images, or only from zoomed images (same proportion of FB and zoomed images during training).
+	Collecting Batch Normalization running statistics only from FB images, or only from zoomed images (same proportion of FB and zoomed images during training).
 }
 <fig:exp:bnf-statfb-statzooms>
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{va06@b01_ai@vb01_uniform}{
-	Comparing effect of collecting Batch Normalization running statistics only from FB images, and selecting body vertices as centers of camera-space augmentations.
+	Collecting Batch Normalization running statistics only from FB images, and selecting body vertices as centers of camera-space augmentations.
 }
 <fig:exp:a03-uniform>
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{va02@va06@va07@va08@va09}{
-	Comparing effect of using different normalization layers in the whole architecture. Although Instance and Group normalizations look promising, they lack support on mobile hardware.
+	Using different normalization layers in the whole architecture. Although Instance and Group normalizations look promising, they lack support on mobile hardware.
 }
 <fig:exp:different-norms>
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{a07_ai@a07_ai@a07_minsoo@a07_renat@a07_egor}{
-	Comparing usage of Instance Normalization layers, when trained with other training sequences. Plots of losses and metrics cannot be validly compared.
+	Instance Normalization layers, when trained with other training sequences. Plots of losses and metrics cannot be validly compared.
 }
 <fig:exp:instancenorm-other-seq>
 
@@ -1001,97 +1001,97 @@ To keep this section compact, we omit from the table experiments, that were trai
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{a03_ai_retrain_val@a37_ai@a37_dis_in@a37_dis_bn}{
-	Comparing effect of removing normalization layers from parts of the architecture.
+	Removing normalization layers from parts of the architecture.
 }
 <fig:exp:nonorm:r:rd:r+dinstancenorm>
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{a03_ai_retrain_val@a37_ai@a37_nodisnorm@a37_noheadnorm}{
-	Comparing effect of removing normalization layers from parts of the architecture.
+	Removing normalization layers from parts of the architecture.
 }
 <fig:exp:nonorm:d:rd:rhead>
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{a03_ai_retrain_val@a43_03v_r@a43_03v_rd}{
-	Comparing effect of using Batch Normalization layers without learned affine parameters ($\gamma=1$, $\beta=0$ as in Formula \ref{lit:eq:bn}).
+	Using Batch Normalization layers without learned affine parameters ($\gamma=1$, $\beta=0$ as in Formula \ref{lit:eq:bn}).
 }
 <fig:exp:norm-noaffine>
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{va06@a43_d@a43_din}{
-	Comparing effect of collecting Batch Normalization running statistics only from FB images; and using normalization layers without learned affine parameters ($\gamma=1$, $\beta=0$ in Formula \ref{lit:eq:bn})
+	Collecting Batch Normalization running statistics only from FB images; and using normalization layers without learned affine parameters ($\gamma=1$, $\beta=0$ in Formula \ref{lit:eq:bn})
 }
 <fig:exp:bnf-disc-noaffinenorms>
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{va06@va43_r@a43_rd@va43_rdin}{
-	Comparing effect of collecting Batch Normalization running statistics only from FB images; and using normalization layers without learned affine parameters ($\gamma=1$, $\beta=0$ in Formula \ref{lit:eq:bn}).
+	Collecting Batch Normalization running statistics only from FB images; and using normalization layers without learned affine parameters ($\gamma=1$, $\beta=0$ in Formula \ref{lit:eq:bn}).
 }
 <fig:exp:renderer-noaffinenorm>
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{a03_ai_retrain_val@a31_ai@a32_ai@a32_80}{
-	Comparing effect of collecting Batch Normalization running statistics only from FB images; or preventing update of neural texture Adam optimizer's state for pixels with 0 gradient.
+	Collecting Batch Normalization running statistics only from FB images; or preventing update of neural texture Adam optimizer's state for pixels with 0 gradient.
 }
 <fig:exp:nza-or-bnfix>
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{va06@va22@va23@va24}{
-	Comparing effect of collecting Batch Normalization running statistics only from FB images; and preventing update of neural texture Adam optimizer's state for pixels with 0 gradient; and selecting body vertices as centers of camera-space augmentations.
+	Collecting Batch Normalization running statistics only from FB images; and preventing update of neural texture Adam optimizer's state for pixels with 0 gradient; and selecting body vertices as centers of camera-space augmentations.
 }
 <fig:exp:nza-bnfix-zoomvertices>
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{a32_ai@a40_ai@a40_low_ntexlr}{
-	Comparing effect of both collecting Batch Normalization running statistics only from full-body images and preventing update of neural texture Adam optimizer's state for pixels with 0 gradient; then fine-tuning only on full-body images.
+	Collecting Batch Normalization running statistics only from full-body images and preventing update of neural texture Adam optimizer's state for pixels with 0 gradient; then fine-tuning only on full-body images.
 }
 <fig:exp:nza-bnfix-finetune>
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{va06@va24@va25@va26@va28}{
-	Comparing effect of lower neural texture capacity; or preventing update of neural texture Adam optimizer's state for pixels with 0 gradient; or selecting body vertices as centers of camera-space augmentations.
+	Using lower neural texture capacity; or preventing update of neural texture Adam optimizer's state for pixels with 0 gradient; or selecting body vertices as centers of camera-space augmentations.
 }
 <fig:exp:nza-bnfix-ntex8>
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{a31_ai@a34_ai@a34_defaultopt}{
-	Comparing effect of batch size on emergence of visual artifacts. We speculate about correlation of the "bubble" artifact around feet, and running batch statistics used in Batch Normalization layers. 
+	Trying a lower batch size. We speculate about correlation of the "bubble" artifact around the feet, and running batch statistics used in Batch Normalization layers. 
 }
 <fig:exp:batch-size-1>
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{b01_bl@vb02_zstat@vb03_znod@vb03_fbnod}{
-	Comparing effect of collecting Batch Normalization running statistics only from FB images (or only zoomed images); or effect of disabling GAN losses on either FB or zoomed images.
+	Collecting Batch Normalization running statistics only from FB images (or only zoomed images); and disabling GAN losses on either FB or zoomed images.
 }
 <fig:exp:scale-distr-enable-disable-stat-or-gan>
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{va06@a47_m2@a47_m3@va49}{
-	Comparing effect of collecting Batch Normalization running statistics only from FB images, with higher momentum, i.e. older statistics are forgotten faster.
+	Collecting Batch Normalization running statistics only from FB images, with higher momentum, i.e. older statistics are forgotten faster.
 }
 <fig:exp:bn-momentum-high>
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{va06@va06_notrack2@va06_notrack5}{
-	Comparing effect of collecting Batch Normalization running statistics only from FB images; and still normalizing zoomed frames with batch statistics, rather than running ones.
+	Collecting Batch Normalization running statistics only from FB images; and still normalizing zoomed frames with batch statistics, rather than running ones.
 }
 <fig:exp:bnf-disable-track>
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{va06@va06_step2@va06_step4@va06_step2d}{
-	Comparing effect of making optimization step of neural renderer or discriminator every $N$ batches, rather than every batch (to possibly accumulate more averaged gradients).
+	Making an optimization step of neural renderer or discriminator every $N$ batches, rather than every batch (to possibly accumulate more averaged gradients).
 }
 <fig:exp:optimizer-step-n>
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{va06@va17@va18@va18}{
-	Comparing effect of collecting Batch Normalization running statistics only from FB images, and afterwards fine-tuning the renderer only on FB images.
+	Collecting Batch Normalization running statistics only from FB images, and afterwards fine-tuning the renderer only on FB images.
 }
 <fig:exp:bnf-fine-tune>
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{va06@va20@a27_ai@a36_ai}{
-	Comparing effect of manually removing hard training samples from the dataset, and training with collecting Batch Normalization running statistics only from FB images.
+	Manually removing hard training samples from the dataset, and training with collecting Batch Normalization running statistics only from FB images.
 }
 <fig:exp:filter-shade-fine-tune>
 
@@ -1103,25 +1103,25 @@ To keep this section compact, we omit from the table experiments, that were trai
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{va02@vb01_nobnf@vb01_nobnf_ut@b01_bl}{
-	Comparing effect of differences in augmentation scales or neural texture capacity. 
+	Differences in augmentation scales or neural texture capacity. 
 }
 <fig:exp:a03-bl>
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{va06@a44_bnf@a45_ai@a46_d2}{
-	Comparing: changing neural texture from multi-scale (layers of which are upscaled and averaged before input rasterization) to single scale; or using same zoom scale within a single batch of optimization; or using higher Dice loss weight to improve segmentation.
+	Changing the neural texture from a multi-scale (layers of which are upscaled and averaged before input rasterization) to single scale; or using same zoom scale within a single batch of optimization; or using higher Dice loss weight to improve segmentation.
 }
 <fig:exp:bnf-samescalebatch-nomultiscaletex-highdice>
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{va06@va19@va21@va20}{
-	Comparing effect of disabling of Adam optimizer's first momentum for the neural texture or discriminator.
+	Disabling the Adam optimizer's first momentum for the neural texture or discriminator.
 }
 <fig:exp:optimizer-momentum>
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{va06@va54_r@va54_rtex@va54_tex}{
-	Comparing effect of starting optimization of neural renderer or neural texture from a state that was optimized on a dataset of multiple people.
+	Starting optimization of the neural renderer or the neural texture from a state that was optimized on a dataset of multiple people.
 }
 <fig:exp:multiperson-init>
 
@@ -1131,109 +1131,109 @@ To keep this section compact, we omit from the table experiments, that were trai
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{a03_ai_retrain_val@va03_vtr@va03_vt}{
-	Comparing effect of strong translation and rotation affine augmentations. By default, person is sligtly translated off the image center and rotated in $(-45^{\circ},45^{\circ})$ range.
+	Strong translation and rotation affine augmentations. By default, person is slightly translated off the image center and rotated in $(-45^{\circ},45^{\circ})$ range.
 }
 <fig:exp:strong-affine-aug>
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{a03_ai_retrain_val@a35_2_01@a35_5_01@a35_dis_d1_01}{
-	Comparing effect of gradient clipping for Adam optimizer of neural renderer's parameters. The clipping value is either an arbitrary constant, or average magnitude of all tensors.
+	Gradient clipping for Adam optimizer of neural renderer's parameters. The clipping value is either an arbitrary constant, or an average magnitude of all tensors.
 }
 <fig:exp:gradclip-constant-or-mean>
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{a03_ai_retrain_val@a35_d1_01@a35_d2_01@a35_d5_01}{
-	Comparing effect of gradient clipping for Adam optimizer of neural renderer's parameters. The clipping value is a fraction of average magnitude of all tensors.
+	Gradient clipping for Adam optimizer of neural renderer's parameters. The clipping value is a fraction of the average magnitude of all tensors.
 }
 <fig:exp:gradclip-mean-fraction>
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{a03_ai_retrain_val@a42_lr2m6@a42_lr2m6_gc10@a42_lr2m6_gc20}{
-	Comparing effect of combining gradient clipping with learning rate scheduling, that would "warmup" with fairly high learning rate (and possibly exploding gradients that will be clipped).
+	Combining gradient clipping with learning rate scheduling, that would "warmup" with a fairly high learning rate (and possibly exploding gradients that will be clipped).
 }
 <fig:exp:gradclip-scheduler>
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{b01_bl@b07_nr2@b07_nr1@b07_nrp0}{
-	Comparing effect of high value of weight decay for parameters of the neural renderer. Decay value 1 is the highest limit until the quality significantly drops.
+	High value of the weight decay for parameters of the neural renderer. The decay value of 1 is the highest until the quality significantly drops.
 }
 <fig:exp:wdecay-nr2:nronly>
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{b01_bl@b07_nr2@b07_nr2_d1_ntex1@b07_nr2_d2_ntex1}{
-	Comparing effect of weight decay for parameters of the neural renderer, neural texture and discriminator. Hardly any difference is observed. 
+	Weight decay for parameters of the neural renderer, neural texture and discriminator. Hardly any difference is observed. 
 }
 <fig:exp:wdecay-nr2:ntex1+disc>
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{b01_bl@b07_nr2@b07_nr2_d2_ntex2@b07_nr2_d1_ntex2}{
-	Comparing effect of weight decay for parameters of the neural renderer, neural texture and discriminator. Hardly any difference is observed. 
+	Weight decay for parameters of the neural renderer, neural texture and discriminator. Hardly any difference is observed. 
 }
 <fig:exp:wdecay-nr2:ntex2+disc>
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{b01_bl@b07_nr3@b07_nr3_d3@b07_nr3_d3_ntex3}{
-	Comparing effect of weight decay for parameters of the neural renderer, neural texture and discriminator separately. Hardly any difference is observed. 
+	Weight decay for parameters of the neural renderer, neural texture and discriminator separately. Hardly any difference is observed. 
 }
 <fig:exp:wdecay-nr3:ntex+disc>
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{b01_bl@b07_nr4@b07_nr3@b07_nr2}{
-	Comparing effect of weight decay for parameters of the neural renderer. Hardly any difference is observed. 
+	Weight decay for parameters of the neural renderer. Hardly any difference is observed. 
 }
 <fig:exp:wdecay-nr432>
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{b01_bl@b07_nr6@b07_nr5@b07_nr4}{
-	Comparing effect of low value of weight decay for parameters of the neural renderer. Hardly any difference is observed. 
+	Low value of weight decay for parameters of the neural renderer. Hardly any difference is observed. 
 }
 <fig:exp:wdecay-nr654>
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{va06@a27_ai@a27_dec50pct@a27_enc2221}{
-	Comparing effect of reducing capacity of neural renderer parts (encoder or decoder); or manually removing hard training samples from the dataset.
+	Reducing capacity of the neural renderer parts (encoder or decoder); or manually removing hard training samples from the dataset.
 }
 <fig:exp:neural-renderer-capacity>
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{vb01_nobnf_ut@b04_01d@b04_01e}{
-	Comparing effect of adding 2D dropout layer \cite{aux:dropout2d-15} after layers of neural renderer's encoder/decoder.
+	Adding a 2D dropout layer \cite{aux:dropout2d-15} after layers of the neural renderer's encoder/decoder.
 }
 <fig:exp:dropout-e-d>
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{vb01_nobnf_ut@b04_01ed@b04_005ed}{
-	Comparing effect of adding 2D dropout layer \cite{aux:dropout2d-15} after layers of neural renderer's encoder/decoder.
+	Adding a 2D dropout layer \cite{aux:dropout2d-15} after layers of the neural renderer's encoder/decoder.
 }
 <fig:exp:dropout-ed-ed>
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{vb01_nobnf_ut@b04_c01e@b04_c01ed@b04_c015ed@b04_c02ed}{
-	Comparing effect of adding 2D dropout layer \cite{aux:dropout2d-15} after all convolutions of neural renderer's encoder/decoder.
+	Adding a 2D dropout layer \cite{aux:dropout2d-15} after all convolutions of the neural renderer's encoder/decoder.
 }
 <fig:exp:dropout-all-conv-ed-ed>
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{va06@va50@va51_01@va51_025}{
-	Comparing effect of adding a white Gaussian noise to spectral initialization of the neural texture (see Figure \ref{fig:spectral_ntex}).
+	Adding a white Gaussian noise to spectral initialization of the neural texture (see Figure \ref{fig:spectral_ntex}).
 }
 <fig:exp:add-noise-ntex-init>
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{vb01_nobnf_ut@b06_inp001@b06_inp002@b06_inp01}{
-	Comparing effect of additive Gaussian noise augmentation for every input of the neural renderer.
+	Additive Gaussian noise augmentation for every input of the neural renderer.
 }
 <fig:exp:add-noise-input>
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{vb01_nobnf_ut@b06_ntex001@b06_ntex002@b06_ntex01}{
-	Comparing effect of additive Gaussian noise augmentation for neural texture before rasterization of every input frame for the neural renderer.
+	Additive Gaussian noise augmentation for neural texture before rasterization of every input frame for the neural renderer.
 }
 <fig:exp:add-noise-ntex>
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{vb01_nobnf_ut@b06_rgb01@b06_rgb005}{
-	Comparing effect of additive Gaussian noise augmentation for every ground truth image.
+	Additive Gaussian noise augmentation for every ground truth image.
 }
 <fig:exp:add-noise-rgb>
 
@@ -1243,31 +1243,31 @@ To keep this section compact, we omit from the table experiments, that were trai
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{a03_ai_retrain_val@a31_ai@a33_ai}{
-	Comparing effect of preventing update of neural texture Adam optimizer's state for pixels with 0 gradient; or using fewer neural texture channels.
+	Preventing the update of the neural texture Adam optimizer's state for pixels with 0 gradient; or using fewer neural texture channels.
 }
 <fig:exp:nza-or-ntex8>
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{a03_ai_retrain_val@a38_ai@a38_cat@a38_cat_bnfix}{
-	Comparing effect of having input tensor down-scaled and additionally passed to layers of the neural renderer's encoder, to address effect of visual artifacts accumulation (e.g. Figure \ref{fig:interm06_decoder}).
+	Down-scaling the input tensor and passing it to the layers of the neural renderer's encoder, to address the effect errors accumulation (e.g. Figure \ref{fig:interm06_decoder}).
 }
 <fig:exp:pass-input-in-encoder>
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{a03_ai_retrain_val@a53_1@a53_ntexlr}{
-	Comparing effect of adjusting weights of training losses used. By default Adversarial and Feature-Matching losses have 1/25 weight compared to Dice, Perceptual and L1 losses.
+	Adjusting weights of training losses used. By default Adversarial and Feature-Matching losses have 1/25 weight compared to Dice, Perceptual and L1 losses.
 }
 <fig:exp:loss-weights>
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{va02@b01_27}{
-	Comparing effect of using fewer training samples than a whole video sequence. We expected smaller overfitting to unusual training samples, e.g. with abnormal change in lighting.
+	Using fewer training samples than a whole video sequence. We expected smaller overfitting to unusual training samples, e.g. with abnormal change in lighting.
 }
 <fig:exp:27-frames>
 
 \appendixexperiment[experiments-counter]
 {\imgfp/exps}{05_54_r1@va41@va41_learnmips@va41_nomips}{
-	Comparing effect of algorithmic (see Figures \ref{fig:mipmap} and \ref{fig:anisotropic_result}), jointly learned or absent MIP-maps of the neural texture.
+	Using algorithmic (see Figures \ref{fig:mipmap} and \ref{fig:anisotropic_result}), jointly learned or absent MIP-maps of the neural texture.
 }
 <fig:exp:ntex-mip-maps>
 

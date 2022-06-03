@@ -89,7 +89,7 @@ The goal of this thesis is to continue the aforementioned project. The first hig
 The specific tasks are defined as follows:
 \begin{enumerate}
 	\item To implement real-time input generation on mobile, for the baseline DNNs. This includes inference of a posed mesh of a unified human body model \cite{dnn:smplx19}, extraction of camera tracking information, mesh rasterization as a 2D image, and its passing to the DNN running on mobile.
-	\item To research on decreasing inference time of the baseline \cite{dnn:stylepeople21} DNN architecture on mobile. It should be possible to infer it with real-time performance of at least 30 FPS, and resolution of the generated images above $256\times256$ pixels.
+	\item To research on decreasing inference time of the baseline \cite{dnn:stylepeople21} DNN architecture on mobile. It should be possible to infer it with real-time performance of at least 30 FPS, and a resolution of the generated images above $256\times256$ pixels.
 	\item To research DNN's training improvements, to make it robust to out-of-distribution views. For example, extremely far zooms, extremely close zooms, rotations, and angles of view, while preserving full-body quality.
 	\item To achieve execution of the DNNs on specialized mobile hardware for fast quantized AI computations (see Section \ref{lit:mobile}). To compare the visual difference between outputs of the default model and outputs on mobile.
 	\item To research algorithmic improvements that would compensate the weaknesses of plain DNN's inference, improving either performance or visual quality of avatars.
